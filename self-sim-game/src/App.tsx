@@ -1,11 +1,15 @@
-import React from "react";
-import { GameEngine } from "./engine/GameEngine";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Login from "./pages/Login";
+import MainGame from "./pages/MainGame"; // 기존 게임 페이지
 
 function App() {
   return (
-    <div className="App">
-      <GameEngine />
-    </div>
+    <Router>
+      <Routes>
+        <Route path="/" element={<MainGame />} />
+        <Route path="/login" element={<Login />} />
+      </Routes>
+    </Router>
   );
 }
 

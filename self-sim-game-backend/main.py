@@ -1,12 +1,16 @@
-from fastapi import FastAPI, Body
+from fastapi import FastAPI, Body, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pathlib import Path
 import yaml
 import re
 import os
 import json
+from fastapi.security import OAuth2PasswordRequestForm
+from auth import authenticate_user, create_access_token
+from controller import auth_controller
 
 app = FastAPI()
+app.include_router(auth_controller.router)
 
 app.add_middleware(
     CORSMiddleware,
@@ -46,6 +50,14 @@ def parse_markdown_to_scene(md_text: str):
         "text": " ".join(text_lines),
         "choices": choices
     }
+
+@app.post("/token")
+def login(form_data: OAuth2PasswordRequestForm = Depends()):
+    user = authenticate_user(form_data.username, form_data.password)
+    if not user:
+        raise HTTPException(status_code=400, detail="Invalid credentials")
+    token = create_access_token({"sub": user["username"]})
+    return {"access_token": token, "token_type": "bearer"}
 
 @app.get("/story")
 def get_all_story():
