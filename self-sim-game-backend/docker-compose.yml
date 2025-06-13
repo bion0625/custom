@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   db:
     image: postgres:15
@@ -12,16 +10,6 @@ services:
       - db-data:/var/lib/postgresql/data
     ports:
       - "5432:5432"
-
-  web:
-    build: ./self-sim-game-backend
-    depends_on:
-      - db
-    environment:
-      DATABASE_URL: postgresql+asyncpg://postgres_user:postgres_password@db:5432/self_sim_game
-      # (기존 JSON 로깅 변수는 제거)
-    ports:
-      - "8000:8000"
 
 volumes:
   db-data:

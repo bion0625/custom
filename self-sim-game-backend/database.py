@@ -1,9 +1,15 @@
 # database.py
-from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
+import os
 
-SQLALCHEMY_DATABASE_URL = "sqlite:///./test.db"  # 개발용 sqlite
+SQLALCHEMY_DATABASE_URL = os.getenv(
+    "DATABASE_URL",
+    "postgresql+asyncpg://postgres_user:postgres_password@localhost:5432/self_sim_game"
+)
+engine = create_async_engine(
+    SQLALCHEMY_DATABASE_URL,  # postgresql+asyncpg://...
+    echo=True,
+)
 
-engine = create_engine(SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False})
-
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+SessionLocal = sessionmaker(bind=engine, class_=AsyncSession, autocommit=False, expire_on_commit=False)

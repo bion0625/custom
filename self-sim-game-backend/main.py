@@ -1,20 +1,25 @@
-from fastapi import FastAPI, Body, Depends, HTTPException
+from fastapi import FastAPI, Body, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pathlib import Path
 import yaml
 import re
 import os
 import json
-from fastapi.security import OAuth2PasswordRequestForm
-from auth import authenticate_user, create_access_token
 from controller import auth_controller
 from database import engine
-from models.user import Base
+from models import Base
+from contextlib import asynccontextmanager
+from service import user_service
 
-# ✅ DB 초기화
-Base.metadata.create_all(bind=engine)
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # → Startup 작업: 테이블 생성 등
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
+    yield
+    # → Shutdown 작업: 필요 시 세션 종료나 기타 정리 로직
 
-app = FastAPI()
+app = FastAPI(lifespan=lifespan)
 app.include_router(auth_controller.router)
 
 app.add_middleware(
@@ -56,16 +61,8 @@ def parse_markdown_to_scene(md_text: str):
         "choices": choices
     }
 
-@app.post("/token")
-def login(form_data: OAuth2PasswordRequestForm = Depends()):
-    user = authenticate_user(form_data.username, form_data.password)
-    if not user:
-        raise HTTPException(status_code=400, detail="Invalid credentials")
-    token = create_access_token({"sub": user["username"]})
-    return {"access_token": token, "token_type": "bearer"}
-
 @app.get("/story")
-def get_all_story():
+async def get_all_story():
     scenes = {}
     for md_file in STORY_DIR.glob("*.md"):
         md_text = md_file.read_text(encoding="utf-8")
@@ -74,7 +71,7 @@ def get_all_story():
     return scenes
 
 @app.get("/story/{scene_id}")
-def get_scene(scene_id: str):
+async def get_scene(scene_id: str):
     md_path = STORY_DIR / f"{scene_id}.md"
     if not md_path.exists():
         return {}
@@ -83,7 +80,7 @@ def get_scene(scene_id: str):
     return parse_markdown_to_scene(md_text)
 
 @app.post("/log")
-def save_log(payload: dict = Body(...)):
+async def save_log(payload: dict = Body(...)):
     timestamp = payload.get("timestamp")
     log = payload.get("log", [])
 
