@@ -8,6 +8,11 @@ import json
 from fastapi.security import OAuth2PasswordRequestForm
 from auth import authenticate_user, create_access_token
 from controller import auth_controller
+from database import engine
+from models.user import Base
+
+# ✅ DB 초기화
+Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 app.include_router(auth_controller.router)

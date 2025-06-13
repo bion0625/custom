@@ -1,32 +1,35 @@
-import React, { useContext, useState } from "react";
+import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { AuthContext } from "../contexts/AuthContext";
 
-const Login: React.FC = () => {
-  const navigate = useNavigate();
+const Register: React.FC = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const { refreshUser } = useContext(AuthContext);
+  const navigate = useNavigate();
 
-  const handleLogin = async () => {
+  const handleRegister = async () => {
     try {
-      const res = await axios.post("http://localhost:8000/token", { username, password }, {
-        headers: { "Content-Type": "application/json" },
+      await axios.post("http://localhost:8000/register", {
+        username,
+        password
+      }, {
+        headers: {
+          "Content-Type": "application/json"
+        }
       });
-      localStorage.setItem("access_token", res.data.access_token);
-      await refreshUser();           // ← 여기가 추가됨
-      navigate("/game");
-    } catch {
-      setError("로그인 실패: 아이디 또는 비밀번호 확인");
+
+      alert("회원가입 성공! 이제 로그인하세요.");
+      navigate("/login");
+    } catch (err) {
+      setError("회원가입 실패: 이미 존재하는 아이디일 수 있어요.");
     }
   };
 
   return (
     <div className="flex flex-col items-center justify-center h-screen">
       <div className="w-80 p-6 bg-white rounded shadow">
-        <h2 className="text-xl font-bold mb-4">로그인</h2>
+        <h2 className="text-xl font-bold mb-4">회원가입</h2>
         <input
           className="w-full mb-2 p-2 border rounded"
           type="text"
@@ -43,20 +46,20 @@ const Login: React.FC = () => {
         />
         {error && <div className="text-red-500 text-sm mb-2">{error}</div>}
         <button
-          className="w-full p-2 bg-blue-500 text-white rounded"
-          onClick={handleLogin}
+          className="w-full p-2 bg-green-500 text-white rounded"
+          onClick={handleRegister}
         >
-          로그인
+          회원가입
         </button>
         <button
           className="w-full mt-2 p-2 text-sm text-blue-500"
-          onClick={() => navigate("/register")}
+          onClick={() => navigate("/login")}
         >
-          계정이 없으신가요? 회원가입
+          이미 계정이 있으신가요? 로그인
         </button>
       </div>
     </div>
   );
 };
 
-export default Login;
+export default Register;
