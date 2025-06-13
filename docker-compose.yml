@@ -18,7 +18,7 @@ services:
     depends_on:
       - db
     environment:
-      DATABASE_URL: postgresql+asyncpg://postgres_user:postgres_password@db:5433/self_sim_game
+      DATABASE_URL: postgresql+asyncpg://postgres_user:postgres_password@db:5432/self_sim_game
       # (기존 JSON 로깅 변수는 제거)
     ports:
       - "8000:8000"
