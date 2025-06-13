@@ -4,7 +4,6 @@ import { AuthContext } from "../contexts/AuthContext";
 import { api } from "../api";
 
 const Login: React.FC = () => {
-  alert(process.env.REACT_APP_API_BASE_URL)
   const navigate = useNavigate();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
