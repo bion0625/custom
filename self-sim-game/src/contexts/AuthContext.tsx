@@ -1,6 +1,6 @@
 // src/contexts/AuthContext.tsx
 import React, { createContext, useState, useEffect, ReactNode } from "react";
-import axios from "axios";
+import { api } from "../api";
 
 export interface User {
   id: number;
@@ -31,7 +31,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       return;
     }
     try {
-      const res = await axios.get<User>("http://localhost:8000/me", {
+      const res = await api.get<User>("http://localhost:8000/me", {
         headers: { Authorization: `Bearer ${token}` },
       });
       setUser(res.data);

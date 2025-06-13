@@ -1,9 +1,10 @@
 import React, { useContext, useState } from "react";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../contexts/AuthContext";
+import { api } from "../api";
 
 const Login: React.FC = () => {
+  alert(process.env.REACT_APP_API_BASE_URL)
   const navigate = useNavigate();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -12,7 +13,7 @@ const Login: React.FC = () => {
 
   const handleLogin = async () => {
     try {
-      const res = await axios.post("http://localhost:8000/token", { username, password }, {
+      const res = await api.post(`/token`, { username, password }, {
         headers: { "Content-Type": "application/json" },
       });
       localStorage.setItem("access_token", res.data.access_token);

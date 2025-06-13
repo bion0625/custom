@@ -24,6 +24,10 @@ services:
   frontend:
     build:
       context: ./self-sim-game
+      args:
+        REACT_APP_API_BASE_URL: ${API_BASE_URL}
+    env_file:
+      - ./.env
     ports:
       - "3000:80"
     restart: always

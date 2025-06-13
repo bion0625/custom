@@ -4,6 +4,7 @@ import { AuthContext } from "../contexts/AuthContext";
 import { Scene } from "../types/Scene";
 import { DialogueLog } from "../components/DialogueLog";
 import { Retrospective } from "../components/Retrospective";
+import { api } from "../api";
 
 const MainGame: React.FC = () => {
   const { user } = useContext(AuthContext);
@@ -15,10 +16,10 @@ const MainGame: React.FC = () => {
   const [isFinished, setIsFinished] = useState(false);
 
   useEffect(() => {
-    fetch("http://localhost:8000/story")
-      .then(res => res.json())
-      .then(data => {
-        setStoryMap(data);
+  api
+      .get<Record<string, Scene>>("/story")
+      .then((res) => {
+        setStoryMap(res.data);
         setIsLoading(false);
       })
       .catch(() => setIsLoading(false));
@@ -26,10 +27,9 @@ const MainGame: React.FC = () => {
 
   useEffect(() => {
     if (log.length === 0) return;
-    fetch("http://localhost:8000/log", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ timestamp: new Date().toISOString(), log }),
+    api.post("/log", {
+      timestamp: new Date().toISOString(),
+      log,
     });
   }, [log]);
 
