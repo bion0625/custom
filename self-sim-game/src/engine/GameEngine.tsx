@@ -1,14 +1,30 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { storyData } from "../data/story";
 import { Scene } from "../types/Scene";
 import { DialogueLog } from "../components/DialogueLog";
 import { Retrospective } from "../components/Retrospective";
 
 export const GameEngine: React.FC = () => {
+  const [storyMap, setStoryMap] = useState<Record<string, Scene>>({});
   const [currentId, setCurrentId] = useState("scene1");
-  const scene: Scene = storyData[currentId];
+  const [isLoading, setIsLoading] = useState(true);
   const [log, setLog] = useState<string[]>([]);
   const [isFinished, setIsFinished] = useState(false);
+
+  useEffect(() => {
+  fetch("http://localhost:8000/story")
+    .then(res => res.json())
+    .then(data => {
+      setStoryMap(data);
+      setIsLoading(false);
+    });
+  }, []);
+
+  if (isLoading) {
+  return <div className="text-white p-8">로딩 중...</div>;
+  }
+
+  const scene = storyMap[currentId];
 
   const handleChoice = (choiceText: string, nextId: string) => {
   setLog(prev => [
