@@ -31,7 +31,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       return;
     }
     try {
-      const res = await api.get<User>("http://localhost:8000/me", {
+      const res = await api.get<User>("/me", {
         headers: { Authorization: `Bearer ${token}` },
       });
       setUser(res.data);
