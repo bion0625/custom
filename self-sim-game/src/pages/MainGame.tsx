@@ -69,7 +69,7 @@ const MainGame: React.FC = () => {
       />
 
       {/* 주요 콘텐츠 영역 (로그 영역을 피해 패딩 확보) */}
-      <div className="relative z-10 flex-1 flex flex-col items-center pt-6 px-4 space-y-6 md:items-start md:px-8 lg:px-16 lg:pr-72">
+      <div className="relative z-10 flex-1 flex flex-col items-center pt-6 px-4 space-y-6 md:items-center md:px-8 lg:px-16 lg:pr-72">
         <div className="w-full max-w-xl flex justify-between items-center">
           <h1 className="text-2xl md:text-3xl font-bold text-indigo-300">
             환영합니다, {user?.username}님!
