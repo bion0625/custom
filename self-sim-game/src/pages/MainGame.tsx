@@ -14,7 +14,6 @@ const MainGame: React.FC = () => {
   const [log, setLog] = useState<string[]>([]);
   const [isFinished, setIsFinished] = useState(false);
 
-  // 1) 스토리 데이터 로드
   useEffect(() => {
     fetch("http://localhost:8000/story")
       .then(res => res.json())
@@ -22,31 +21,22 @@ const MainGame: React.FC = () => {
         setStoryMap(data);
         setIsLoading(false);
       })
-      .catch(() => {
-        // 에러 처리 로직
-        setIsLoading(false);
-      });
+      .catch(() => setIsLoading(false));
   }, []);
 
-  // 2) 로그 전송 (log가 바뀔 때마다)
   useEffect(() => {
     if (log.length === 0) return;
     fetch("http://localhost:8000/log", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        timestamp: new Date().toISOString(),
-        log,
-      }),
+      body: JSON.stringify({ timestamp: new Date().toISOString(), log }),
     });
   }, [log]);
 
-  // 조건부 렌더링: 로딩 중
   if (isLoading) {
-    return <div className="text-white p-8">로딩 중...</div>;
+    return <div className="flex items-center justify-center h-screen text-white">로딩 중...</div>;
   }
 
-  // 조건부 렌더링: 게임 종료 후 회고 화면
   if (isFinished) {
     return (
       <Retrospective
@@ -60,26 +50,17 @@ const MainGame: React.FC = () => {
     );
   }
 
-  // 현재 씬 정보
   const scene = storyMap[currentId];
 
-  // 사용자의 선택 처리
   const handleChoice = (choiceText: string, nextId: string) => {
-    setLog(prev => [
-      ...prev,
-      `${scene.speaker}: ${scene.text}`,
-      `→ 나: ${choiceText}`,
-    ]);
-
+    setLog(prev => [...prev, `${scene.speaker}: ${scene.text}`, `→ 나: ${choiceText}`]);
     const nextScene = storyMap[nextId];
-    if (nextScene?.end) {
-      setIsFinished(true);
-    }
+    if (nextScene?.end) setIsFinished(true);
     setCurrentId(nextId);
   };
 
   return (
-    <div className="relative min-h-screen w-full overflow-hidden bg-black text-white">
+    <div className="relative min-h-screen w-full overflow-hidden bg-black text-white flex flex-col md:flex-row">
       {/* 배경 이미지 */}
       <img
         src={require(`../assets/backgrounds/${scene.bg}`)}
@@ -87,14 +68,14 @@ const MainGame: React.FC = () => {
         className="absolute inset-0 w-full h-full object-cover opacity-50"
       />
 
-      <div className="relative z-10 flex flex-col items-center pt-6 px-4 space-y-6">
-        {/* 환영 인사 + 로그아웃 */}
+      {/* 주요 콘텐츠 영역 (로그 영역을 피해 패딩 확보) */}
+      <div className="relative z-10 flex-1 flex flex-col items-center pt-6 px-4 space-y-6 md:items-start md:px-8 lg:px-16 lg:pr-72">
         <div className="w-full max-w-xl flex justify-between items-center">
-          <h1 className="text-2xl font-bold text-indigo-300">
+          <h1 className="text-2xl md:text-3xl font-bold text-indigo-300">
             환영합니다, {user?.username}님!
           </h1>
           <button
-            className="text-sm text-red-400 hover:text-red-600"
+            className="text-sm md:text-base text-red-400 hover:text-red-600"
             onClick={() => {
               localStorage.removeItem("access_token");
               window.location.href = "/login";
@@ -104,25 +85,28 @@ const MainGame: React.FC = () => {
           </button>
         </div>
 
-        {/* 스토리 콘텐츠 */}
-        <div className="bg-white/10 backdrop-blur-md rounded-xl shadow-lg p-6 w-full max-w-xl">
-          <h2 className="text-indigo-300 text-lg mb-2">{scene.speaker}</h2>
-          <p className="text-xl mb-4">{scene.text}</p>
+        <div className="bg-white/10 backdrop-blur-md rounded-xl shadow-lg p-6 w-full max-w-xl md:max-w-2xl">
+          <h2 className="text-indigo-300 text-lg md:text-xl mb-2">{scene.speaker}</h2>
+          <p className="text-xl md:text-2xl mb-4">{scene.text}</p>
           <div className="space-y-2">
             {scene.choices.map((choice, idx) => (
               <button
                 key={idx}
                 onClick={() => handleChoice(choice.text, choice.next)}
-                className="block w-full py-2 px-4 bg-indigo-600 hover:bg-indigo-700 rounded-lg"
+                className="block w-full py-2 px-4 bg-indigo-600 hover:bg-indigo-700 rounded-lg text-sm md:text-base"
               >
                 {choice.text}
               </button>
             ))}
           </div>
         </div>
+      </div>
 
-        {/* 대화 로그 */}
-        <DialogueLog log={log} />
+      {/* 대화 로그 패널: 큰 화면에서만 표시, 고정 위치 & 고정 크기 */}
+      <div className="hidden lg:block lg:fixed lg:top-4 lg:right-4 lg:w-64 lg:h-[70vh]">
+      <DialogueLog
+        log={log}
+      />
       </div>
     </div>
   );
