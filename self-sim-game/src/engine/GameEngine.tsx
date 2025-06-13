@@ -49,6 +49,15 @@ export const GameEngine: React.FC = () => {
     }} />;
     }
 
+    fetch("http://localhost:8000/log", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        timestamp: new Date().toISOString(),
+        log: log,  // 대화 기록 배열
+      }),
+    });
+
   return (
     <div className="relative min-h-screen w-full overflow-hidden bg-black text-white">
       {/* 배경 이미지 */}

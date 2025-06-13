@@ -1,56 +1,81 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Body
 from fastapi.middleware.cors import CORSMiddleware
+from pathlib import Path
+import yaml
+import re
+import os
+import json
 
 app = FastAPI()
 
-# CORS 설정 (React가 localhost:3000에서 접근할 수 있도록)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # 개발 중엔 *로 열어도 됨
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# 샘플 데이터
-story_data = {
-    "scene1": {
-    "id": "scene1",
-    "speaker": "나",
-    "text": "나는 왜 반복되는 실수를 멈추지 못할까?",
-    "bg": "dark-room.jpg",
-    "symbol": "mirror.png",
-    "choices": [
-      { "text": "나는 본질적으로 약한 존재야", "next": "scene2_selfdoubt" },
-      { "text": "나는 아직 나를 완전히 이해하지 못했어", "next": "scene2_introspection" }
-    ]
-  },
-  "scene2_selfdoubt": {
-    "id": "scene2_selfdoubt",
-    "speaker": "또 다른 나",
-    "text": "약하다는 건 틀렸다는 뜻일까, 아니면 인간적이라는 뜻일까?",
-    "bg": "dark-room.jpg",
-    "symbol": "mirror.png",
-    "choices": [
-      { "text": "틀렸다는 뜻", "next": "scene3_judgement" },
-      { "text": "인간적이라는 뜻", "next": "scene5_final" }
-    ]
-  },
-  "scene5_final": {
-    "id": "scene5_final",
-    "speaker": "나",
-    "text": "지금 나는 조금 더 나를 이해하게 되었어.",
-    "bg": "forest.jpg",
-    "symbol": "sunrise.png",
-    "end": "true",
-    "choices": []
-}
-}
+STORY_DIR = Path("story")
+
+def parse_markdown_to_scene(md_text: str):
+    # YAML 헤더 분리
+    match = re.match(r"---\n(.*?)\n---\n(.*)", md_text, re.DOTALL)
+    if not match:
+        raise ValueError("Invalid markdown format")
+    
+    yaml_text, content = match.groups()
+    meta = yaml.safe_load(yaml_text)
+
+    # 본문 → 텍스트 + 선택지 추출
+    lines = content.strip().split("\n")
+    text_lines = []
+    choices = []
+
+    for line in lines:
+        line = line.strip()
+        if line.startswith("- "):
+            parts = re.split(r"→|->", line[2:], maxsplit=1)
+            if len(parts) == 2:
+                choices.append({"text": parts[0].strip(), "next": parts[1].strip()})
+        elif line:
+            text_lines.append(line)
+
+    return {
+        **meta,
+        "text": " ".join(text_lines),
+        "choices": choices
+    }
 
 @app.get("/story")
 def get_all_story():
-    return story_data
+    scenes = {}
+    for md_file in STORY_DIR.glob("*.md"):
+        md_text = md_file.read_text(encoding="utf-8")
+        scene = parse_markdown_to_scene(md_text)
+        scenes[scene["id"]] = scene
+    return scenes
 
 @app.get("/story/{scene_id}")
 def get_scene(scene_id: str):
-    return story_data.get(scene_id, {})
+    md_path = STORY_DIR / f"{scene_id}.md"
+    if not md_path.exists():
+        return {}
+    
+    md_text = md_path.read_text(encoding="utf-8")
+    return parse_markdown_to_scene(md_text)
+
+@app.post("/log")
+def save_log(payload: dict = Body(...)):
+    timestamp = payload.get("timestamp")
+    log = payload.get("log", [])
+
+    os.makedirs("logs", exist_ok=True)  # ✅ 디렉토리 자동 생성
+
+    # 파일 이름에 사용할 수 없는 문자 제거 (특히 ':' → '_')
+    safe_timestamp = timestamp.replace(":", "_")
+
+    with open(f"logs/{safe_timestamp}.json", "w", encoding="utf-8") as f:
+        json.dump(log, f, ensure_ascii=False, indent=2)
+
+    return {"status": "ok"}
