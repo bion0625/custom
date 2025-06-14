@@ -1,17 +1,11 @@
 // src/pages/Admin.tsx
 
-import React, { useContext, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { AuthContext } from "../contexts/AuthContext";
-import { api } from "../api";
-import {
-  SceneOut,
-  SceneCreate,
-  SceneUpdate,
-} from "../types/Scene";
+import React, {useEffect, useState} from "react";
+import {useNavigate} from "react-router-dom";
+import {api} from "../api";
+import {SceneCreate, SceneOut, SceneUpdate,} from "../types/Scene";
 
 const Admin: React.FC = () => {
-  const { user } = useContext(AuthContext);
   const navigate = useNavigate();
 
   // ─── State ───────────────────────────────────────────
@@ -204,7 +198,7 @@ const Admin: React.FC = () => {
               <label className="block text-sm font-medium">Background</label>
               <input
                 type="text"
-                value={form.bg}
+                value={form.bg || "dark-room.jpg"}
                 onChange={(e) =>
                   setForm((f) => ({ ...f, bg: e.target.value }))
                 }

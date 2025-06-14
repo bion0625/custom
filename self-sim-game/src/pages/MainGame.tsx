@@ -159,10 +159,16 @@ const MainGame: React.FC = () => {
         setCurrentId(nextId);
     };
 
+    const isExternalUrl = (url: string) => /^https?:\/\//.test(url);
+
+    const bgSrc = isExternalUrl(scene.bg)
+        ? scene.bg
+        : `/backgrounds/${scene.bg}`;
+
     return (
         <div className="relative min-h-screen w-full overflow-hidden bg-black text-white flex flex-col md:flex-row">
             <img
-                src={`/backgrounds/${scene.bg}`}
+                src={bgSrc}
                 alt="배경"
                 className="absolute inset-0 w-full h-full object-cover opacity-50"
             />
