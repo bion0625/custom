@@ -138,11 +138,20 @@ const MainGame: React.FC = () => {
             return;
         }
 
-        setLog((prev) => [
-            ...prev,
+        const newLog = [
+            ...log,
             `${scene.speaker}: ${scene.text}`,
             `→ 나: ${choiceText}`,
-        ]);
+        ];
+
+        setLog(newLog);
+
+        // ✅ 선택 즉시 로그 서버에 저장
+        api.post("/log", {
+            timestamp: new Date().toISOString(),
+            log: newLog,
+            scene_id: nextId,
+        });
 
         if (nextScene.end) {
             setIsFinished(true);
