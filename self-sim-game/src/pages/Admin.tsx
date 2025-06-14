@@ -1,3 +1,5 @@
+// src/pages/Admin.tsx
+
 import React, { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../contexts/AuthContext";
@@ -25,20 +27,18 @@ const Admin: React.FC = () => {
     text: "",
     choices: [],
     end: false,
-    start: false,       // ← 추가
+    start: false,
   });
 
-  // 0) 리스트 중 이미 start=true 씬이 있는지
+  // 이미 다른 씬에 start=true 가 있는지
   const hasOtherStart = list.some((s) => s.start && s.id !== currentId);
 
   // ─── 1) 씬 목록 로드 ──────────────────────────────────
   useEffect(() => {
-    api.get<SceneOut[]>("/admin/story").then((res) => {
-      setList(res.data);
-    });
+    api.get<SceneOut[]>("/admin/story").then((res) => setList(res.data));
   }, []);
 
-  // 1-1) 리스트가 변경되면, currentId가 비어 있을 때 첫 ID로 초기화
+  // ─── 1-1) 리스트가 변경되면 첫 ID 자동 선택 ────────────────
   useEffect(() => {
     if (list.length > 0 && !currentId) {
       setCurrentId(list[0].id);
@@ -52,26 +52,24 @@ const Admin: React.FC = () => {
       return;
     }
     if (!list.some((s) => s.id === currentId)) {
-      // 새로 생성 중인 씬이니 아직 DB 에 없다고 보고, fetch 건너뛰기
       setScene(null);
       return;
     }
     api.get<SceneOut>(`/admin/story/${currentId}`).then((res) => {
       setScene(res.data);
-      // form 초기화
       setForm({
-        id: res.data.id,
+        id:      res.data.id,
         speaker: res.data.speaker,
-        bg: res.data.bg,
-        text: res.data.text,
+        bg:      res.data.bg,
+        text:    res.data.text,
         choices: res.data.choices,
-        end: res.data.end,
-        start:   res.data.start ?? false,  // ← res.data.start 가 undefined면 false
+        end:     res.data.end,
+        start:   res.data.start ?? false,
       });
     });
-  }, [currentId]);
+  }, [currentId, list]);
 
-  // ─── 3) 새 씬 생성 버튼 ─────────────────────────────────
+  // ─── 3) 새 씬 생성 ─────────────────────────────────────
   const createNew = () => {
     const id = prompt("새 씬 ID를 입력하세요:");
     if (!id) return;
@@ -83,7 +81,7 @@ const Admin: React.FC = () => {
       text: "",
       choices: [],
       end: false,
-      start: false,     // ← 여기!
+      start: false,
     });
     setScene(null);
   };
@@ -92,28 +90,19 @@ const Admin: React.FC = () => {
   const save = async () => {
     try {
       if (scene) {
-        // 기존 씬 → PUT
-        const payload: SceneUpdate = {
-          speaker: form.speaker,
-          bg: form.bg,
-          text: form.text,
-          choices: form.choices,
-          end: form.end,
-          start:   form.start,       // ← include it here
-        };
+        const payload: SceneUpdate = { ...form };
         await api.put<SceneOut>(`/admin/story/${currentId}`, payload);
-        // 목록도 갱신
         setList((prev) =>
-          prev.map((s) => (s.id === currentId ? { ...s, ...payload } as SceneOut : s))
+          prev.map((s) =>
+            s.id === currentId ? ({ ...s, ...payload } as SceneOut) : s
+          )
         );
       } else {
-        // 신규 씬 → POST
         await api.post<SceneOut>("/admin/story", form);
         setList((prev) => [...prev, form as SceneOut]);
       }
       alert("저장 완료");
-    } catch (err) {
-      console.error(err);
+    } catch {
       alert("저장 실패");
     }
   };
@@ -134,206 +123,198 @@ const Admin: React.FC = () => {
   };
 
   // ─── 6) choice 항목 추가/삭제 헬퍼 ────────────────────────
-  const addChoice = () => {
+  const addChoice = () =>
     setForm((f) => ({ ...f, choices: [...f.choices, { text: "", next: "" }] }));
-  };
-  const updateChoice = (idx: number, key: "text" | "next", val: string) => {
+  const updateChoice = (idx: number, key: "text" | "next", val: string) =>
     setForm((f) => {
       const c = [...f.choices];
       c[idx] = { ...c[idx], [key]: val };
       return { ...f, choices: c };
     });
-  };
-  const removeChoice = (idx: number) => {
-    setForm((f) => {
-      const c = f.choices.filter((_, i) => i !== idx);
-      return { ...f, choices: c };
-    });
-  };
+  const removeChoice = (idx: number) =>
+    setForm((f) => ({
+      ...f,
+      choices: f.choices.filter((_, i) => i !== idx),
+    }));
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
-      <div className="max-w-6xl mx-auto flex flex-col">
-        {/* 헤더 */}
-        <nav className="flex justify-between items-center mb-6">
-          <h1 className="text-3xl font-bold text-gray-800">스토리 관리</h1>
-          <div className="space-x-2">
-            <button
-              onClick={() => navigate("/game")}
-              className="px-4 py-2 bg-indigo-600 text-white rounded-lg"
-            >
-              돌아가기
-            </button>
-            <button
-              onClick={() => {
-                localStorage.removeItem("access_token");
-                navigate("/login");
-              }}
-              className="px-4 py-2 bg-red-600 text-white rounded-lg"
-            >
-              로그아웃
-            </button>
-          </div>
-        </nav>
+    <div className="min-h-screen bg-gray-50 p-4 sm:p-6">
+      <div className="max-w-6xl mx-auto flex flex-col md:flex-row gap-6">
+        {/* 사이드바 */}
+        <aside className="w-full md:w-1/4 border-b md:border-b-0 md:border-r bg-gray-100 p-4 rounded-md md:rounded-none overflow-auto h-auto md:h-[80vh]">
+          {/* 게임으로 돌아가기 */}
+          <button
+            onClick={() => navigate("/game")}
+            className="mb-2 w-full py-2 bg-indigo-500 text-white rounded-lg hover:bg-indigo-600 transition"
+          >
+            게임으로 돌아가기
+          </button>
+          {/* 로그아웃 */}
+          <button
+            onClick={() => {
+              localStorage.removeItem("access_token");
+              navigate("/login");
+            }}
+            className="mb-4 w-full py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition"
+          >
+            로그아웃
+          </button>
+          {/* 새 씬 생성 */}
+          <button
+            onClick={createNew}
+            className="mb-4 w-full py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition"
+          >
+            + 새 씬
+          </button>
 
-        <div className="bg-white shadow rounded-lg overflow-hidden flex flex-col md:flex-row">
-          {/* 사이드바: ID 목록 */}
-          <aside className="md:w-1/4 border-r bg-gray-100 p-4">
-            <button
-              onClick={createNew}
-              className="mb-4 w-full py-2 bg-green-600 text-white rounded"
-            >
-              + 새 씬
-            </button>
-            <ul className="space-y-2 overflow-auto max-h-[60vh]">
-              {list.map((s) => (
-                <li key={s.id}>
-                  <button
-                    onClick={() => setCurrentId(s.id)}
-                    className={`w-full text-left px-2 py-1 rounded ${
-                      s.id === currentId
-                        ? "bg-indigo-200 font-semibold"
-                        : "hover:bg-gray-200"
-                    }`}
-                  >
-                    {s.id}
-                  </button>
-                </li>
-              ))}
-            </ul>
-          </aside>
-
-          {/* 에디터 폼 */}
-          <section className="flex-1 p-4 flex flex-col space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium">Speaker</label>
-                <input
-                  type="text"
-                  value={form.speaker}
-                  onChange={(e) =>
-                    setForm((f) => ({ ...f, speaker: e.target.value }))
+          <ul className="space-y-2">
+            {list.map((s) => (
+              <li key={s.id}>
+                <button
+                  onClick={() => setCurrentId(s.id)}
+                  className={`w-full text-left px-2 py-1 rounded 
+                    ${s.id === currentId
+                      ? "bg-indigo-200 font-semibold"
+                      : "hover:bg-gray-200"}`
                   }
-                  className="mt-1 w-full border rounded p-2"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium">Background</label>
-                <input
-                  type="text"
-                  value={form.bg}
-                  onChange={(e) =>
-                    setForm((f) => ({ ...f, bg: e.target.value }))
-                  }
-                  className="mt-1 w-full border rounded p-2"
-                  placeholder="scene1.jpg"
-                />
-              </div>
-            </div>
+                >
+                  {s.id}
+                </button>
+              </li>
+            ))}
+          </ul>
+        </aside>
 
+        {/* 에디터 폼 */}
+        <section className="w-full md:flex-1 bg-white p-4 rounded-md shadow flex flex-col space-y-4 overflow-auto h-auto md:h-[80vh]">
+          {/* Grid for inputs */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
             <div>
-              <label className="block text-sm font-medium">Text</label>
-              <textarea
-                value={form.text}
+              <label className="block text-sm font-medium">Speaker</label>
+              <input
+                type="text"
+                value={form.speaker}
                 onChange={(e) =>
-                  setForm((f) => ({ ...f, text: e.target.value }))
+                  setForm((f) => ({ ...f, speaker: e.target.value }))
                 }
-                className="mt-1 w-full border rounded p-2 h-32"
+                className="mt-1 w-full border rounded p-2"
               />
             </div>
-
             <div>
-              <div className="flex justify-between items-center">
-                <label className="block text-sm font-medium">Choices</label>
-                <button
-                  onClick={addChoice}
-                  className="text-sm text-green-600"
-                >
-                  + 추가
-                </button>
-              </div>
-              <div className="space-y-2 mt-1">
-                {form.choices.map((c, i) => (
-                  <div key={i} className="flex items-center space-x-2">
-                    <input
-                      type="text"
-                      value={c.text}
-                      onChange={(e) =>
-                        updateChoice(i, "text", e.target.value)
-                      }
-                      placeholder="버튼 텍스트"
-                      className="border rounded p-1 flex-1"
-                    />
-                    <input
-                      type="text"
-                      value={c.next}
-                      onChange={(e) =>
-                        updateChoice(i, "next", e.target.value)
-                      }
-                      placeholder="다음 씬 ID"
-                      className="border rounded p-1 flex-1"
-                    />
-                    <button
-                      onClick={() => removeChoice(i)}
-                      className="text-red-600"
-                    >
-                      ×
-                    </button>
-                  </div>
-                ))}
-              </div>
+              <label className="block text-sm font-medium">Background</label>
+              <input
+                type="text"
+                value={form.bg}
+                onChange={(e) =>
+                  setForm((f) => ({ ...f, bg: e.target.value }))
+                }
+                className="mt-1 w-full border rounded p-2"
+                placeholder="scene1.jpg"
+              />
             </div>
+          </div>
 
-            <div className="flex items-center space-x-2">
-              <label className="inline-flex items-center">
-                <input
-                  type="checkbox"
-                  checked={form.start}
-                  onChange={(e) =>
-                    setForm((f) => ({ ...f, start: e.target.checked }))
-                  }
-                  className="form-checkbox"
-                  // hasOtherStart 가 true 이고, 이 폼이 아닌 다른 씬에 start가 설정돼 있으면 비활성화
-                  disabled={hasOtherStart && !form.start}
-                />
-                <span className={`ml-2 text-sm ${hasOtherStart && !form.start ? 'text-gray-400' : ''}`}>
-                  Start Scene
-                </span>
-              </label>
-            </div>
+          {/* Text */}
+          <div className="mb-4">
+            <label className="block text-sm font-medium">Text</label>
+            <textarea
+              value={form.text}
+              onChange={(e) =>
+                setForm((f) => ({ ...f, text: e.target.value }))
+              }
+              className="mt-1 w-full border rounded p-2 h-32"
+            />
+          </div>
 
-            <div className="flex items-center space-x-2">
-              <label className="inline-flex items-center">
-                <input
-                  type="checkbox"
-                  checked={form.end}
-                  onChange={(e) =>
-                    setForm((f) => ({ ...f, end: e.target.checked }))
-                  }
-                  className="form-checkbox"
-                />
-                <span className="ml-2 text-sm">End Scene</span>
-              </label>
-            </div>
-
-            <div className="flex space-x-2">
-              <button
-                onClick={save}
-                className="px-4 py-2 bg-blue-600 text-white rounded"
-              >
-                저장
+          {/* Choices */}
+          <div className="mb-4">
+            <div className="flex justify-between items-center mb-2">
+              <label className="text-sm font-medium">Choices</label>
+              <button onClick={addChoice} className="text-sm text-green-600">
+                + 추가
               </button>
-              {scene && (
-                <button
-                  onClick={remove}
-                  className="px-4 py-2 bg-red-600 text-white rounded"
-                >
-                  삭제
-                </button>
-              )}
             </div>
-          </section>
-        </div>
+            <div className="space-y-2">
+              {form.choices.map((c, i) => (
+                <div
+                  key={i}
+                  className="flex flex-col sm:flex-row sm:space-x-2 space-y-2 sm:space-y-0"
+                >
+                  <input
+                    type="text"
+                    value={c.text}
+                    onChange={(e) => updateChoice(i, "text", e.target.value)}
+                    placeholder="버튼 텍스트"
+                    className="border rounded p-1 flex-1"
+                  />
+                  <input
+                    type="text"
+                    value={c.next}
+                    onChange={(e) => updateChoice(i, "next", e.target.value)}
+                    placeholder="다음 씬 ID"
+                    className="border rounded p-1 flex-1"
+                  />
+                  <button
+                    onClick={() => removeChoice(i)}
+                    className="text-red-600 self-center"
+                  >
+                    ×
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Flags */}
+          <div className="flex flex-col sm:flex-row sm:space-x-4 mb-4">
+            <label className="inline-flex items-center space-x-2">
+              <input
+                type="checkbox"
+                checked={form.end}
+                onChange={(e) =>
+                  setForm((f) => ({ ...f, end: e.target.checked }))
+                }
+                className="form-checkbox"
+              />
+              <span>End Scene</span>
+            </label>
+            <label
+              className={`inline-flex items-center space-x-2 ${
+                hasOtherStart && !form.start
+                  ? "opacity-50 pointer-events-none"
+                  : ""
+              }`}
+            >
+              <input
+                type="checkbox"
+                checked={form.start}
+                onChange={(e) =>
+                  setForm((f) => ({ ...f, start: e.target.checked }))
+                }
+                className="form-checkbox"
+              />
+              <span>Start Scene</span>
+            </label>
+          </div>
+
+          {/* Buttons */}
+          <div className="flex flex-col sm:flex-row sm:space-x-2 space-y-2 sm:space-y-0">
+            <button
+              onClick={save}
+              className="w-full sm:w-auto px-4 py-2 bg-blue-600 text-white rounded-lg"
+            >
+              저장
+            </button>
+            {scene && (
+              <button
+                onClick={remove}
+                className="w-full sm:w-auto px-4 py-2 bg-red-600 text-white rounded-lg"
+              >
+                삭제
+              </button>
+            )}
+          </div>
+        </section>
       </div>
     </div>
   );
