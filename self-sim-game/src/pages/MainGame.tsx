@@ -1,5 +1,5 @@
-// src/pages/MainGame.tsx
 import React, { useContext, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../contexts/AuthContext";
 import { Scene } from "../types/Scene";
 import { DialogueLog } from "../components/DialogueLog";
@@ -8,6 +8,7 @@ import { api } from "../api";
 
 const MainGame: React.FC = () => {
   const { user } = useContext(AuthContext);
+  const navigate = useNavigate();
 
   const [storyMap, setStoryMap] = useState<Record<string, Scene>>({});
   const [currentId, setCurrentId] = useState("scene1");
@@ -16,7 +17,7 @@ const MainGame: React.FC = () => {
   const [isFinished, setIsFinished] = useState(false);
 
   useEffect(() => {
-  api
+    api
       .get<Record<string, Scene>>("/story")
       .then((res) => {
         setStoryMap(res.data);
@@ -26,7 +27,7 @@ const MainGame: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    if (log.length === 0) return;
+    if (!log.length) return;
     api.post("/log", {
       timestamp: new Date().toISOString(),
       log,
@@ -53,7 +54,7 @@ const MainGame: React.FC = () => {
   const scene = storyMap[currentId];
 
   const handleChoice = (choiceText: string, nextId: string) => {
-    setLog(prev => [...prev, `${scene.speaker}: ${scene.text}`, `→ 나: ${choiceText}`]);
+    setLog((prev) => [...prev, `${scene.speaker}: ${scene.text}`, `→ 나: ${choiceText}`]);
     const nextScene = storyMap[nextId];
     if (nextScene?.end) setIsFinished(true);
     setCurrentId(nextId);
@@ -74,15 +75,25 @@ const MainGame: React.FC = () => {
           <h1 className="text-2xl md:text-3xl font-bold text-indigo-300">
             환영합니다, {user?.username}님!
           </h1>
-          <button
-            className="text-sm md:text-base text-red-400 hover:text-red-600"
-            onClick={() => {
-              localStorage.removeItem("access_token");
-              window.location.href = "/login";
-            }}
-          >
-            로그아웃
-          </button>
+          <div className="flex space-x-4">
+            {user?.is_admin && (
+              <button
+                onClick={() => navigate('/admin')}
+                className="text-sm md:text-base text-green-400 hover:text-green-600"
+              >
+                관리자 페이지
+              </button>
+            )}
+            <button
+              className="text-sm md:text-base text-red-400 hover:text-red-600"
+              onClick={() => {
+                localStorage.removeItem("access_token");
+                window.location.href = "/login";
+              }}
+            >
+              로그아웃
+            </button>
+          </div>
         </div>
 
         <div className="bg-white/10 backdrop-blur-md rounded-xl shadow-lg p-6 w-full max-w-xl md:max-w-2xl">
@@ -104,9 +115,7 @@ const MainGame: React.FC = () => {
 
       {/* 대화 로그 패널: 큰 화면에서만 표시, 고정 위치 & 고정 크기 */}
       <div className="hidden lg:block lg:fixed lg:top-4 lg:right-4 lg:w-64 lg:h-[70vh]">
-      <DialogueLog
-        log={log}
-      />
+        <DialogueLog log={log} />
       </div>
     </div>
   );
