@@ -15,6 +15,7 @@ const MainGame: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [log, setLog] = useState<string[]>([]);
   const [isFinished, setIsFinished] = useState(false);
+  const [error, setError] = useState<string | null>(null);  // ← 에러 상태
 
   // 1) 스토리 맵 불러오기
   useEffect(() => {
@@ -25,6 +26,7 @@ const MainGame: React.FC = () => {
       })
       .catch((err) => {
         console.error("스토리 로드 실패:", err);
+        setError("스토리를 불러오는 중 오류가 발생했습니다.");
       })
       .finally(() => {
         setIsLoading(false);
@@ -47,7 +49,8 @@ const MainGame: React.FC = () => {
     });
   }, [log]);
 
-  // 4) 로딩 중
+  // ─── 렌더링 가드 ─────────────────────────────────
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-screen text-white">
@@ -56,7 +59,43 @@ const MainGame: React.FC = () => {
     );
   }
 
-  // 5) 회고 화면
+  
+if (error) {
+  return (
+    <div className="relative min-h-screen w-full overflow-hidden bg-black text-white flex items-center justify-center">
+      {/* 배경 반투명 레이어 (이미지나 컬러) */}
+      <div className="absolute inset-0 bg-black/60" />
+
+      {/* 패널: 회고와 동일한 스타일 */}
+      <div className="relative z-10 bg-white/10 backdrop-blur-md rounded-xl shadow-lg p-8 max-w-lg w-full space-y-6">
+        <h2 className="text-2xl font-bold text-red-400">오류가 발생했습니다</h2>
+        <p className="text-lg">{error}</p>
+
+        <div>
+          <p className="mb-2 font-medium">당신의 여정은 아래와 같습니다:</p>
+          <ul className="list-decimal list-inside space-y-1 text-sm max-h-40 overflow-auto">
+            {log.map((entry, i) => (
+              <li key={i}>{entry}</li>
+            ))}
+          </ul>
+        </div>
+
+        <button
+          onClick={() => {
+            setError(null);
+            setLog([]);
+            setIsFinished(false);
+            setCurrentId(Object.keys(storyMap)[0]);
+          }}
+          className="w-full py-2 bg-indigo-600 hover:bg-indigo-700 rounded-lg text-white"
+        >
+          처음부터 다시 시작
+        </button>
+      </div>
+    </div>
+  );
+}
+
   if (isFinished) {
     return (
       <Retrospective
@@ -64,32 +103,37 @@ const MainGame: React.FC = () => {
         onRestart={() => {
           setIsFinished(false);
           setLog([]);
-          // 다시 첫 씬으로
           setCurrentId(Object.keys(storyMap)[0]);
         }}
       />
     );
   }
 
-  // 6) 현재 씬 가져오기 & 가드
   const scene = storyMap[currentId];
   if (!scene) {
     return (
       <div className="flex items-center justify-center h-screen text-white">
-        씬을 불러오는 중입니다...
+        씬을 불러올 수 없습니다...
       </div>
     );
   }
 
-  // 7) 선택지 핸들러
+  // 4) 선택지 핸들러
   const handleChoice = (choiceText: string, nextId: string) => {
+    const nextScene = storyMap[nextId];
+    if (!nextScene) {
+      // 없는 씬으로 넘어가려 하면 에러 처리
+      setError(`다음 씬("${nextId}")을(를) 찾을 수 없습니다.`);
+      return;
+    }
+
     setLog((prev) => [
       ...prev,
       `${scene.speaker}: ${scene.text}`,
       `→ 나: ${choiceText}`,
     ]);
-    const nextScene = storyMap[nextId];
-    if (nextScene?.end) {
+
+    if (nextScene.end) {
       setIsFinished(true);
     }
     setCurrentId(nextId);
@@ -97,7 +141,7 @@ const MainGame: React.FC = () => {
 
   return (
     <div className="relative min-h-screen w-full overflow-hidden bg-black text-white flex flex-col md:flex-row">
-      {/* 배경 이미지 (public/backgrounds 폴더 사용) */}
+      {/* 배경 이미지 */}
       <img
         src={require(`../assets/backgrounds/${scene.bg}`)}
         alt="배경"
