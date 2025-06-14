@@ -1,6 +1,8 @@
 import json
-from sqlalchemy import Boolean, Column, Integer, String, Text, JSON, TEXT, TypeDecorator
-from sqlalchemy.orm import declarative_base
+
+from sqlalchemy import Boolean, Column, Integer, String, Text, TEXT, TypeDecorator, ForeignKey
+from sqlalchemy.orm import declarative_base, relationship
+
 
 class JSONUnicode(TypeDecorator):
     impl = TEXT
@@ -25,6 +27,8 @@ class User(Base):
     username = Column(String(50), unique=True, index=True, nullable=False)
     hashed_password = Column(String, nullable=False)
     is_admin = Column(Boolean, default=False)  # ← 추가
+    
+    logs = relationship("Log", back_populates="user")
 
 class Story(Base):
     __tablename__ = "stories"
@@ -49,3 +53,7 @@ class Log(Base):
     id        = Column(Integer, primary_key=True, index=True)
     timestamp = Column(String, nullable=False)
     data      = Column(JSONUnicode, nullable=False)
+    user_id   = Column(Integer, ForeignKey("users.id"), nullable=False)
+    scene_id = Column(String, nullable=True)  # 마지막 씬 ID 저장용
+    
+    user = relationship("User", back_populates="logs")

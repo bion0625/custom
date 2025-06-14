@@ -1,12 +1,16 @@
 # app/service/log_service.py
 from sqlalchemy.ext.asyncio import AsyncSession
-from repository.log_repository import create_log
-from sqlalchemy.exc import SQLAlchemyError
 
-async def save_log(session: AsyncSession, timestamp: str, data: list) -> int:
+from models import Log
+
+
+async def save_log(db: AsyncSession, timestamp: str, data: list[str], user_id: int, scene_id: str | None) -> int | None:
+    entry = Log(timestamp=timestamp, data=data, user_id=user_id, scene_id=scene_id)
+    db.add(entry)
     try:
-        entry = await create_log(session, timestamp, data)
+        await db.commit()
+        await db.refresh(entry)
         return entry.id
-    except SQLAlchemyError as e:
-        # 필요 시 로깅
-        raise
+    except:
+        await db.rollback()
+        return None
