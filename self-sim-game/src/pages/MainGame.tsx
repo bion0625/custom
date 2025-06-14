@@ -25,16 +25,31 @@ const MainGame: React.FC = () => {
     }
 
     useEffect(() => {
+        // 전체 스토리, startId, 마지막 log scene_id를 함께 불러옴
         Promise.all([
             api.get<Record<string, Scene>>("/story"),
             api.get<{ startId: string }>("/story/start"),
+            api.get<{ scene_id: string | null }>("/log/last"),
         ])
-            .then(([storiesRes, startRes]) => {
+            .then(([storiesRes, startRes, logRes]) => {
                 const data = storiesRes.data;
                 setStoryMap(data);
-                const initial = startRes.data.startId && data[startRes.data.startId]
-                    ? startRes.data.startId
-                    : getInitialId(data);
+
+                const lastSceneId = logRes.data.scene_id;
+
+                let initial: string;
+
+                if (lastSceneId && data[lastSceneId]) {
+                    // 🎯 최근 로그가 있다면 거기서 시작
+                    initial = lastSceneId;
+                } else if (startRes.data.startId && data[startRes.data.startId]) {
+                    // 🎯 start 플래그 있는 씬부터 시작
+                    initial = startRes.data.startId;
+                } else {
+                    // fallback
+                    initial = getInitialId(data);
+                }
+
                 setCurrentId(initial);
             })
             .catch((err) => {
@@ -54,6 +69,18 @@ const MainGame: React.FC = () => {
         });
     };
 
+    const onRestart = async () => {
+        try {
+            await api.delete("/log"); // 서버 로그 삭제
+        } catch (err) {
+            console.error("로그 삭제 실패", err);
+        }
+        setLog([]);
+        setError(null);
+        setIsFinished(false);
+        setCurrentId(getInitialId(storyMap));
+    };
+
     if (isLoading) {
         return (
             <div className="flex items-center justify-center h-screen text-white">
@@ -67,7 +94,8 @@ const MainGame: React.FC = () => {
         return (
             <div className="relative min-h-screen w-full overflow-hidden bg-black text-white flex items-center justify-center">
                 <div className="absolute inset-0 bg-black/60" />
-                <div className="relative z-10 bg-white/10 backdrop-blur-md rounded-xl shadow-lg p-8 max-w-lg w-full space-y-6">
+                <div
+                    className="relative z-10 bg-white/10 backdrop-blur-md rounded-xl shadow-lg p-8 max-w-lg w-full space-y-6">
                     <h2 className="text-2xl font-bold text-red-400">오류가 발생했습니다</h2>
                     <p className="text-lg">{error}</p>
                     <div>
@@ -79,13 +107,8 @@ const MainGame: React.FC = () => {
                         </ul>
                     </div>
                     <button
-                        onClick={() => {
-                            setError(null);
-                            setLog([]);
-                            setIsFinished(false);
-                            setCurrentId(getInitialId(storyMap));
-                        }}
-                        className="w-full py-2 bg-indigo-600 hover:bg-indigo-700 rounded-lg text-white"
+                        onClick={onRestart}
+                        className="w-full py-2 mt-4 bg-indigo-600 hover:bg-indigo-700 rounded-lg text-white"
                     >
                         처음부터 다시 시작
                     </button>
@@ -95,18 +118,9 @@ const MainGame: React.FC = () => {
     }
 
     if (isFinished) {
-        sendLogToServer();
-        return (
-            <Retrospective
-                log={log}
-                onRestart={() => {
-                    setIsFinished(false);
-                    setLog([]);
-                    setCurrentId(getInitialId(storyMap));
-                }}
-            />
-        );
+        return <Retrospective log={log} onRestart={onRestart} />;
     }
+
 
     const scene = storyMap[currentId];
     if (!scene) {

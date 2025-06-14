@@ -1,26 +1,28 @@
+import React from "react";
+
 interface RetrospectiveProps {
   log: string[];
-  onRestart: () => void;
+  onRestart: () => void; // ← 여기 중요!
 }
 
 export const Retrospective: React.FC<RetrospectiveProps> = ({ log, onRestart }) => {
   return (
-    <div className="min-h-screen bg-black text-white flex items-center justify-center p-8">
-      <div className="bg-white/10 p-6 rounded-lg max-w-2xl w-full text-sm shadow-xl">
-        <h2 className="text-2xl text-indigo-300 font-bold mb-4">회고</h2>
-        <p className="mb-6 text-white/80">당신이 걸어온 내면의 여정은 다음과 같아요:</p>
-        <ul className="space-y-2 max-h-96 overflow-y-auto mb-6">
-          {log.map((entry, idx) => (
-            <li key={idx} className="text-white/90">{entry}</li>
-          ))}
-        </ul>
-        <button
-          onClick={onRestart}
-          className="mt-4 bg-indigo-600 hover:bg-indigo-700 px-4 py-2 rounded"
-        >
-          다시 시작하기
-        </button>
+      <div className="min-h-screen bg-black text-white flex items-center justify-center">
+        <div className="bg-white/10 backdrop-blur-md rounded-xl shadow-lg p-8 max-w-xl w-full space-y-6">
+          <h2 className="text-2xl font-bold text-indigo-300">당신의 여정</h2>
+          <ul className="list-decimal list-inside space-y-1 text-sm max-h-60 overflow-auto">
+            {log.map((entry, index) => (
+                <li key={index}>{entry}</li>
+            ))}
+          </ul>
+
+          <button
+              onClick={onRestart}
+              className="w-full py-2 mt-4 bg-indigo-600 hover:bg-indigo-700 rounded-lg text-white"
+          >
+            처음부터 다시 시작
+          </button>
+        </div>
       </div>
-    </div>
   );
 };

@@ -20,3 +20,34 @@ async def create_log(
     if not log_id:
         raise HTTPException(status_code=500, detail="DB 저장 중 오류 발생")
     return {"status": "ok", "log_id": log_id}
+
+@router.get("/log/last")
+async def get_last_log(
+        db: AsyncSession = Depends(get_db),
+        current_user = Depends(get_current_user),
+):
+    from models import Log
+    from sqlalchemy import select, desc
+
+    result = await db.execute(
+        select(Log.scene_id)
+        .where(Log.user_id == current_user.id)
+        .order_by(desc(Log.timestamp))
+        .limit(1)
+    )
+    scene_id = result.scalar()
+    return {"scene_id": scene_id}
+
+@router.delete("/log")
+async def delete_user_logs(
+        db: AsyncSession = Depends(get_db),
+        current_user = Depends(get_current_user),
+):
+    from models import Log
+    from sqlalchemy import delete
+
+    await db.execute(
+        delete(Log).where(Log.user_id == current_user.id)
+    )
+    await db.commit()
+    return {"status": "deleted"}
