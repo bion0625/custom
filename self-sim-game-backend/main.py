@@ -1,52 +1,34 @@
-from fastapi import FastAPI, Body
-from fastapi.middleware.cors import CORSMiddleware
-from pathlib import Path
-import yaml
-import re
+# app/main.py
 import os
-import json
-from controller import auth_controller
-from database import engine
-from models import Base
+import re
+import yaml
+from pathlib import Path
 from contextlib import asynccontextmanager
+
+from fastapi import FastAPI, Body, Depends, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
+from sqlalchemy import select, func
+from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from controller import auth_controller
 from controller.story_admin import router as admin_story_router
-
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    # → Startup 작업: 테이블 생성 등
-    async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all)
-    yield
-    # → Shutdown 작업: 필요 시 세션 종료나 기타 정리 로직
-
-app = FastAPI(lifespan=lifespan)
-app.include_router(auth_controller.router)
-app.include_router(admin_story_router)
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+from database import engine, AsyncSessionLocal
+from deps import get_db
+from models import Base, Scene, Log
 
 STORY_DIR = Path("story")
 
+
 def parse_markdown_to_scene(md_text: str):
-    # YAML 헤더 분리
     match = re.match(r"---\n(.*?)\n---\n(.*)", md_text, re.DOTALL)
     if not match:
         raise ValueError("Invalid markdown format")
-    
     yaml_text, content = match.groups()
     meta = yaml.safe_load(yaml_text)
 
-    # 본문 → 텍스트 + 선택지 추출
     lines = content.strip().split("\n")
-    text_lines = []
-    choices = []
-
+    text_lines, choices = [], []
     for line in lines:
         line = line.strip()
         if line.startswith("- "):
@@ -62,35 +44,92 @@ def parse_markdown_to_scene(md_text: str):
         "choices": choices
     }
 
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # 1) 테이블 생성
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
+
+    # 2) 초기 시드: scenes 테이블이 비어 있다면 .md 파일을 모두 읽어서 삽입
+    async with AsyncSessionLocal() as session:
+        count = await session.scalar(select(func.count()).select_from(Scene))
+        if count == 0:
+            for md_file in STORY_DIR.glob("*.md"):
+                md = md_file.read_text(encoding="utf-8")
+                sc = parse_markdown_to_scene(md)
+                scene = Scene(
+                    id      = sc["id"],
+                    speaker = sc.get("speaker", ""),
+                    bg      = sc.get("bg", ""),
+                    text    = sc["text"],
+                    choices = sc["choices"],
+                    end     = sc.get("end", False),
+                )
+                session.add(scene)
+            await session.commit()
+
+    yield
+
+    # (Shutdown 시 추가 로직이 필요하면 여기에)
+
+
+app = FastAPI(lifespan=lifespan)
+app.include_router(auth_controller.router)
+app.include_router(admin_story_router)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+
 @app.get("/story")
-async def get_all_story():
-    scenes = {}
-    for md_file in STORY_DIR.glob("*.md"):
-        md_text = md_file.read_text(encoding="utf-8")
-        scene = parse_markdown_to_scene(md_text)
-        scenes[scene["id"]] = scene
-    return scenes
+async def get_all_story(db: AsyncSession = Depends(get_db)):
+    result = await db.execute(select(Scene))
+    scenes = result.scalars().all()
+    return {
+        scene.id: {
+            "id":      scene.id,
+            "speaker": scene.speaker,
+            "bg":      scene.bg,       # ← 포함
+            "text":    scene.text,
+            "choices": scene.choices,
+            "end":     scene.end,
+        }
+        for scene in scenes
+    }
+
 
 @app.get("/story/{scene_id}")
-async def get_scene(scene_id: str):
-    md_path = STORY_DIR / f"{scene_id}.md"
-    if not md_path.exists():
-        return {}
-    
-    md_text = md_path.read_text(encoding="utf-8")
-    return parse_markdown_to_scene(md_text)
+async def get_scene(scene_id: str, db: AsyncSession = Depends(get_db)):
+    result = await db.execute(select(Scene).where(Scene.id == scene_id))
+    scene = result.scalar_one_or_none()
+    if not scene:
+        raise HTTPException(status_code=404, detail="Scene not found")
+    return {
+        "id":      scene.id,
+        "speaker": scene.speaker,
+        "bg":      scene.bg,       # ← 포함
+        "text":    scene.text,
+        "choices": scene.choices,
+        "end":     scene.end,
+    }
+
 
 @app.post("/log")
-async def save_log(payload: dict = Body(...)):
+async def save_log(payload: dict = Body(...), db: AsyncSession = Depends(get_db)):
     timestamp = payload.get("timestamp")
-    log = payload.get("log", [])
-
-    os.makedirs("logs", exist_ok=True)  # ✅ 디렉토리 자동 생성
-
-    # 파일 이름에 사용할 수 없는 문자 제거 (특히 ':' → '_')
-    safe_timestamp = timestamp.replace(":", "_")
-
-    with open(f"logs/{safe_timestamp}.json", "w", encoding="utf-8") as f:
-        json.dump(log, f, ensure_ascii=False, indent=2)
-
-    return {"status": "ok"}
+    data = payload.get("log", [])
+    entry = Log(timestamp=timestamp, data=data)
+    db.add(entry)
+    try:
+        await db.commit()
+        await db.refresh(entry)
+    except SQLAlchemyError:
+        await db.rollback()
+        raise HTTPException(status_code=500, detail="DB 저장 중 오류 발생")
+    return {"status": "ok", "log_id": entry.id}

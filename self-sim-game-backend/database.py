@@ -12,4 +12,4 @@ engine = create_async_engine(
     echo=True,
 )
 
-SessionLocal = sessionmaker(bind=engine, class_=AsyncSession, autocommit=False, expire_on_commit=False)
+AsyncSessionLocal = sessionmaker(bind=engine, class_=AsyncSession, autocommit=False, expire_on_commit=False)
