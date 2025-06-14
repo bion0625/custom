@@ -5,6 +5,7 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import MainGame from "./pages/MainGame";
 import React, { JSX, useContext } from "react";
+import Admin from "./pages/Admin";
 
 const PrivateRoute: React.FC<{ children: JSX.Element }> = ({ children }) => {
   const { user, loading } = useContext(AuthContext);
@@ -12,6 +13,13 @@ const PrivateRoute: React.FC<{ children: JSX.Element }> = ({ children }) => {
     return <div>로딩 중…</div>;
   }
   return user ? children : <Navigate to="/login" />;
+};
+
+// 관리자 권한 체크
+const AdminRoute: React.FC<{ children: JSX.Element }> = ({ children }) => {
+  const { user, loading } = useContext(AuthContext);
+  if (loading) return <div>로딩 중…</div>;
+  return user?.is_admin ? children : <Navigate to="/game" replace />;
 };
 
 function App() {
@@ -27,6 +35,14 @@ function App() {
               <PrivateRoute>
                 <MainGame />
               </PrivateRoute>
+            }
+          />
+          <Route
+            path="/admin/*"
+            element={
+              <AdminRoute>
+                <Admin />
+              </AdminRoute>
             }
           />
           <Route path="*" element={<Navigate to="/game" />} />

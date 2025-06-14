@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Body, HTTPException
+from fastapi import FastAPI, Body
 from fastapi.middleware.cors import CORSMiddleware
 from pathlib import Path
 import yaml
@@ -9,7 +9,7 @@ from controller import auth_controller
 from database import engine
 from models import Base
 from contextlib import asynccontextmanager
-from service import user_service
+from controller.story_admin import router as admin_story_router
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -21,6 +21,7 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(lifespan=lifespan)
 app.include_router(auth_controller.router)
+app.include_router(admin_story_router)
 
 app.add_middleware(
     CORSMiddleware,

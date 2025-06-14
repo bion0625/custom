@@ -11,6 +11,7 @@ class UserCreate(BaseModel):
 class UserOut(BaseModel):
     id: int
     username: str
+    is_admin: bool  # ← 추가
 
     class Config:
         orm_mode = True

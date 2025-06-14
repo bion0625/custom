@@ -1,22 +1,24 @@
-// src/contexts/AuthContext.tsx
 import React, { createContext, useState, useEffect, ReactNode } from "react";
 import { api } from "../api";
 
 export interface User {
   id: number;
   username: string;
+  is_admin: boolean;
 }
 
 interface AuthContextType {
   user: User | null;
   loading: boolean;
   refreshUser: () => Promise<void>;
+  logout: () => void;
 }
 
 export const AuthContext = createContext<AuthContextType>({
   user: null,
   loading: true,
   refreshUser: async () => {},
+  logout: () => {},
 });
 
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
@@ -43,13 +45,17 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
   };
 
-  // 앱 시작 시 / 토큰 변경 시 한 번 호출
+  const logout = () => {
+    localStorage.removeItem("access_token");
+    setUser(null);
+  };
+
   useEffect(() => {
     refreshUser();
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, loading, refreshUser }}>
+    <AuthContext.Provider value={{ user, loading, refreshUser, logout }}>
       {children}
     </AuthContext.Provider>
   );
