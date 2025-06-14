@@ -31,6 +31,13 @@ async def seed_scenes_if_empty(session: AsyncSession):
                 text=sc["text"],
                 choices=sc["choices"],
                 end=sc.get("end", False),
+                start=sc.get("start", False),   # ← 추가!
             )
             session.add(scene)
         await session.commit()
+
+async def get_start_scene_id(session: AsyncSession) -> str | None:
+    # start 플래그 우선
+    result = await session.execute(select(Scene).where(Scene.start == True))
+    scene = result.scalar_one_or_none()
+    return scene.id if scene else None

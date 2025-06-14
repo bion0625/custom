@@ -11,6 +11,7 @@ export type Scene = {
   symbol: string;
   choices: Choice[];
   end?: boolean; // ✅ 선택적으로 존재할 수 있는 종료 플래그
+  start?: boolean;  // ← 추가
 };
 
 /* ────────────────────────────────────────────────────────────── */
@@ -25,6 +26,7 @@ export interface SceneOut {
   text: string;
   choices: Choice[];
   end?: boolean;
+  start?: boolean;
 }
 
 /** 신규 씬 생성용 Payload (POST /admin/story) */
@@ -35,6 +37,7 @@ export type SceneCreate = {
   text: string;
   choices: Choice[];
   end?: boolean;
+  start?: boolean;  // ← 추가
 };
 
 /** 기존 씬 수정용 Payload (PUT /admin/story/{id}) */

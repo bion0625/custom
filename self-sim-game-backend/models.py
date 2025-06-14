@@ -42,6 +42,7 @@ class Scene(Base):
     text    = Column(String, nullable=False)
     choices = Column(JSONUnicode, nullable=False)
     end     = Column(Boolean, default=False)     # ← 회차 종료 여부
+    start   = Column(Boolean, default=False)  # ← 추가!
 
 class Log(Base):
     __tablename__ = "logs"

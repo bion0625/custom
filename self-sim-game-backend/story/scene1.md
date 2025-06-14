@@ -3,6 +3,7 @@ id: scene1
 speaker: 나
 bg: dark-room.jpg
 symbol: mirror.png
+start: true    # ← 최초 씬 지정
 ---
 
 나는 왜 반복되는 실수를 멈추지 못할까?

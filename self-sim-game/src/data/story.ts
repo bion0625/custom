@@ -27,7 +27,7 @@ export const storyData: Record<string, Scene> = {
     id: "scene5_final",
     speaker: "나",
     text: "지금 나는 조금 더 나를 이해하게 되었어.",
-    bg: "forest.jpg",
+    bg: "dark-room.jpg",
     symbol: "sunrise.png",
     end: true, // ✅ 회고 화면으로 전환하는 조건
     choices: []

@@ -17,28 +17,33 @@ const MainGame: React.FC = () => {
   const [isFinished, setIsFinished] = useState(false);
   const [error, setError] = useState<string | null>(null);  // ← 에러 상태
 
-  // 1) 스토리 맵 불러오기
+  // 1) 스토리 맵 + 시작 ID를 함께 불러오기
   useEffect(() => {
-    api
-      .get<Record<string, Scene>>("/story")
-      .then((res) => {
-        setStoryMap(res.data);
+    Promise.all([
+      api.get<Record<string, Scene>>("/story"),
+      api.get<{ startId: string }>("/story/start"),
+    ])
+      .then(([storiesRes, startRes]) => {
+        setStoryMap(storiesRes.data);
+        // startId가 없으면 fallback으로 메타데이터에 start=true인 씬을 찾고, 
+        // 그래도 없으면 첫 키를 씁니다.
+        const data = storiesRes.data;
+        const startId = startRes.data.startId;
+        if (startId && data[startId]) {
+          setCurrentId(startId);
+        } else {
+          // 혹시 startId가 없거나, data에 없는 ID라면
+          const first = Object.values(data).find((s) => s.start)?.id
+            ?? Object.keys(data)[0];
+          setCurrentId(first);
+        }
       })
       .catch((err) => {
-        console.error("스토리 로드 실패:", err);
+        console.error(err);
         setError("스토리를 불러오는 중 오류가 발생했습니다.");
       })
-      .finally(() => {
-        setIsLoading(false);
-      });
+      .finally(() => setIsLoading(false));
   }, []);
-
-  // 2) 로딩 끝나면 currentId를 첫 씬으로 초기화
-  useEffect(() => {
-    if (!isLoading && Object.keys(storyMap).length > 0) {
-      setCurrentId(Object.keys(storyMap)[0]);
-    }
-  }, [isLoading, storyMap]);
 
   // 3) 로그가 쌓이면 서버에 저장
   useEffect(() => {

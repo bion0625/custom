@@ -1,7 +1,7 @@
 ---
 id: scene5_final
 speaker: 나
-bg: forest.jpg
+bg: dark-room.jpg
 symbol: sunrise.png
 end: true
 ---

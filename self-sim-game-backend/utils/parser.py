@@ -28,5 +28,6 @@ def parse_markdown_to_scene(md_text: str) -> dict:
     return {
         **meta,
         "text": " ".join(text_lines),
-        "choices": choices
+        "choices": choices,
+        "start": meta.get("start", False),    # ← 추가!
     }

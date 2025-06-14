@@ -25,7 +25,11 @@ const Admin: React.FC = () => {
     text: "",
     choices: [],
     end: false,
+    start: false,       // ← 추가
   });
+
+  // 0) 리스트 중 이미 start=true 씬이 있는지
+  const hasOtherStart = list.some((s) => s.start && s.id !== currentId);
 
   // ─── 1) 씬 목록 로드 ──────────────────────────────────
   useEffect(() => {
@@ -33,6 +37,13 @@ const Admin: React.FC = () => {
       setList(res.data);
     });
   }, []);
+
+  // 1-1) 리스트가 변경되면, currentId가 비어 있을 때 첫 ID로 초기화
+  useEffect(() => {
+    if (list.length > 0 && !currentId) {
+      setCurrentId(list[0].id);
+    }
+  }, [list, currentId]);
 
   // ─── 2) currentId 변경 시 씬 로드 및 form 초기화 ─────────
   useEffect(() => {
@@ -55,6 +66,7 @@ const Admin: React.FC = () => {
         text: res.data.text,
         choices: res.data.choices,
         end: res.data.end,
+        start:   res.data.start ?? false,  // ← res.data.start 가 undefined면 false
       });
     });
   }, [currentId]);
@@ -71,6 +83,7 @@ const Admin: React.FC = () => {
       text: "",
       choices: [],
       end: false,
+      start: false,     // ← 여기!
     });
     setScene(null);
   };
@@ -86,6 +99,7 @@ const Admin: React.FC = () => {
           text: form.text,
           choices: form.choices,
           end: form.end,
+          start:   form.start,       // ← include it here
         };
         await api.put<SceneOut>(`/admin/story/${currentId}`, payload);
         // 목록도 갱신
@@ -268,6 +282,24 @@ const Admin: React.FC = () => {
                   </div>
                 ))}
               </div>
+            </div>
+
+            <div className="flex items-center space-x-2">
+              <label className="inline-flex items-center">
+                <input
+                  type="checkbox"
+                  checked={form.start}
+                  onChange={(e) =>
+                    setForm((f) => ({ ...f, start: e.target.checked }))
+                  }
+                  className="form-checkbox"
+                  // hasOtherStart 가 true 이고, 이 폼이 아닌 다른 씬에 start가 설정돼 있으면 비활성화
+                  disabled={hasOtherStart && !form.start}
+                />
+                <span className={`ml-2 text-sm ${hasOtherStart && !form.start ? 'text-gray-400' : ''}`}>
+                  Start Scene
+                </span>
+              </label>
             </div>
 
             <div className="flex items-center space-x-2">
