@@ -17,6 +17,16 @@ const MainGame: React.FC = () => {
   const [isFinished, setIsFinished] = useState(false);
   const [error, setError] = useState<string | null>(null);  // ← 에러 상태
 
+  // MainGame.tsx 상단
+  function getInitialId(storyMap: Record<string, Scene>): string {
+    const scenes = Object.values(storyMap);
+    // 1) start 플래그가 붙은 씬
+    const start = scenes.find((s) => s.start);
+    if (start) return start.id;
+    // 2) 없으면 첫 번째 key
+    return Object.keys(storyMap)[0];
+  }
+
   // 1) 스토리 맵 + 시작 ID를 함께 불러오기
   useEffect(() => {
     Promise.all([
@@ -28,15 +38,12 @@ const MainGame: React.FC = () => {
         // startId가 없으면 fallback으로 메타데이터에 start=true인 씬을 찾고, 
         // 그래도 없으면 첫 키를 씁니다.
         const data = storiesRes.data;
-        const startId = startRes.data.startId;
-        if (startId && data[startId]) {
-          setCurrentId(startId);
-        } else {
-          // 혹시 startId가 없거나, data에 없는 ID라면
-          const first = Object.values(data).find((s) => s.start)?.id
-            ?? Object.keys(data)[0];
-          setCurrentId(first);
-        }
+        // start API 결과(또는 메타에 있는 start 플래그) 기반으로
+        // 항상 getInitialId 하나만 호출
+        const initial = startRes.data.startId && data[startRes.data.startId]
+          ? startRes.data.startId
+          : getInitialId(data);
+        setCurrentId(initial);
       })
       .catch((err) => {
         console.error(err);
@@ -90,7 +97,7 @@ if (error) {
             setError(null);
             setLog([]);
             setIsFinished(false);
-            setCurrentId(Object.keys(storyMap)[0]);
+            setCurrentId(getInitialId(storyMap));
           }}
           className="w-full py-2 bg-indigo-600 hover:bg-indigo-700 rounded-lg text-white"
         >
@@ -108,7 +115,7 @@ if (error) {
         onRestart={() => {
           setIsFinished(false);
           setLog([]);
-          setCurrentId(Object.keys(storyMap)[0]);
+          setCurrentId(getInitialId(storyMap));
         }}
       />
     );
@@ -148,7 +155,7 @@ if (error) {
     <div className="relative min-h-screen w-full overflow-hidden bg-black text-white flex flex-col md:flex-row">
       {/* 배경 이미지 */}
       <img
-        src={require(`../assets/backgrounds/${scene.bg}`)}
+        src={`/backgrounds/${scene.bg}`}   // ← public 폴더에서 서빙됨
         alt="배경"
         className="absolute inset-0 w-full h-full object-cover opacity-50"
       />

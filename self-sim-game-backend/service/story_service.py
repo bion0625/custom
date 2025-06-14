@@ -22,6 +22,7 @@ async def get_all_scenes(session: AsyncSession) -> Dict[str, dict]:
             "text": s.text,
             "choices": s.choices,
             "end": s.end,
+            "start": s.start,
         }
         for s in scenes
     }
