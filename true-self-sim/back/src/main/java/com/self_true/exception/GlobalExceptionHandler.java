@@ -1,6 +1,6 @@
 package com.self_true.exception;
 
-import com.self_true.model.dto.Response;
+import com.self_true.model.dto.response.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;

@@ -1,7 +1,7 @@
 package com.self_true.controller;
 
-import com.self_true.model.dto.PublicSceneRequest;
-import com.self_true.model.dto.Response;
+import com.self_true.model.dto.request.PublicSceneRequest;
+import com.self_true.model.dto.response.Response;
 import com.self_true.service.PublicStoryService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

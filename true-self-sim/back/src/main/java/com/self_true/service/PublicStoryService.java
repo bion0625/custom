@@ -1,7 +1,7 @@
 package com.self_true.service;
 
-import com.self_true.model.dto.PublicSceneRequest;
-import com.self_true.model.dto.PublicStoryResponse;
+import com.self_true.model.dto.request.PublicSceneRequest;
+import com.self_true.model.dto.response.PublicStoryResponse;
 import com.self_true.model.entity.PublicChoice;
 import com.self_true.model.entity.PublicScene;
 import com.self_true.repository.PublicChoiceRepository;

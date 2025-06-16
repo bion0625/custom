@@ -1,4 +1,4 @@
-package com.self_true.model.dto;
+package com.self_true.model.dto.request;
 
 import lombok.Data;
 

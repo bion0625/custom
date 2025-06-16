@@ -1,7 +1,7 @@
 package com.self_true.controller;
 
-import com.self_true.model.dto.Response;
-import com.self_true.model.dto.MembersRequest;
+import com.self_true.model.dto.response.Response;
+import com.self_true.model.dto.request.MembersRequest;
 import com.self_true.service.MemberService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

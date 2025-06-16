@@ -1,4 +1,4 @@
-package com.self_true.model.dto;
+package com.self_true.model.dto.response;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;

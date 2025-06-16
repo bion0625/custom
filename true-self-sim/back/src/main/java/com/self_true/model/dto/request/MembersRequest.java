@@ -1,4 +1,4 @@
-package com.self_true.model.dto;
+package com.self_true.model.dto.request;
 
 import com.self_true.model.entity.Member;
 import io.swagger.v3.oas.annotations.media.Schema;

@@ -1,7 +1,7 @@
 package com.self_true.service;
 
 import com.self_true.exception.DuplicateMemberIdException;
-import com.self_true.model.dto.MembersRequest;
+import com.self_true.model.dto.request.MembersRequest;
 import com.self_true.model.entity.Member;
 import com.self_true.repository.MemberRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
