@@ -14,8 +14,8 @@ public class PublicSceneRequest {
      * 질문
      * */
     private String text;
-    private boolean isStart;
-    private boolean isEnd;
+    private boolean isStart = false;
+    private boolean isEnd = false;
     /**
      * 답변
      * */

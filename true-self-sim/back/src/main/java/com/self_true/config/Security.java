@@ -2,6 +2,7 @@ package com.self_true.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -35,11 +36,13 @@ public class Security {
                                         /* *
                                         SWAGGER 설정
                                          * */
-                                        "/swagger-ui/**", "/v3/api-docs/**",
+                                        "/swagger-ui/**", "/v3/api-docs/**"
+                                ).permitAll()
+                                .requestMatchers(
                                         /* *
                                         공개 서비스 설정
                                          * */
-                                        "/public/story"
+                                        HttpMethod.GET, "/public/scene"
                                 ).permitAll()
                                 .anyRequest().authenticated());
 

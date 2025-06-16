@@ -16,10 +16,17 @@ public class GlobalExceptionHandler {
                 .body(new Response(false, e.getMessage()));
     }
 
+    @ExceptionHandler(NotFoundSceneException.class)
+    public ResponseEntity<Response> handleNotFoundSceneException(NotFoundSceneException e) {
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(new Response(false, e.getMessage()));
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Response> handleGeneralException(Exception e) {
         return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(new Response(false, "서버 오류: " + e.getMessage()));
+                .body(new Response(false, "INTERNAL_SERVER_ERROR: " + e.getMessage()));
     }
 }
