@@ -1,5 +1,7 @@
 package com.self_true.model.dto;
 
+import com.self_true.model.entity.PublicChoice;
+import com.self_true.model.entity.PublicScene;
 import lombok.Data;
 
 import java.util.List;
@@ -18,4 +20,18 @@ public class PublicSceneRequest {
      * 답변
      * */
     private List<String> texts;
+
+    public PublicScene toEntity() {
+        return PublicScene.builder()
+                .speaker(speaker)
+                .backgroundImage(backgroundImage)
+                .text(text)
+                .isStart(isStart)
+                .isEnd(isEnd)
+                .publicChoices(
+                        texts.stream()
+                                .map(t -> PublicChoice.builder().text(t).build())
+                                .toList())
+                .build();
+    }
 }
