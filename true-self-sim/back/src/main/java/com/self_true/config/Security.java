@@ -39,7 +39,7 @@ public class Security {
                                         /* *
                                         공개 서비스 설정
                                          * */
-                                        "/public/**"
+                                        "/public/story"
                                 ).permitAll()
                                 .anyRequest().authenticated());
 
