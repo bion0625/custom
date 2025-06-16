@@ -19,7 +19,7 @@ public class PublicSceneRequest {
     /**
      * 답변
      * */
-    private List<String> texts;
+    private List<PublicChoiceRequest> choiceRequests;
 
     public PublicScene toEntity() {
         return PublicScene.builder()
@@ -29,8 +29,11 @@ public class PublicSceneRequest {
                 .isStart(isStart)
                 .isEnd(isEnd)
                 .publicChoices(
-                        texts.stream()
-                                .map(t -> PublicChoice.builder().text(t).build())
+                        choiceRequests.stream()
+                                .map(cr -> PublicChoice.builder()
+                                        .nextPublicSceneId(cr.getNextSceneId())
+                                        .text(cr.getText())
+                                        .build())
                                 .toList())
                 .build();
     }

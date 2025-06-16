@@ -22,7 +22,7 @@ public class PublicStoryService {
 
     @Transactional(readOnly = true)
     public PublicStoryResponse getPublicScenes() {
-        return PublicStoryResponse.fromEntity(publicSceneRepository.findAll());
+        return PublicStoryResponse.fromEntity(publicSceneRepository.findAllByDeletedAtIsNull());
     }
 
     public void save(PublicSceneRequest request) {
