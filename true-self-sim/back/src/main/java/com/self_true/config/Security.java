@@ -35,7 +35,11 @@ public class Security {
                                         /* *
                                         SWAGGER 설정
                                          * */
-                                        "/swagger-ui/**", "/v3/api-docs/**"
+                                        "/swagger-ui/**", "/v3/api-docs/**",
+                                        /* *
+                                        공개 서비스 설정
+                                         * */
+                                        "/public/**"
                                 ).permitAll()
                                 .anyRequest().authenticated());
 

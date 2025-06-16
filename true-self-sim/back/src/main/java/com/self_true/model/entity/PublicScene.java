@@ -1,11 +1,12 @@
 package com.self_true.model.entity;
 
 import com.self_true.model.common.BaseEntity;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
+import lombok.Data;
 
+import java.util.List;
+
+@Data
 @Entity
 public class PublicScene extends BaseEntity {
     @Id
@@ -14,6 +15,9 @@ public class PublicScene extends BaseEntity {
     private String speaker;
     private String backgroundImage;
     private String text;
-    private String isEnd;
-    private String isStart;
+    private Boolean isStart;
+    private Boolean isEnd;
+
+    @OneToMany(mappedBy = "publicScene")
+    private List<PublicChoice> publicChoices;
 }
