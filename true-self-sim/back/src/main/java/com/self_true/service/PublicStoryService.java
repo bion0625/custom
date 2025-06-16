@@ -25,12 +25,6 @@ public class PublicStoryService {
         this.publicChoiceRepository = publicChoiceRepository;
     }
 
-    //todo 추후 관리자에서 편집할 때 is_start 플래그가 하나 있으면 나머지 사용할 수 없으니 단 번에 가져와서 구분하고 단번에 저장해야 함
-    @Transactional(readOnly = true)
-    public PublicStoryResponse getPublicScenes() {
-        return PublicStoryResponse.fromEntity(publicSceneRepository.findAllByDeletedAtIsNull());
-    }
-
     @Transactional(readOnly = true)
     public PublicSceneResponse getPublicScene(PublicChoiceRequest request) {
         return Optional.ofNullable(request)
@@ -52,5 +46,11 @@ public class PublicStoryService {
             publicChoice.setPublicScene(publicScene);
         }
         publicChoiceRepository.saveAll(publicScene.getPublicChoices());
+    }
+
+    //todo 추후 관리자에서 편집할 때 is_start 플래그가 하나 있으면 나머지 사용할 수 없으니 단 번에 가져와해야 함
+    @Transactional(readOnly = true)
+    public PublicStoryResponse getPublicScenes() {
+        return PublicStoryResponse.fromEntity(publicSceneRepository.findAllByDeletedAtIsNull());
     }
 }
