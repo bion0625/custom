@@ -18,6 +18,7 @@ public class PublicController {
 
     @GetMapping("/story")
     public ResponseEntity<?> getStory() {
+        // todo 전체 스토리 한 번에 가져가는 것보다, 첫 번째 장면부터 다음 장면을 가져가는게 log 저장하기에도 용이하지 않을까?
         return ResponseEntity.ok(publicStoryService.getPublicScenes());
     }
 
