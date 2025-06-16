@@ -3,12 +3,15 @@ package com.self_true.controller;
 import com.self_true.model.dto.request.LoginRequest;
 import com.self_true.model.dto.response.TokenResponse;
 import com.self_true.service.AuthService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@Tag(name = "AuthController", description = "인증 API")
 public class AuthController {
 
     private final AuthService authService;
@@ -17,6 +20,7 @@ public class AuthController {
         this.authService = authService;
     }
 
+    @Operation(summary = "로그인", description = "인증 토큰 반환")
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest request) {
         String token = authService.getTokenByLogin(request);
