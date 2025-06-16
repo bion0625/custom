@@ -1,8 +1,10 @@
 package com.self_true.model.dto;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 @Data
+@EqualsAndHashCode(callSuper = false)
 public class TokenResponse extends Response {
     private String accessToken;
 

@@ -1,12 +1,13 @@
 package com.self_true.model.dto;
 
 import com.self_true.model.entity.PublicScene;
-import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.util.List;
 
 @Data
+@EqualsAndHashCode(callSuper = false)
 public class PublicStoryResponse extends Response {
     List<PublicSceneResponse> publicScenes;
 
