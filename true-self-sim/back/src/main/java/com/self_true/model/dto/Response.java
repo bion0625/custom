@@ -1,4 +1,4 @@
-package com.example.demo.model.dto;
+package com.self_true.model.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -9,4 +9,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class Response {
     private Boolean isSuccess = false;
+    private String message;
 }
