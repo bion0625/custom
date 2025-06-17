@@ -1,14 +1,41 @@
 import {useNavigate} from "react-router-dom";
+import {useContext, useState} from "react";
+import AuthContext from "../context/AuthContext.tsx";
+import api from "../api.ts";
 
 const Login: React.FC = () => {
     const navigate = useNavigate();
+    const [username, setUsername] = useState('');
+    const [password, setPassword] = useState('');
+    const [error, setError] = useState('');
+    const {refreshUser} = useContext(AuthContext);
+
+    const handleLogin = async (e: React.FormEvent) => {
+        e.preventDefault();
+        try {
+            const res = await api.post('/login', {id:username, password}, {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            localStorage.setItem('access_token', res.data.accessToken);
+            await refreshUser();
+            navigate('/')
+        } catch {
+            setError("로그인 실패: 아이디 또는 비밀번호 확인")
+        }
+    };
+
     return (
         <div className="flex flex-col items-center justify-center h-screen">
             <div className="w-80 p-6 bg-white rounded shadow">
                 <h2 className="text-xl font-bold mb-4">로그인</h2>
-                <form onSubmit={() => alert('로그인')}>
-                    <input className="w-full mb-2 p-2 border rounded" placeholder="아이디"/>
-                    <input className="w-full mb-2 p-2 border rounded" placeholder="비밀번호"/>
+                <form onSubmit={handleLogin}>
+                    <input className="w-full mb-2 p-2 border rounded" placeholder="아이디"
+                           type="text" value={username} onChange={(e) => setUsername(e.target.value)}/>
+                    <input className="w-full mb-2 p-2 border rounded" placeholder="비밀번호"
+                           type="password" value={password} onChange={(e) => setPassword(e.target.value)}/>
+                    {error && <p className="text-red-500">{error}</p>}
                     <button className="w-full p-2 bg-blue-500 text-white rounded">로그인</button>
                     <button className="w-full mt-2 p-2 text-sm text-blue-500" type="button" onClick={() => navigate("/register")}>계정이 없으신가요? 회원가입</button>
                 </form>
