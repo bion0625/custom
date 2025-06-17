@@ -4,7 +4,6 @@ import com.self_true.exception.NotFoundMemberException;
 import com.self_true.exception.NotFoundSceneException;
 import com.self_true.model.dto.request.PublicChoiceRequest;
 import com.self_true.model.dto.request.PublicSceneRequest;
-import com.self_true.model.dto.response.PublicChoiceResponce;
 import com.self_true.model.dto.response.PublicSceneResponse;
 import com.self_true.model.dto.response.PublicStoryResponse;
 import com.self_true.model.entity.Member;
@@ -17,7 +16,6 @@ import com.self_true.repository.PublicSceneRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -43,7 +41,7 @@ public class PublicStoryService {
     public PublicSceneResponse getPublicScene(PublicChoiceRequest request, String memberId) {
         PublicSceneResponse response = Optional.ofNullable(request)
                 .map(PublicChoiceRequest::getNextSceneId)
-                .map(publicSceneRepository::findById)
+                .map(publicSceneRepository::findByIdAndDeletedAtIsNull)
                 .orElseGet(publicSceneRepository::findFirstByIsStartIsTrueAndDeletedAtIsNullOrderByCreatedAtDesc)
                 .map(PublicSceneResponse::fromEntity)
                 .orElseThrow(() ->
