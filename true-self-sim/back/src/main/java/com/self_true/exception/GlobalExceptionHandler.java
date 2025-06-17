@@ -16,6 +16,13 @@ public class GlobalExceptionHandler {
                 .body(new Response(false, e.getMessage()));
     }
 
+    @ExceptionHandler(NotFoundMemberException.class)
+    public ResponseEntity<Response> handleNotFoundMemberException(NotFoundMemberException e) {
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(new Response(false, e.getMessage()));
+    }
+
     @ExceptionHandler(NotFoundSceneException.class)
     public ResponseEntity<Response> handleNotFoundSceneException(NotFoundSceneException e) {
         return ResponseEntity

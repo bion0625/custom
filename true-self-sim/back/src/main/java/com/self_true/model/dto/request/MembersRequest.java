@@ -19,6 +19,7 @@ public class MembersRequest {
         return Member.builder()
                 .memberId(id).password(encodedPassword)
                 .name(name).email(email).phoneNumber(phoneNumber)
+                .role("USER")
                 .build();
     }
 }

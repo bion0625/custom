@@ -5,6 +5,7 @@ import com.self_true.service.PublicStoryService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -22,7 +23,7 @@ public class PublicController {
 
     @Operation(summary = "(다음) 장면 호출", description = "nextSceneId is null 이면 첫 장면 호출")
     @GetMapping("/scene")
-    public ResponseEntity<?> getScene(PublicChoiceRequest request) {
-        return ResponseEntity.ok(publicStoryService.getPublicScene(request));
+    public ResponseEntity<?> getScene(PublicChoiceRequest request, @AuthenticationPrincipal String memberId) {
+        return ResponseEntity.ok(publicStoryService.getPublicScene(request, memberId));
     }
 }

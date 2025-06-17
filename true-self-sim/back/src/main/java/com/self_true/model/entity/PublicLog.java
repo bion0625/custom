@@ -5,14 +5,20 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 @Entity
+@Builder
 @EqualsAndHashCode(callSuper = false)
-public class Log extends BaseEntity {
+@AllArgsConstructor
+@NoArgsConstructor
+public class PublicLog extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private Long userId;
-    private Long sceneId;
+    private Long publicSceneId;
 }
