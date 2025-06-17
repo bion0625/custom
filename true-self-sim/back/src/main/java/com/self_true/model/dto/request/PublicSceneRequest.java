@@ -31,7 +31,7 @@ public class PublicSceneRequest {
                 .publicChoices(
                         choiceRequests.stream()
                                 .map(cr -> PublicChoice.builder()
-                                        .nextPublicSceneId(cr.getNextSceneId())
+                                        .nextPublicScene(PublicScene.builder().id(cr.getNextSceneId()).build())
                                         .text(cr.getText())
                                         .build())
                                 .toList())

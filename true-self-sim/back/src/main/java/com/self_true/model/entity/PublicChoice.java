@@ -16,9 +16,11 @@ public class PublicChoice extends BaseEntity {
     private Long id;
     private String text;
 
-    private Long nextPublicSceneId;
+    @ManyToOne
+    @JoinColumn(name = "public_scene_id")
+    private PublicScene publicScene;
 
     @ManyToOne
-    @JoinColumn(name = "publicSceneId")
-    private PublicScene publicScene;
+    @JoinColumn(name = "next_public_scene_id")
+    private PublicScene nextPublicScene;
 }

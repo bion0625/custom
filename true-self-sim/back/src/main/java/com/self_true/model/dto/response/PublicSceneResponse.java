@@ -1,6 +1,5 @@
 package com.self_true.model.dto.response;
 
-import com.self_true.model.entity.PublicChoice;
 import com.self_true.model.entity.PublicScene;
 import lombok.Builder;
 import lombok.Data;
@@ -36,7 +35,7 @@ public class PublicSceneResponse {
                 .isStart(publicScene.getIsStart())
                 .isEnd(publicScene.getIsEnd())
                 .texts(publicScene.getPublicChoices().stream()
-                        .map(pc -> new PublicChoiceResponce(pc.getText(), pc.getNextPublicSceneId()))
+                        .map(pc -> new PublicChoiceResponce(pc.getText(), pc.getNextPublicScene().getId(), pc.getNextPublicScene().getText()))
                         .toList())
                 .build();
     }
