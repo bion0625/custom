@@ -4,6 +4,7 @@ import com.self_true.exception.NotFoundMemberException;
 import com.self_true.exception.NotFoundSceneException;
 import com.self_true.model.dto.request.PublicChoiceRequest;
 import com.self_true.model.dto.request.PublicSceneRequest;
+import com.self_true.model.dto.response.PublicChoiceResponce;
 import com.self_true.model.dto.response.PublicSceneResponse;
 import com.self_true.model.dto.response.PublicStoryResponse;
 import com.self_true.model.entity.Member;
@@ -16,6 +17,7 @@ import com.self_true.repository.PublicSceneRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -72,7 +74,6 @@ public class PublicStoryService {
         publicChoiceRepository.saveAll(publicScene.getPublicChoices());
     }
 
-    //todo 추후 관리자에서 편집할 때 is_start 플래그가 하나 있으면 나머지 사용할 수 없으니 단 번에 가져와 해야 함
     @Transactional(readOnly = true)
     public PublicStoryResponse getPublicScenes() {
         return PublicStoryResponse.fromEntity(publicSceneRepository.findAllByDeletedAtIsNull());

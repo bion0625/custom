@@ -25,7 +25,7 @@ public class PublicSceneResponse {
     /**
      * 답변
      * */
-    private List<String> texts;
+    private List<PublicChoiceResponce> texts;
 
     public static PublicSceneResponse fromEntity(PublicScene publicScene) {
         return PublicSceneResponse.builder()
@@ -35,7 +35,9 @@ public class PublicSceneResponse {
                 .text(publicScene.getText())
                 .isStart(publicScene.getIsStart())
                 .isEnd(publicScene.getIsEnd())
-                .texts(publicScene.getPublicChoices().stream().map(PublicChoice::getText).toList())
+                .texts(publicScene.getPublicChoices().stream()
+                        .map(pc -> new PublicChoiceResponce(pc.getText(), pc.getNextPublicSceneId()))
+                        .toList())
                 .build();
     }
 }

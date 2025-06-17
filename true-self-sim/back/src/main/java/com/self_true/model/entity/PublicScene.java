@@ -16,7 +16,6 @@ public class PublicScene extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String title;
     private String speaker;
     private String backgroundImage;
     private String text;
