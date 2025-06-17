@@ -1,13 +1,13 @@
 package com.self_true.controller;
 
 import com.self_true.model.dto.request.PublicChoiceRequest;
-import com.self_true.model.dto.request.PublicSceneRequest;
-import com.self_true.model.dto.response.Response;
 import com.self_true.service.PublicStoryService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RequestMapping("/public")
 @RestController
@@ -24,12 +24,5 @@ public class PublicController {
     @GetMapping("/scene")
     public ResponseEntity<?> getScene(PublicChoiceRequest request) {
         return ResponseEntity.ok(publicStoryService.getPublicScene(request));
-    }
-
-    @Operation(summary = "장면 저장", description = "관리자 기능")
-    @PostMapping("/scene")
-    public ResponseEntity<Response> postStory(@RequestBody PublicSceneRequest request) {
-        publicStoryService.save(request);
-        return ResponseEntity.ok(new Response(true, "장면 저장 완료"));
     }
 }

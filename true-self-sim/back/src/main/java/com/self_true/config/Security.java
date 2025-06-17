@@ -2,7 +2,6 @@ package com.self_true.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -36,14 +35,18 @@ public class Security {
                                         /* *
                                         SWAGGER 설정
                                          * */
-                                        "/swagger-ui/**", "/v3/api-docs/**"
-                                ).permitAll()
-                                .requestMatchers(
+                                        "/swagger-ui/**", "/v3/api-docs/**",
                                         /* *
                                         공개 서비스 설정
                                          * */
-                                        HttpMethod.GET, "/public/scene"
+                                        "/public/**"
                                 ).permitAll()
+                                .requestMatchers(
+                                        /* *
+                                        관리자 서비스 설정
+                                         * */
+                                        "/admin/**"
+                                ).hasRole("ADMIN")
                                 .anyRequest().authenticated());
 
         return http.build();

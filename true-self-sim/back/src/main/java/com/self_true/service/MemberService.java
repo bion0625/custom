@@ -23,7 +23,7 @@ public class MemberService {
     }
 
     public void register(MembersRequest request) {
-        if (memberRepository.existsByMemberId(request.getId())) {
+        if (Boolean.TRUE.equals(memberRepository.existsByMemberIdAndDeletedAtIsNull(request.getId()))) {
             throw new DuplicateMemberIdException("member Id is already exists: " + request.getId());
         }
         Member entity = request.toEntity(passwordEncoder);
@@ -31,6 +31,6 @@ public class MemberService {
     }
 
     public Optional<Member> findById(String memberId) {
-        return memberRepository.findByMemberId(memberId);
+        return memberRepository.findByMemberIdAndDeletedAtIsNull(memberId);
     }
 }
