@@ -16,6 +16,7 @@ import com.self_true.repository.PublicSceneRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Service
@@ -70,6 +71,27 @@ public class PublicStoryService {
             publicChoice.setPublicScene(publicScene);
         }
         publicChoiceRepository.saveAll(publicScene.getPublicChoices());
+    }
+
+    public void update(PublicSceneRequest request, Long id) {
+        PublicScene entity = publicSceneRepository.findByIdAndDeletedAtIsNull(id)
+                .orElseThrow(() -> new NotFoundSceneException("not found scene id: " + id));
+
+        entity.getPublicChoices()
+                .forEach(publicChoice -> publicChoice.setDeletedAt(LocalDateTime.now()));
+
+        PublicScene update = request.toEntity();
+
+        entity.setSpeaker(update.getSpeaker());
+        entity.setBackgroundImage(update.getBackgroundImage());
+        entity.setText(update.getText());
+        entity.setIsStart(update.getIsStart());
+        entity.setIsEnd(update.getIsEnd());
+        entity.setPublicChoices(update.getPublicChoices());
+
+        entity.getPublicChoices()
+                .forEach(publicChoice -> publicChoice.setPublicScene(PublicScene.builder().id(id).build()));
+        publicChoiceRepository.saveAll(entity.getPublicChoices());
     }
 
     @Transactional(readOnly = true)

@@ -35,6 +35,7 @@ public class PublicSceneResponse {
                 .isStart(publicScene.getIsStart())
                 .isEnd(publicScene.getIsEnd())
                 .texts(publicScene.getPublicChoices().stream()
+                        .filter(pc -> pc.getDeletedAt() == null)
                         .map(pc -> new PublicChoiceResponce(pc.getText(), pc.getNextPublicScene().getId(), pc.getNextPublicScene().getText()))
                         .toList())
                 .build();

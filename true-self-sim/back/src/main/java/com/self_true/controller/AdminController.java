@@ -32,4 +32,11 @@ public class AdminController {
     public ResponseEntity<PublicStoryResponse> getStory() {
         return ResponseEntity.ok(publicStoryService.getPublicScenes());
     }
+
+    @Operation(summary = "public 장면 수정")
+    @PutMapping("/public/scene/{id}")
+    public ResponseEntity<Response> putScene(@PathVariable Long id, @RequestBody PublicSceneRequest request) {
+        publicStoryService.update(request, id);
+        return ResponseEntity.ok(new Response(true, "장면 저장 완료"));
+    }
 }
