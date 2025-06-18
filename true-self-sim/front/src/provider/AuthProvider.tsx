@@ -1,7 +1,7 @@
 import {type ReactNode, useEffect, useState} from "react";
 import type {User} from "../types.ts";
-import api from "../api.ts";
 import AuthContext from "../context/AuthContext.tsx";
+import {getMe} from "../api.ts";
 
 const AuthProvider: React.FC<{children: ReactNode}> = ({children}) => {
     const [user, setUser] = useState<User | null>(null);
@@ -15,10 +15,8 @@ const AuthProvider: React.FC<{children: ReactNode}> = ({children}) => {
             return;
         }
         try {
-            const res = await api.get<User>("/me", {
-                headers: {Authorization: `Bearer ${token}`},
-            });
-            setUser(res.data);
+            const user = await getMe();
+            setUser(user);
         } catch {
             setUser(null);
             localStorage.removeItem("access_token");
