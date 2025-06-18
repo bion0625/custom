@@ -15,3 +15,11 @@ export interface LoginRequest {
     id: string;
     password: string;
 }
+
+export interface RegisterRequest {
+    id: string;
+    password: string;
+    name: string;
+    phoneNumber: string;
+    email: string;
+}
