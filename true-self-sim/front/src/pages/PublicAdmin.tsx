@@ -73,7 +73,7 @@ const PublicAdmin: React.FC = () => {
                 speaker: request.speaker,
                 backgroundImage: request.backgroundImage,
                 text: request.text,
-                choiceRequests: request.choiceRequests.map(cr => ({nextSceneId: cr.nextSceneId, text: cr.text})),
+                choiceRequests: request.choiceRequests.map(cr => ({nextSceneId: cr.nextSceneId ?? 1, text: cr.text})),
                 start: request.start,
                 end: request.end
             },
@@ -173,10 +173,11 @@ const PublicAdmin: React.FC = () => {
                                                 setRequest(r => ({...r, choiceRequests: r.choiceRequests.map((c, i) => i === index ? {...c, nextSceneId: parseInt(e.target.value)} : c)}))}
                                     >
                                         <option value="" disabled>다음 장면 선택</option>
-                                        {data?.publicScenes?.filter(scene => scene.sceneId !== currentId)
+                                        {currentId !== 1 ? data?.publicScenes?.filter(scene => scene.sceneId !== currentId)
                                             .map(scene => (
                                             <option key={scene.sceneId} value={scene.sceneId}>{scene.text}</option>
-                                        ))}
+                                        )) : data?.publicScenes?.map(scene => (
+                                            <option key={scene.sceneId} value={scene.sceneId}>{scene.text}</option>))}
                                     </select>
                                     <button className="text-red-600 self-center"
                                             onClick={() => setRequest(r => ({...r, choiceRequests: r.choiceRequests.filter((_, i) => i !== index)}))}
@@ -215,14 +216,9 @@ const PublicAdmin: React.FC = () => {
 
                     {/*버튼*/}
                     <div className="flex flex-col sm:flex-row sm:space-x-2 space-y-2 sm:space-y-0">
-                        {currentId === 0 ?
-                            (<button className="w-full sm:w-auto px-4 py-2 bg-blue-600 text-white rounded-lg" onClick={handleSceneSave}>
-                                {isPending ? '저장중...' : '저장'}
-                            </button>)
-                            : (<button className="w-full sm:w-auto px-4 py-2 bg-blue-600 text-white rounded-lg" onClick={() => alert('수정 api 작성: '+currentId)}>
-                                수정
-                            </button>)
-                        }
+                        <button className="w-full sm:w-auto px-4 py-2 bg-blue-600 text-white rounded-lg" onClick={handleSceneSave}>
+                            {isPending ? '저장중...' : '저장'}
+                        </button>
                         <button className="w-full sm:w-auto px-4 py-2 bg-red-600 text-white rounded-lg">삭제</button>
                     </div>
                 </section>
