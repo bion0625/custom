@@ -1,5 +1,5 @@
 import axios, {type InternalAxiosRequestConfig} from "axios";
-import type {LoginRequest, RegisterRequest, User} from "./types.ts";
+import type {LoginRequest, PublicSceneRequest, PublicStory, RegisterRequest, User} from "./types.ts";
 
 const api = axios.create({
     baseURL: import.meta.env.VITE_API_URL  || "http://localhost:8080"
@@ -26,5 +26,15 @@ export const register = async ({id, password, name, phoneNumber, email}: Registe
 
 export const getMe = async (): Promise<User> => {
     const res = await api.get<User>("/me");
+    return res.data;
+}
+
+export const getPublicStory = async (): Promise<PublicStory> => {
+    const res = await api.get<PublicStory>("/admin/public/story");
+    return res.data;
+}
+
+export const postPublicScene = async ({speaker, backgroundImage, text, choiceRequests, start, end}: PublicSceneRequest) => {
+    const res = await api.post("/admin/public/scene", {speaker, backgroundImage, text, choiceRequests, start, end});
     return res.data;
 }
