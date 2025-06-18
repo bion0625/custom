@@ -1,7 +1,7 @@
 import {useNavigate} from "react-router-dom";
 import {useContext, useState} from "react";
 import AuthContext from "../context/AuthContext.tsx";
-import api from "../api.ts";
+import useLogin from "../hook/userLogin.ts";
 
 const Login: React.FC = () => {
     const navigate = useNavigate();
@@ -10,20 +10,23 @@ const Login: React.FC = () => {
     const [error, setError] = useState('');
     const {refreshUser} = useContext(AuthContext);
 
+    const {mutate: login, isPending} = useLogin();
+
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
-        try {
-            const res = await api.post('/login', {id:username, password}, {
-                headers: {
-                    'Content-Type': 'application/json'
+        login(
+            {id:username, password},
+            {
+                onSuccess: async (data) => {
+                    localStorage.setItem('access_token', data.accessToken);
+                    await refreshUser();
+                    navigate('/')
+                },
+                onError: () => {
+                    setError("로그인 실패: 아이디 또는 비밀번호 확인")
                 }
-            });
-            localStorage.setItem('access_token', res.data.accessToken);
-            await refreshUser();
-            navigate('/')
-        } catch {
-            setError("로그인 실패: 아이디 또는 비밀번호 확인")
-        }
+            }
+        )
     };
 
     return (
@@ -36,7 +39,9 @@ const Login: React.FC = () => {
                     <input className="w-full mb-2 p-2 border rounded" placeholder="비밀번호"
                            type="password" value={password} onChange={(e) => setPassword(e.target.value)}/>
                     {error && <p className="text-red-500">{error}</p>}
-                    <button className="w-full p-2 bg-blue-500 text-white rounded">로그인</button>
+                    <button className="w-full p-2 bg-blue-500 text-white rounded">
+                        {isPending ? '로그인 중...' : '로그인'}
+                    </button>
                     <button className="w-full mt-2 p-2 text-sm text-blue-500" type="button" onClick={() => navigate("/register")}>계정이 없으신가요? 회원가입</button>
                 </form>
             </div>

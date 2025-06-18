@@ -10,3 +10,8 @@ export interface AuthContextType {
     refreshUser: () => Promise<void>;
     logout: () => void;
 }
+
+export interface LoginRequest {
+    id: string;
+    password: string;
+}
