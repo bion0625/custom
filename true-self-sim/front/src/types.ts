@@ -33,6 +33,7 @@ interface choiceRequest {
 }
 
 export interface PublicSceneRequest {
+    id?: number;
     speaker: string;
     backgroundImage: string;
     text: string;
