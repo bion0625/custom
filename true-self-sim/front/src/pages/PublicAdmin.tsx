@@ -2,6 +2,7 @@ import usePublicStory from "../hook/usePublicStory.ts";
 import usePostPublicScene from "../hook/usePostPublicScene.ts";
 import {useEffect, useState} from "react";
 import type {PublicSceneRequest} from "../types.ts";
+import usePutPublicScene from "../hook/usePutPublicScene.ts";
 
 const PublicAdmin: React.FC = () => {
 
@@ -48,6 +49,7 @@ const PublicAdmin: React.FC = () => {
     }, [currentId, data]);
 
     const [errorMsg, setErrorMsg] = useState("");
+    const [successMsg, setSuccessMsg] = useState("");
 
     const createNew = () => {
         const newText = prompt("새 장면의 질문을 입력하세요:");
@@ -63,24 +65,37 @@ const PublicAdmin: React.FC = () => {
             end: false
         })
     }
-    //
 
-    const {mutate: postPublicScene, isPending} = usePostPublicScene();
+    const {mutate: postPublicScene, isPending: isPostPending} = usePostPublicScene();
+    const {mutate: putPublicScene, isPending: isPutPending} = usePutPublicScene();
 
     const handleSceneSave = () => {
-        postPublicScene(
-            {
-                speaker: request.speaker,
-                backgroundImage: request.backgroundImage,
-                text: request.text,
-                choiceRequests: request.choiceRequests.map(cr => ({nextSceneId: cr.nextSceneId ?? 1, text: cr.text})),
-                start: request.start,
-                end: request.end
-            },
-            {
-                onSuccess: () => window.location.reload(),
-                onError: () => setErrorMsg("장면 저장에 실패했습니다.")
-            })
+        const publicSceneRequest: PublicSceneRequest = {
+            speaker: request.speaker,
+            backgroundImage: request.backgroundImage,
+            text: request.text,
+            choiceRequests: request.choiceRequests.map(cr => ({nextSceneId: cr.nextSceneId ?? 1, text: cr.text})),
+            start: request.start,
+            end: request.end
+        };
+        if (currentId === 0) {
+            postPublicScene(publicSceneRequest,
+                {
+                    onError: () => setErrorMsg("장면 저장에 실패했습니다."),
+                    onSuccess: () => {
+                        setSuccessMsg("장면 저장에 성공했습니다.");
+                        window.location.reload();
+                    }
+                });
+        } else {
+            putPublicScene({...publicSceneRequest, id: currentId},
+                {
+                    onError: () => setErrorMsg("장면 저장에 실패했습니다."),
+                    onSuccess: () => {
+                        setSuccessMsg("장면 수정에 성공했습니다.");
+                    }
+                });
+        }
     }
 
     const addChoice = () => {
@@ -106,7 +121,10 @@ const PublicAdmin: React.FC = () => {
                     <ul className="space-y-2">
                         {data?.publicScenes?.map((scene, index) => (
                             <li key={index}>
-                                <button onClick={() => {setCurrentId(scene.sceneId)}}
+                                <button onClick={() => {
+                                    setSuccessMsg("");
+                                    setCurrentId(scene.sceneId);
+                                }}
                                         className={`w-full text-left px-2 py-1 rounded
                                         ${scene.sceneId === currentId 
                                             ? "bg-indigo-200 font-semibold" 
@@ -213,11 +231,12 @@ const PublicAdmin: React.FC = () => {
 
                     {errorMsg && <div className="text-red-500">{errorMsg}</div>}
                     {error && <div className="text-red-500">{error.message}</div>}
+                    {successMsg && <div className="text-green-600">{successMsg}</div>}
 
                     {/*버튼*/}
                     <div className="flex flex-col sm:flex-row sm:space-x-2 space-y-2 sm:space-y-0">
                         <button className="w-full sm:w-auto px-4 py-2 bg-blue-600 text-white rounded-lg" onClick={handleSceneSave}>
-                            {isPending ? '저장중...' : '저장'}
+                            {isPostPending || isPutPending ? '저장중...' : '저장'}
                         </button>
                         <button className="w-full sm:w-auto px-4 py-2 bg-red-600 text-white rounded-lg">삭제</button>
                     </div>
