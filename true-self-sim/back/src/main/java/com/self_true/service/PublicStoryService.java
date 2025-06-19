@@ -1,8 +1,6 @@
 package com.self_true.service;
 
-import com.self_true.exception.NotFoundMemberException;
 import com.self_true.exception.NotFoundSceneException;
-import com.self_true.model.dto.request.PublicChoiceRequest;
 import com.self_true.model.dto.request.PublicSceneRequest;
 import com.self_true.model.dto.response.PublicSceneResponse;
 import com.self_true.model.dto.response.PublicStoryResponse;
@@ -17,7 +15,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
 
 @Service
 @Transactional
@@ -39,27 +36,36 @@ public class PublicStoryService {
         this.memberService = memberService;
     }
 
-    public PublicSceneResponse getPublicScene(PublicChoiceRequest request, String memberId) {
-        PublicSceneResponse response = Optional.ofNullable(request)
-                .map(PublicChoiceRequest::getNextSceneId)
-                .map(publicSceneRepository::findByIdAndDeletedAtIsNull)
-                .orElseGet(publicSceneRepository::findFirstByIsStartIsTrueAndDeletedAtIsNullOrderByCreatedAtDesc)
-                .map(PublicSceneResponse::fromEntity)
-                .orElseThrow(() ->
-                        Optional.ofNullable(request)
-                                .map(PublicChoiceRequest::getNextSceneId)
-                                .map(id -> new NotFoundSceneException("not fount next scene id: " + id))
-                                .orElse(new NotFoundSceneException("not fount next scene id is null")));
-
-        Long userId = memberService.findById(memberId)
+    /**
+     * 로그인 한 상태일 때만 저장
+     * */
+    private void saveSceneLog(String memberId, PublicSceneResponse response) {
+        memberService.findById(memberId)
                 .map(Member::getId)
-                .orElseThrow(() -> new NotFoundMemberException("not found member id: " + memberId));
+                .map(id -> PublicLog.builder()
+                        .publicSceneId(response.getSceneId())
+                        .userId(id)
+                        .build())
+                .ifPresent(publicLogRepository::save);
+    }
 
-        publicLogRepository.save(PublicLog
-                .builder()
-                .publicSceneId(response.getSceneId())
-                .userId(userId)
-                .build());
+    public PublicSceneResponse getFirstScene(String memberId) {
+        PublicSceneResponse response = publicSceneRepository.findFirstByIsStartIsTrueAndDeletedAtIsNullOrderByCreatedAtDesc()
+                .map(PublicSceneResponse::fromEntity)
+                .orElseThrow(() -> new NotFoundSceneException("not found first scene"));
+
+        saveSceneLog(memberId, response);
+
+        return response;
+    }
+
+    public PublicSceneResponse getPublicScene(Long id, String memberId) {
+
+        PublicSceneResponse response = publicSceneRepository.findByIdAndDeletedAtIsNull(id)
+                .map(PublicSceneResponse::fromEntity)
+                .orElseThrow(() -> new NotFoundSceneException("not found scene id: " + id));
+
+        saveSceneLog(memberId, response);
 
         return response;
     }
