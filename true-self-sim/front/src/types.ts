@@ -11,7 +11,7 @@ interface Text {
     nextText: string;
 }
 
-interface PublicScene {
+export interface PublicScene {
     sceneId: number;
     speaker: string;
     backgroundImage: string;
