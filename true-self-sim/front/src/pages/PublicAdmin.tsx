@@ -67,14 +67,11 @@ const PublicAdmin: React.FC = () => {
     const [successMsg, setSuccessMsg] = useState("");
 
     const createNew = () => {
-        const newText = prompt("새 장면의 질문을 입력하세요:");
-        if (!newText) return;
-
         setCurrentId(0)
         setRequest({
             speaker: "",
             backgroundImage: "",
-            text: newText,
+            text: "",
             choiceRequests: [],
             start: false,
             end: false
@@ -86,6 +83,7 @@ const PublicAdmin: React.FC = () => {
     const {mutate: deletePublicScene, isPending: isDeletePending} = useDeletePublicScene();
 
     const handleSceneDelete = () => {
+        if (!confirm("정말로 이 장면을 삭제하시겠습니까?")) return;
         deletePublicScene(currentId);
         setSuccessMsg("장면 삭제에 성공했습니다.");
         window.location.reload();
@@ -178,6 +176,9 @@ const PublicAdmin: React.FC = () => {
                                             : "hover:bg-gray-200"}`
                                 }
                                 >
+                                    <span className="text-sm text-gray-700 font-mono">
+                                        [{scene.sceneId}]
+                                    </span>
                                     {scene.text}
                                 </button>
                             </li>
@@ -190,6 +191,7 @@ const PublicAdmin: React.FC = () => {
                     <div className="mb-4">
                         <label className="block text-sm font-medium">text</label>
                         <textarea className="mt-1 w-full border rounded p-2 h-32"
+                                  placeholder="장면 내용을 입력하세요..."
                                   value={request.text}
                                   onChange={(e) =>
                                       setRequest(r => ({...r, text: e.target.value}))}
@@ -248,6 +250,9 @@ const PublicAdmin: React.FC = () => {
                                 + 추가
                             </button>
                         </div>
+                        {request.choiceRequests.length === 0 && (
+                            <p className="text-sm text-gray-400">선택지를 추가하려면 "+ 추가" 버튼을 누르세요.</p>
+                        )}
                         {request.choiceRequests.map((choice, index) => (
                             <div className="space-y-2" key={index}>
                                 <div className="flex flex-col sm:flex-row sm:space-x-2 space-y-2 sm:space-y-0">
@@ -264,9 +269,13 @@ const PublicAdmin: React.FC = () => {
                                         <option value="" disabled>다음 장면 선택</option>
                                         {currentId !== 1 ? data?.publicScenes?.filter(scene => scene.sceneId !== currentId)
                                             .map(scene => (
-                                            <option key={scene.sceneId} value={scene.sceneId}>{scene.text}</option>
+                                                <option key={scene.sceneId} value={scene.sceneId}>
+                                                    [{scene.sceneId}] {scene.text.length > 20 ? scene.text.slice(0, 20) + "..." : scene.text}
+                                                </option>
                                         )) : data?.publicScenes?.map(scene => (
-                                            <option key={scene.sceneId} value={scene.sceneId}>{scene.text}</option>))}
+                                            <option key={scene.sceneId} value={scene.sceneId}>
+                                                [{scene.sceneId}] {scene.text.length > 20 ? scene.text.slice(0, 20) + "..." : scene.text}
+                                            </option>))}
                                     </select>
                                     <button className="text-red-600 self-center"
                                             onClick={() => setRequest(r => ({...r, choiceRequests: r.choiceRequests.filter((_, i) => i !== index)}))}
@@ -280,6 +289,11 @@ const PublicAdmin: React.FC = () => {
 
                     {/*FLAG 스타트(하나만) or 엔드*/}
                     <div className="flex flex-col sm:flex-row sm:space-x-4 mb-4">
+                        {otherSceneAlreadyStart && !request.start && (
+                            <p className="text-xs text-gray-500 ml-6 mt-1">
+                                시작 장면은 하나만 지정할 수 있습니다.
+                            </p>
+                        )}
                         <label className={`inline-flex items-center space-x-2 ${otherSceneAlreadyStart ? "opacity-50 pointer-events-none" : ""}`}>
                             <input type="checkbox" className="form-checkbox"
                                    checked={request.start}
@@ -311,6 +325,19 @@ const PublicAdmin: React.FC = () => {
                                 {isDeletePending ? '삭제중...' : '삭제'}
                             </button>
                         )}
+                        <button
+                            className="w-full sm:w-auto px-4 py-2 bg-gray-400 text-white rounded-lg"
+                            onClick={() => setRequest({
+                                speaker: "",
+                                backgroundImage: "",
+                                text: "",
+                                choiceRequests: [],
+                                start: false,
+                                end: false
+                            })}
+                        >
+                            입력 초기화
+                        </button>
                     </div>
                 </section>
             </div>
