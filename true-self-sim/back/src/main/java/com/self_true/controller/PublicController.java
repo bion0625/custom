@@ -22,7 +22,7 @@ public class PublicController {
     }
 
     @Operation(summary = "첫 장면 호출")
-    @GetMapping("/scene/")
+    @GetMapping("/scene")
     public ResponseEntity<?> getFirstScene(@AuthenticationPrincipal String memberId) {
         return ResponseEntity.ok(publicStoryService.getFirstScene(memberId));
     }
