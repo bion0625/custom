@@ -19,6 +19,11 @@ const PublicAdmin: React.FC = () => {
 
     const [currentId, setCurrentId] = useState(0);
 
+    const [useCustomImg, setUseCustomImg] = useState(false);
+    const backgroundImgs = [
+        "mountain.jpg"
+    ]
+
     useEffect(() => {
         if (currentId === 0) return;
         if (data?.publicScenes) {
@@ -70,6 +75,18 @@ const PublicAdmin: React.FC = () => {
     const {mutate: putPublicScene, isPending: isPutPending} = usePutPublicScene();
 
     const handleSceneSave = () => {
+        if (!request.speaker.trim()
+            || !request.backgroundImage.trim()
+            || !request.text.trim()) {
+            setErrorMsg("모든 필수 항목을 입력해주세요.")
+            return;
+        }
+
+        if ((request.choiceRequests.length > 0 && request.choiceRequests.some(cr => !cr.text.trim() || !cr.nextSceneId))) {
+            setErrorMsg("모든 필수 항목을 입력해주세요.")
+            return;
+        }
+
         const publicSceneRequest: PublicSceneRequest = {
             speaker: request.speaker,
             backgroundImage: request.backgroundImage,
@@ -160,12 +177,36 @@ const PublicAdmin: React.FC = () => {
                             />
                         </div>
                         <div>
-                            <label className="block text-sm font-medium">배경이미지</label>
-                            <input type="text" className="mt-1 w-full border rounded p-2"
-                                   value={request.backgroundImage}
-                                   onChange={(e) =>
-                                       setRequest((r) => ({...r, backgroundImage: e.target.value}))}
-                            />
+                            <label className="block text-sm font-medium mb-1">배경이미지</label>
+
+                            <label className="inline-flex items-center mb-2 space-x-2">
+                                <input type="checkbox"
+                                       checked={useCustomImg}
+                                       onChange={(e) =>
+                                           setUseCustomImg(e.target.checked)}
+                                />
+                                <span>직접 URL 입력</span>
+                            </label>
+
+                            <div className="w-full">
+                                {useCustomImg ? (
+                                    <input type="text" className="w-full border rounded p-2"
+                                           value={request.backgroundImage}
+                                           onChange={(e) => setRequest((r) => ({...r, backgroundImage: e.target.value}))}
+                                           placeholder="https://example.com/bg.jpg"
+                                    />
+                                        ) : (
+                                        <select className="w-full border rounded p-2"
+                                                value={request.backgroundImage}
+                                                onChange={(e) => setRequest((r) => ({...r, backgroundImage: e.target.value}))}
+                                        >
+                                            <option value="">배경 이미지 선택</option>
+                                            {backgroundImgs.map((img, index) => (
+                                                <option key={index} value={img}>{img}</option>
+                                            ))}
+                                        </select>
+                                        )}
+                            </div>
                         </div>
                     </div>
 
