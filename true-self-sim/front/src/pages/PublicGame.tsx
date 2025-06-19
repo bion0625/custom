@@ -5,14 +5,14 @@ const PublicGame: React.FC = () => {
             <div className="relative z-10 flex-1 flex flex-col items-center pt-6 px-4 space-y-6 md:items-center md:px-8 lg:px-16 lg:pr-72">
                 <div className="w-full max-w-xl flex justify-between items-center">
                     <h1 className="text-2xl md:text-3xl font-bold text-indigo-300">
-                        환영합니다. 유저님!
+                        Welcome to the public page!
                     </h1>
                     <div className="flex space-x-4">
                         <button className="text-sm md:text-base text-green-400 hover:text-green-600">
                             관리자 페이지(is_admin)
                         </button>
-                        <button className="text-sm md:text-base text-red-400 hover:text-red-600">
-                            로그아웃
+                        <button className="text-sm md:text-base text-blue-400 hover:text-blue-600">
+                            로그인
                         </button>
                     </div>
                 </div>
