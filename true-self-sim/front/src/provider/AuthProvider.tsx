@@ -1,7 +1,7 @@
 import {type ReactNode, useEffect, useState} from "react";
 import type {User} from "../types.ts";
 import AuthContext from "../context/AuthContext.tsx";
-import {getMe} from "../api.ts";
+import {getMe} from "../api/auth.ts";
 
 const AuthProvider: React.FC<{children: ReactNode}> = ({children}) => {
     const [user, setUser] = useState<User | null>(null);

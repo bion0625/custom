@@ -1,5 +1,5 @@
 import {useSuspenseQuery} from "@tanstack/react-query";
-import {getPublicStory} from "../api.ts";
+import {getPublicStory} from "../api/adminPublic.ts";
 
 const usePublicStory = () => {
     return useSuspenseQuery({

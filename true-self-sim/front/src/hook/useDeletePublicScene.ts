@@ -1,5 +1,5 @@
 import {useMutation} from "@tanstack/react-query";
-import {deletePublicScene} from "../api.ts";
+import {deletePublicScene} from "../api/adminPublic.ts";
 
 const useDeletePublicScene = () => {
     return useMutation({

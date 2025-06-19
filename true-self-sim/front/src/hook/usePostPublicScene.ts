@@ -1,6 +1,6 @@
 import {useMutation} from "@tanstack/react-query";
-import {postPublicScene} from "../api.ts";
 import type {PublicSceneRequest} from "../types.ts";
+import {postPublicScene} from "../api/adminPublic.ts";
 
 const usePostPublicScene = () => {
     return useMutation({
