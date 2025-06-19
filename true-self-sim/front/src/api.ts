@@ -43,3 +43,8 @@ export const putPublicScene = async ({id, speaker, backgroundImage, text, choice
     const res = await api.put(`/admin/public/scene/${id}`, {speaker, backgroundImage, text, choiceRequests, start, end});
     return res.data;
 }
+
+export const deletePublicScene = async (id: number) => {
+    const res = await api.delete(`/admin/public/scene/${id}`);
+    return res.data;
+}

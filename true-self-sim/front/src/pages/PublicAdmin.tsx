@@ -5,6 +5,7 @@ import type {PublicSceneRequest} from "../types.ts";
 import usePutPublicScene from "../hook/usePutPublicScene.ts";
 import {useNavigate} from "react-router-dom";
 import AuthContext from "../context/AuthContext.tsx";
+import useDeletePublicScene from "../hook/useDeletePublicScene.ts";
 
 const PublicAdmin: React.FC = () => {
 
@@ -82,6 +83,13 @@ const PublicAdmin: React.FC = () => {
 
     const {mutate: postPublicScene, isPending: isPostPending} = usePostPublicScene();
     const {mutate: putPublicScene, isPending: isPutPending} = usePutPublicScene();
+    const {mutate: deletePublicScene, isPending: isDeletePending} = useDeletePublicScene();
+
+    const handleSceneDelete = () => {
+        deletePublicScene(currentId);
+        setSuccessMsg("장면 삭제에 성공했습니다.");
+        window.location.reload();
+    }
 
     const handleSceneSave = () => {
         if (!request.speaker.trim()
@@ -298,7 +306,11 @@ const PublicAdmin: React.FC = () => {
                         <button className="w-full sm:w-auto px-4 py-2 bg-blue-600 text-white rounded-lg" onClick={handleSceneSave}>
                             {isPostPending || isPutPending ? '저장중...' : '저장'}
                         </button>
-                        <button className="w-full sm:w-auto px-4 py-2 bg-red-600 text-white rounded-lg">삭제</button>
+                        {currentId !== 0 && (
+                            <button className="w-full sm:w-auto px-4 py-2 bg-red-600 text-white rounded-lg" onClick={handleSceneDelete}>
+                                {isDeletePending ? '삭제중...' : '삭제'}
+                            </button>
+                        )}
                     </div>
                 </section>
             </div>
