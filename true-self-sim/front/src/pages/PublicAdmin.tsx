@@ -1,12 +1,19 @@
 import usePublicStory from "../hook/usePublicStory.ts";
 import usePostPublicScene from "../hook/usePostPublicScene.ts";
-import {useEffect, useState} from "react";
+import {useContext, useEffect, useState} from "react";
 import type {PublicSceneRequest} from "../types.ts";
 import usePutPublicScene from "../hook/usePutPublicScene.ts";
+import {useNavigate} from "react-router-dom";
+import AuthContext from "../context/AuthContext.tsx";
 
 const PublicAdmin: React.FC = () => {
 
+    const navigate = useNavigate();
+    const {refreshUser, logout} = useContext(AuthContext);
+
     const {data, isLoading, error} = usePublicStory();
+
+    if (error) navigate("/login");
 
     const [request, setRequest] = useState<PublicSceneRequest>({
         speaker: "",
@@ -127,8 +134,20 @@ const PublicAdmin: React.FC = () => {
             <div className="max-w-6xl mx-auto flex flex-col md:flex-row gap-6">
                 {/*사이드바*/}
                 <aside className="w-full md:w-1/4 border-b md:border-b-0 md:border-r bg-gray-100 p-4 rounded-md md:rounded-none overflow-auto h-auto md:h-[80vh]">
-                    <button className="mb-2 w-full py-2 bg-indigo-500 text-white rounded-lg hover:bg-indigo-600 transition">돌아가기</button>
-                    <button className="mb-4 w-full py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition">로그아웃</button>
+                    <button className="mb-2 w-full py-2 bg-indigo-500 text-white rounded-lg hover:bg-indigo-600 transition"
+                            onClick={() => navigate("/")}
+                    >
+                        돌아가기
+                    </button>
+                    <button className="mb-4 w-full py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition"
+                            onClick={async () => {
+                                await logout();
+                                await refreshUser();
+                                navigate("/")
+                            }}
+                    >
+                        로그아웃
+                    </button>
                     <button className="mb-4 w-full py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition"
                             onClick={createNew}
                     >
@@ -271,7 +290,6 @@ const PublicAdmin: React.FC = () => {
                     </div>
 
                     {errorMsg && <div className="text-red-500">{errorMsg}</div>}
-                    {error && <div className="text-red-500">{error.message}</div>}
                     {successMsg && <div className="text-green-600">{successMsg}</div>}
 
                     {/*버튼*/}
