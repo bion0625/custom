@@ -1,10 +1,10 @@
-import {useQuery} from "@tanstack/react-query";
+import {useSuspenseQuery} from "@tanstack/react-query";
 import {getPublicStory} from "../api.ts";
 
 const usePublicStory = () => {
-    return useQuery({
+    return useSuspenseQuery({
         queryKey: ['publicStory'],
-        queryFn: getPublicStory
+        queryFn: getPublicStory,
     });
 }
 

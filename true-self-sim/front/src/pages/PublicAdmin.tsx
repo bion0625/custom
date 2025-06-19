@@ -12,7 +12,7 @@ const PublicAdmin: React.FC = () => {
     const navigate = useNavigate();
     const {refreshUser, logout} = useContext(AuthContext);
 
-    const {data, isLoading, error} = usePublicStory();
+    const {data, error} = usePublicStory();
 
     if (error) navigate("/login");
 
@@ -134,9 +134,6 @@ const PublicAdmin: React.FC = () => {
     const addChoice = () => {
         setRequest(r => ({...r, choiceRequests: [...r.choiceRequests, {text: "", nextText: "", nextSceneId: 1}]}))
     }
-
-    /*TODO 추후 로딩 전체 적용시 제거*/
-    if (isLoading) return <div>로딩중</div>
 
     return (
         <div className="min-h-screen bg-gray-50 p-4 sm:p-6">
