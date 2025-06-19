@@ -94,6 +94,17 @@ public class PublicStoryService {
         publicChoiceRepository.saveAll(entity.getPublicChoices());
     }
 
+    public void delete(Long id) {
+        publicSceneRepository.findByIdAndDeletedAtIsNull(id)
+                .ifPresent(scene -> {
+                    scene.getPublicChoices()
+                            .forEach(publicChoice -> publicChoice.setDeletedAt(LocalDateTime.now()));
+                    publicChoiceRepository.saveAll(scene.getPublicChoices());
+                    scene.setDeletedAt(LocalDateTime.now());
+                    publicSceneRepository.save(scene);
+                });
+    }
+
     @Transactional(readOnly = true)
     public PublicStoryResponse getPublicScenes() {
         return PublicStoryResponse.fromEntity(publicSceneRepository.findAllByDeletedAtIsNull());

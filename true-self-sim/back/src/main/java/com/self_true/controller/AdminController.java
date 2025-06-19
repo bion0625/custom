@@ -39,4 +39,11 @@ public class AdminController {
         publicStoryService.update(request, id);
         return ResponseEntity.ok(new Response(true, "장면 저장 완료"));
     }
+
+    @Operation(summary = "public 장면 삭제")
+    @DeleteMapping("/public/scene/{id}")
+    public ResponseEntity<Response> deleteScene(@PathVariable Long id) {
+        publicStoryService.delete(id);
+        return ResponseEntity.ok(new Response(true, "장면 삭제 완료"));
+    }
 }
