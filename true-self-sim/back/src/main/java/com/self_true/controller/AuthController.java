@@ -1,9 +1,12 @@
 package com.self_true.controller;
 
+import com.self_true.exception.NotFoundMemberException;
 import com.self_true.model.dto.request.LoginRequest;
+import com.self_true.model.dto.response.MytInfoResponse;
 import com.self_true.model.dto.response.Response;
 import com.self_true.model.dto.response.TokenResponse;
 import com.self_true.service.AuthService;
+import com.self_true.service.MemberService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
@@ -18,9 +21,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
 
     private final AuthService authService;
+    private final MemberService memberService;
 
-    public AuthController(AuthService authService) {
+    public AuthController(AuthService authService, MemberService memberService) {
         this.authService = authService;
+        this.memberService = memberService;
     }
 
     @Operation(summary = "로그인", description = "인증 토큰 반환")
@@ -30,9 +35,11 @@ public class AuthController {
         return ResponseEntity.ok(new TokenResponse(token));
     }
 
-    @Operation(summary = "상태확인")
+    @Operation(summary = "내 정보")
     @GetMapping("/me")
-    public ResponseEntity<Response> getMyInfo(@AuthenticationPrincipal String memberId) {
-        return ResponseEntity.ok(new Response(true, memberId));
+    public ResponseEntity<MytInfoResponse> getMyInfo(@AuthenticationPrincipal String memberId) {
+        return ResponseEntity.ok(memberService.findById(memberId)
+                .map(MytInfoResponse::fromEntity)
+                .orElseThrow(() -> new NotFoundMemberException("not found member id: " + memberId)));
     }
 }
