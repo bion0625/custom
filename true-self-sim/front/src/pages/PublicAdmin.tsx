@@ -26,6 +26,8 @@ const PublicAdmin: React.FC = () => {
 
     const [currentId, setCurrentId] = useState(0);
 
+    const otherSceneAlreadyStart = data?.publicScenes?.some(scene => scene.start && scene.sceneId !== currentId);
+
     const [useCustomImg, setUseCustomImg] = useState(false);
     const backgroundImgs = [
         "mountain.jpg"
@@ -117,6 +119,7 @@ const PublicAdmin: React.FC = () => {
                     onError: () => setErrorMsg("장면 저장에 실패했습니다."),
                     onSuccess: () => {
                         setSuccessMsg("장면 수정에 성공했습니다.");
+                        window.location.reload();
                     }
                 });
         }
@@ -269,9 +272,7 @@ const PublicAdmin: React.FC = () => {
 
                     {/*FLAG 스타트(하나만) or 엔드*/}
                     <div className="flex flex-col sm:flex-row sm:space-x-4 mb-4">
-                        <label className="inline-flex items-center space-x-2">
-                        {/*비활성화시*/}
-                        {/*<label className="inline-flex items-center space-x-2 opacity-50 pointer-events-none">*/}
+                        <label className={`inline-flex items-center space-x-2 ${otherSceneAlreadyStart ? "opacity-50 pointer-events-none" : ""}`}>
                             <input type="checkbox" className="form-checkbox"
                                    checked={request.start}
                                    onChange={(e) =>
