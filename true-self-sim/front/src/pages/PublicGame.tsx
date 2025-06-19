@@ -15,9 +15,13 @@ const PublicGame: React.FC = () => {
                         Welcome to the public page!
                     </h1>
                     <div className="flex space-x-4">
-                        <button className="text-sm md:text-base text-green-400 hover:text-green-600">
-                            관리자 페이지(is_admin)
-                        </button>
+                        {user?.isAdmin && (
+                            <button className="text-sm md:text-base text-green-400 hover:text-green-600"
+                                    onClick={() => navigate("/admin/public")}
+                            >
+                                관리자
+                            </button>
+                        )}
                         {!user && (
                             <button className="text-sm md:text-base text-blue-400 hover:text-blue-600"
                                     onClick={() => navigate("/login")}
