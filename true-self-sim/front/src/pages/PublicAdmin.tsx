@@ -268,7 +268,7 @@ const PublicAdmin: React.FC = () => {
                                                setRequest(r => ({...r, choiceRequests: r.choiceRequests.map((c, i) => i === index ? {...c, text: e.target.value} : c)}))}
                                     />
                                     <select className="border rounded p-1 flex-1"
-                                            value={choice.nextSceneId ?? 0}
+                                            value={choice.nextSceneId ?? ""}
                                             onChange={(e) =>
                                                 setRequest(r => ({...r, choiceRequests: r.choiceRequests.map((c, i) => i === index ? {...c, nextSceneId: parseInt(e.target.value)} : c)}))}
                                     >
