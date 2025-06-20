@@ -4,6 +4,7 @@ import AuthContext from "../context/AuthContext.tsx";
 import usePublicFirstScene from "../hook/usePublicFirstScene.ts";
 import type {PublicScene} from "../types.ts";
 import {getPublicScene} from "../api/publicScene.ts";
+import MemoryLog from "../component/MemoryLog.tsx";
 
 const PublicGame: React.FC = () => {
     const navigate = useNavigate();
@@ -30,7 +31,7 @@ const PublicGame: React.FC = () => {
     // 다음 장면 로드 함수
     const handleNextScene = async (nextSceneId: number, nextText: string) => {
 
-        setLog(log => [...log, `${scene.speaker}: ${scene.text}`, `me: ${nextText}`])
+        setLog(log => [`${scene.speaker}: ${scene.text}`, `-> me: ${nextText}`, ...log])
 
         try {
             const nextScene = await getPublicScene(nextSceneId);
@@ -101,7 +102,9 @@ const PublicGame: React.FC = () => {
                     </div>
                 </div>
             </div>
-            <div className="hidden lg:block lg:fixed lg:top-4 lg:right-4 lg:w-64 lg:h-[70vh]"></div>
+            <div className="hidden lg:block lg:fixed lg:top-4 lg:right-4 lg:w-64 lg:h-[70vh]">
+                <MemoryLog log={log}/>
+            </div>
         </div>
     )
 }
