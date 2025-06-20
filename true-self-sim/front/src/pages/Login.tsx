@@ -8,7 +8,7 @@ const Login: React.FC = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
-    const {refreshUser} = useContext(AuthContext);
+    const {refreshUser, user} = useContext(AuthContext);
 
     const {mutate: login, isPending} = useLogin();
 
@@ -20,7 +20,7 @@ const Login: React.FC = () => {
                 onSuccess: async (data) => {
                     localStorage.setItem('access_token', data.accessToken);
                     await refreshUser();
-                    navigate('/')
+                    navigate(user?.isAdmin ? '/admin/public' : '/')
                 },
                 onError: () => {
                     setError("로그인 실패: 아이디 또는 비밀번호 확인")
