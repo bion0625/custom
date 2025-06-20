@@ -31,7 +31,10 @@ const PublicGame: React.FC = () => {
     // 다음 장면 로드 함수
     const handleNextScene = async (nextSceneId: number, nextText: string) => {
 
-        setLog(log => [`${scene.speaker}: ${scene.text}`, `-> me: ${nextText}`, ...log])
+        setLog(log => {
+            const logEntry = [`${scene.speaker}: ${scene.text}`, `-> me: ${nextText}`, ...log];
+            return [...logEntry.slice(0, 10), '...']
+        })
 
         try {
             const nextScene = await getPublicScene(nextSceneId);
