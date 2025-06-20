@@ -88,9 +88,12 @@ const PublicAdmin: React.FC = () => {
 
     const handleSceneDelete = () => {
         if (!confirm("정말로 이 장면을 삭제하시겠습니까?")) return;
-        deletePublicScene(currentId);
-        setSuccessMsg("장면 삭제에 성공했습니다.");
-        window.location.reload();
+        deletePublicScene(currentId, {
+            onSuccess: () => {
+                setSuccessMsg("장면 삭제에 성공했습니다.");
+                window.location.reload();
+            }
+        });
     }
 
     const handleSceneSave = () => {
