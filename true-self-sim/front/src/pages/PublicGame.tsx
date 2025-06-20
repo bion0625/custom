@@ -91,7 +91,7 @@ const PublicGame: React.FC = () => {
                         {scene.text}
                     </p>
                     <div className="space-y-2">
-                        {scene.texts.map((t, index) => (
+                        {scene?.texts?.map((t, index) => (
                             <button className="block w-full py-2 px-4 bg-indigo-600 hover:bg-indigo-700 rounded-lg text-sm md:text-base"
                                     key={index}
                                     onClick={() => handleNextScene(t.nextPublicSceneId, t.nextText)}

@@ -52,7 +52,14 @@ public class PublicStoryService {
     public PublicSceneResponse getFirstScene(String memberId) {
         PublicSceneResponse response = publicSceneRepository.findFirstByIsStartIsTrueAndDeletedAtIsNullOrderByCreatedAtDesc()
                 .map(PublicSceneResponse::fromEntity)
-                .orElseThrow(() -> new NotFoundSceneException("not found first scene"));
+                .orElse(PublicSceneResponse.builder()
+                        .sceneId(0L)
+                        .speaker("")
+                        .backgroundImage("loading-background1.png")
+                        .text("첫 번째 화면이 없습니다.")
+                        .isStart(false)
+                        .isEnd(false)
+                        .build());
 
         saveSceneLog(memberId, response);
 
