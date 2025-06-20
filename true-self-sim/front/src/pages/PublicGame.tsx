@@ -19,6 +19,8 @@ const PublicGame: React.FC = () => {
         end: false,
     });
 
+    const [log, setLog] = useState<string[]>([])
+
     useEffect(() => {
         if (firstScene) {
             setScene(firstScene);
@@ -26,7 +28,10 @@ const PublicGame: React.FC = () => {
     }, [firstScene]);
 
     // 다음 장면 로드 함수
-    const handleNextScene = async (nextSceneId: number) => {
+    const handleNextScene = async (nextSceneId: number, nextText: string) => {
+
+        setLog(log => [...log, `${scene.speaker}: ${scene.text}`, `me: ${nextText}`])
+
         try {
             const nextScene = await getPublicScene(nextSceneId);
             setScene(nextScene);
@@ -88,7 +93,7 @@ const PublicGame: React.FC = () => {
                         {scene.texts.map((t, index) => (
                             <button className="block w-full py-2 px-4 bg-indigo-600 hover:bg-indigo-700 rounded-lg text-sm md:text-base"
                                     key={index}
-                                    onClick={() => handleNextScene(t.nextPublicSceneId)}
+                                    onClick={() => handleNextScene(t.nextPublicSceneId, t.nextText)}
                             >
                                 {t.text}
                             </button>
