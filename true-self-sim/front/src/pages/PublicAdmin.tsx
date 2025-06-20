@@ -110,7 +110,7 @@ const PublicAdmin: React.FC = () => {
             speaker: request.speaker,
             backgroundImage: request.backgroundImage,
             text: request.text,
-            choiceRequests: request.choiceRequests.map(cr => ({nextSceneId: cr.nextSceneId ?? 1, text: cr.text})),
+            choiceRequests: request.choiceRequests.map(cr => ({nextSceneId: cr.nextSceneId, text: cr.text})),
             start: request.start,
             end: request.end
         };
@@ -136,7 +136,7 @@ const PublicAdmin: React.FC = () => {
     }
 
     const addChoice = () => {
-        setRequest(r => ({...r, choiceRequests: [...r.choiceRequests, {text: "", nextText: "", nextSceneId: 1}]}))
+        setRequest(r => ({...r, choiceRequests: [...r.choiceRequests, {text: "", nextText: "", nextSceneId: null}]}))
     }
 
     return (
@@ -268,15 +268,12 @@ const PublicAdmin: React.FC = () => {
                                                 setRequest(r => ({...r, choiceRequests: r.choiceRequests.map((c, i) => i === index ? {...c, nextSceneId: parseInt(e.target.value)} : c)}))}
                                     >
                                         <option value="" disabled>다음 장면 선택</option>
-                                        {currentId !== 1 ? data?.publicScenes?.filter(scene => scene.sceneId !== currentId)
+                                        {data?.publicScenes?.filter(scene => scene.sceneId !== currentId)
                                             .map(scene => (
                                                 <option key={scene.sceneId} value={scene.sceneId}>
                                                     [{scene.sceneId}] {scene.text.length > 20 ? scene.text.slice(0, 20) + "..." : scene.text}
                                                 </option>
-                                        )) : data?.publicScenes?.map(scene => (
-                                            <option key={scene.sceneId} value={scene.sceneId}>
-                                                [{scene.sceneId}] {scene.text.length > 20 ? scene.text.slice(0, 20) + "..." : scene.text}
-                                            </option>))}
+                                        ))}
                                     </select>
                                     <button className="text-red-600 self-center"
                                             onClick={() => setRequest(r => ({...r, choiceRequests: r.choiceRequests.filter((_, i) => i !== index)}))}

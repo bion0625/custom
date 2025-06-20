@@ -28,7 +28,7 @@ export interface PublicStory {
 }
 
 interface choiceRequest {
-    nextSceneId: number;
+    nextSceneId: number | null;
     text: string;
     nextText?: string;
 }

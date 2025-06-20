@@ -94,10 +94,15 @@ public class PublicStoryService {
         entity.setIsStart(update.getIsStart());
         entity.setIsEnd(update.getIsEnd());
         entity.setPublicChoices(update.getPublicChoices());
+        entity.getPublicChoices().forEach(cr -> cr.setDeletedAt(LocalDateTime.now()));
 
-        entity.getPublicChoices()
-                .forEach(publicChoice -> publicChoice.setPublicScene(PublicScene.builder().id(id).build()));
-        publicChoiceRepository.saveAll(entity.getPublicChoices());
+        publicChoiceRepository.saveAll(request.getChoiceRequests().stream()
+                .map(cr -> PublicChoice.builder()
+                        .text(cr.getText())
+                        .publicScene(PublicScene.builder().id(id).build())
+                        .nextPublicScene(PublicScene.builder().id(cr.getNextSceneId()).build())
+                        .build())
+                .toList());
     }
 
     public void delete(Long id) {
