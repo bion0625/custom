@@ -118,6 +118,6 @@ public class PublicStoryService {
 
     @Transactional(readOnly = true)
     public PublicStoryResponse getPublicScenes() {
-        return PublicStoryResponse.fromEntity(publicSceneRepository.findAllByDeletedAtIsNull());
+        return PublicStoryResponse.fromEntity(publicSceneRepository.findAllByDeletedAtIsNullOrderByCreatedAtDesc());
     }
 }
