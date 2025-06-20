@@ -250,9 +250,11 @@ const PublicAdmin: React.FC = () => {
                     <div className="mb-4">
                         <div className="flex justify-between items-center mb-2">
                             <label className="text-sm font-medium">Choice</label>
-                            <button className="text-sm text-green-600" onClick={addChoice}>
-                                + 추가
-                            </button>
+                            {data?.publicScenes?.length > 0 && (
+                                <button className="text-sm text-green-600" onClick={addChoice}>
+                                    + 추가
+                                </button>
+                            )}
                         </div>
                         {request.choiceRequests.length === 0 && (
                             <p className="text-sm text-gray-400">선택지를 추가하려면 "+ 추가" 버튼을 누르세요.</p>
