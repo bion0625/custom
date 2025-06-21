@@ -11,6 +11,12 @@ export const postPublicScene = async ({speaker, backgroundImage, text, choiceReq
     return res.data;
 }
 
+export const postPublicSceneBulk = async (body: PublicSceneRequest[]) => {
+    const withOutId = body.map(({id: _id, ...rest}) => rest);
+    const res = await api.post("/admin/public/scene/bulk", withOutId);
+    return res.data;
+}
+
 export const putPublicScene = async ({id, speaker, backgroundImage, text, choiceRequests, start, end}: PublicSceneRequest) => {
     const res = await api.put(`/admin/public/scene/${id}`, {speaker, backgroundImage, text, choiceRequests, start, end});
     return res.data;
