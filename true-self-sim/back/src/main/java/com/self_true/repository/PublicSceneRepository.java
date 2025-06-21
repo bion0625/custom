@@ -12,4 +12,6 @@ public interface PublicSceneRepository extends JpaRepository<PublicScene, Long> 
     Optional<PublicScene> findFirstByIsStartIsTrueAndDeletedAtIsNullOrderByCreatedAtDesc();
 
     Optional<PublicScene> findByIdAndDeletedAtIsNull(Long id);
+
+    Optional<PublicScene> findByPublicSceneId(String publicSceneId);
 }

@@ -15,12 +15,6 @@ public class PublicChoice extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String text;
-
-    @ManyToOne
-    @JoinColumn(name = "public_scene_id")
-    private PublicScene publicScene;
-
-    @ManyToOne
-    @JoinColumn(name = "next_public_scene_id")
-    private PublicScene nextPublicScene;
+    private String publicSceneId;
+    private String nextPublicSceneId;
 }

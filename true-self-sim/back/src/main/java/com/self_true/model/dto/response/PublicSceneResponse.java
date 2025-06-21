@@ -12,7 +12,7 @@ public class PublicSceneResponse {
     /**
      * 로그 저장을 위한 장면 ID
      * */
-    private Long sceneId;
+    private String sceneId;
     private String speaker;
     private String backgroundImage;
     /**
@@ -28,16 +28,12 @@ public class PublicSceneResponse {
 
     public static PublicSceneResponse fromEntity(PublicScene publicScene) {
         return PublicSceneResponse.builder()
-                .sceneId(publicScene.getId())
+                .sceneId(publicScene.getPublicSceneId())
                 .speaker(publicScene.getSpeaker())
                 .backgroundImage(publicScene.getBackgroundImage())
                 .text(publicScene.getText())
                 .isStart(publicScene.getIsStart())
                 .isEnd(publicScene.getIsEnd())
-                .texts(publicScene.getPublicChoices().stream()
-                        .filter(pc -> pc.getDeletedAt() == null)
-                        .map(pc -> new PublicChoiceResponce(pc.getText(), pc.getNextPublicScene().getId(), pc.getNextPublicScene().getText()))
-                        .toList())
                 .build();
     }
 }

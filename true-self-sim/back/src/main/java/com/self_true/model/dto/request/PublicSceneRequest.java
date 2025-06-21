@@ -8,6 +8,7 @@ import java.util.List;
 
 @Data
 public class PublicSceneRequest {
+    private String sceneId;
     private String speaker;
     private String backgroundImage;
     /**
@@ -23,18 +24,12 @@ public class PublicSceneRequest {
 
     public PublicScene toEntity() {
         return PublicScene.builder()
+                .publicSceneId(sceneId)
                 .speaker(speaker)
                 .backgroundImage(backgroundImage)
                 .text(text)
                 .isStart(isStart)
                 .isEnd(isEnd)
-                .publicChoices(
-                        choiceRequests.stream()
-                                .map(cr -> PublicChoice.builder()
-                                        .nextPublicScene(PublicScene.builder().id(cr.getNextSceneId()).build())
-                                        .text(cr.getText())
-                                        .build())
-                                .toList())
                 .build();
     }
 }

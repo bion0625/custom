@@ -20,5 +20,6 @@ public class PublicLog extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private Long userId;
-    private Long publicSceneId;
+    private String publicSceneId;
+    private Long scenePageId;
 }

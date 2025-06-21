@@ -16,12 +16,10 @@ public class PublicScene extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    private String publicSceneId;
     private String speaker;
     private String backgroundImage;
     private String text;
     private Boolean isStart;
     private Boolean isEnd;
-
-    @OneToMany(mappedBy = "publicScene")
-    private List<PublicChoice> publicChoices;
 }
