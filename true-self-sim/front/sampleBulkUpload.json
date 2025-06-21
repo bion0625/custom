@@ -1,0 +1,23 @@
+[
+  {
+    "speaker": "시스템",
+    "backgroundImage": "loading-background1.png",
+    "text": "환영합니다!",
+    "start": true,
+    "end": false,
+    "choiceRequests": [
+      { "text": "계속", "nextSceneId": 2 }
+    ]
+  },
+  {
+    "speaker": "주인공",
+    "backgroundImage": "mountain.jpg",
+    "text": "어디로 갈까?",
+    "start": false,
+    "end": false,
+    "choiceRequests": [
+      { "text": "왼쪽 길", "nextSceneId": 3 },
+      { "text": "오른쪽 길", "nextSceneId": 4 }
+    ]
+  }
+]

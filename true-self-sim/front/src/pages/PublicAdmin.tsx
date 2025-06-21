@@ -1,11 +1,12 @@
 import usePublicStory from "../hook/usePublicStory.ts";
 import usePostPublicScene from "../hook/usePostPublicScene.ts";
-import {useContext, useEffect, useState} from "react";
+import {useContext, useEffect, useRef, useState} from "react";
 import type {PublicSceneRequest} from "../types.ts";
 import usePutPublicScene from "../hook/usePutPublicScene.ts";
 import {useNavigate} from "react-router-dom";
 import AuthContext from "../context/AuthContext.tsx";
 import useDeletePublicScene from "../hook/useDeletePublicScene.ts";
+import usePostPublicSceneBulk from "../hook/usePostPublicSceneBulk.ts";
 
 const PublicAdmin: React.FC = () => {
 
@@ -69,6 +70,12 @@ const PublicAdmin: React.FC = () => {
 
     const [errorMsg, setErrorMsg] = useState("");
     const [successMsg, setSuccessMsg] = useState("");
+
+    const [bulkPreview, setBulkPreview] = useState<PublicSceneRequest[]>([]);
+    const {mutate: postBulk, isPending: isBulkPending}
+        = usePostPublicSceneBulk();
+    const [showBulkModal, setShowBulkModal] = useState(false);
+    const fileInputRef = useRef<HTMLInputElement>(null);
 
     const createNew = () => {
         setCurrentId(0)
@@ -142,6 +149,56 @@ const PublicAdmin: React.FC = () => {
         setRequest(r => ({...r, choiceRequests: [...r.choiceRequests, {text: "", nextText: "", nextSceneId: null}]}))
     }
 
+    function handleFileSelect(e: React.ChangeEvent<HTMLInputElement>) {
+        const input = e.currentTarget;
+        const file = input.files?.[0];
+        if (!file) return;
+
+        // 확장자 검사 – 혹시 모르니 한 번 더
+        if (!file.name.toLowerCase().endsWith(".json")) {
+            setErrorMsg("JSON 파일만 업로드할 수 있습니다.");
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = (evt) => {
+            try {
+                const parsed: PublicSceneRequest[] = JSON.parse(
+                    evt.target?.result as string
+                );
+
+                // 최소 검증
+                const invalid = parsed.find(
+                    (p) =>
+                        !p.speaker?.trim() || !p.backgroundImage?.trim() || !p.text?.trim()
+                );
+                if (invalid) throw new Error("필수값 누락 행이 있습니다.");
+
+                // start 중복 방지
+                if (parsed.filter((p) => p.start).length > 1) {
+                    throw new Error("start=true 장면은 하나만 있어야 합니다.");
+                }
+
+                setBulkPreview(parsed);
+                setShowBulkModal(true);
+                setErrorMsg("");
+                input.value = "";
+            } catch (err: unknown) {
+                const message = err instanceof Error ? err.message : "JSON 파싱 오류";
+                setBulkPreview([]);
+                setErrorMsg(message);
+            }
+        };
+        reader.readAsText(file);
+    }
+
+    const closeModal = () => {
+        setShowBulkModal(false);
+        setBulkPreview([]);      // preview 비우기
+        fileInputRef.current!.value = "";  // input 초기화
+    };
+
+
     return (
         <div className="min-h-screen bg-gray-50 p-4 sm:p-6">
             <div className="max-w-6xl mx-auto flex flex-col md:flex-row gap-6">
@@ -166,6 +223,17 @@ const PublicAdmin: React.FC = () => {
                     >
                         + 새 장면
                     </button>
+                    <input type="file"
+                           ref={fileInputRef}
+                           accept=".json,application/json"
+                           className="hidden" id="bulkFile"
+                           onChange={handleFileSelect}
+                    />
+                    <label htmlFor="bulkFile"
+                           className="mb-4 w-full py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition block text-center">
+                        Bulk 업로드
+
+                    </label>
 
                     <ul className="space-y-2">
                         {data?.publicScenes?.map((scene, index) => (
@@ -343,6 +411,82 @@ const PublicAdmin: React.FC = () => {
                         </button>
                     </div>
                 </section>
+                {/* centered modal */}
+                {showBulkModal && (
+                    <>
+                        {/* overlay */}
+                        <div
+                            className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40"
+                            onClick={() => setShowBulkModal(false)}
+                        />
+
+                        {/* modal */}
+                        <div
+                            className="fixed inset-0 z-50 flex items-center justify-center p-4"
+                            aria-modal="true"
+                            role="dialog"
+                        >
+                            <div
+                                className="bg-white rounded-2xl shadow-xl w-full max-w-3xl max-h-[80vh] overflow-auto p-6 relative"
+                            >
+                                <button
+                                    className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
+                                    onClick={closeModal}
+                                >
+                                    ✕
+                                </button>
+
+                                <h3 className="text-lg font-semibold mb-4">
+                                    미리보기 ({bulkPreview.length})
+                                </h3>
+
+                                <ul className="space-y-4 mb-4">
+                                    {bulkPreview.map((sc, idx) => (
+                                        <li key={idx} className="border-b pb-2">
+                                            {/* 씬 메인 텍스트 */}
+                                            <div className="flex items-center mb-1">
+                <span className="text-indigo-600 font-mono mr-2">
+                  [{sc.speaker}]
+                </span>
+                                                <span className="font-medium">{sc.text}</span>
+                                            </div>
+                                            {/* choiceRequests 렌더 */}
+                                            {sc.choiceRequests.length > 0 && (
+                                                <ul className="ml-6 list-disc list-inside text-sm space-y-1">
+                                                    {sc.choiceRequests.map((choice, cidx) => (
+                                                        <li key={cidx}>
+                                                            {choice.text}
+                                                            <span className="text-gray-500 ml-1">
+                        (→ {choice.nextSceneId})
+                      </span>
+                                                        </li>
+                                                    ))}
+                                                </ul>
+                                            )}
+                                        </li>
+                                    ))}
+                                </ul>
+
+                                <button
+                                    className="w-full py-3 bg-purple-600 text-white rounded-lg
+                     hover:bg-purple-700 disabled:opacity-50"
+                                    disabled={isBulkPending}
+                                    onClick={() =>
+                                        postBulk(bulkPreview, {
+                                            onSuccess: () => {
+                                                setSuccessMsg("벌크 저장 완료!");
+                                                window.location.reload();
+                                            },
+                                            onError: () => setErrorMsg("벌크 저장 실패"),
+                                        })
+                                    }
+                                >
+                                    {isBulkPending ? "저장중…" : "한꺼번에 저장"}
+                                </button>
+                            </div>
+                        </div>
+                    </>
+                )}
             </div>
         </div>
     )
