@@ -22,13 +22,6 @@ public class AdminController {
         this.publicStoryService = publicStoryService;
     }
 
-    @Operation(summary = "public 장면 생성")
-    @PostMapping("/public/scene")
-    public ResponseEntity<Response> postScene(@RequestBody PublicSceneRequest request) {
-        publicStoryService.save(request);
-        return ResponseEntity.ok(new Response(true, "장면 저장 완료"));
-    }
-
     @Operation(summary = "public 장면 저장")
     @PostMapping("/public/scene/{id}")
     public ResponseEntity<Response> createOrUpdateScene(@PathVariable String id, @RequestBody PublicSceneRequest request) {
@@ -46,13 +39,6 @@ public class AdminController {
     @GetMapping("/public/story")
     public ResponseEntity<PublicStoryResponse> getStory() {
         return ResponseEntity.ok(publicStoryService.getPublicScenes());
-    }
-
-    @Operation(summary = "public 장면 수정")
-    @PutMapping("/public/scene/{id}")
-    public ResponseEntity<Response> putScene(@PathVariable String id, @RequestBody PublicSceneRequest request) {
-        publicStoryService.update(request, id);
-        return ResponseEntity.ok(new Response(true, "장면 저장 완료"));
     }
 
     @Operation(summary = "public 장면 삭제")
