@@ -3,153 +3,256 @@
     "sceneId": "s00",
     "speaker": "시스템",
     "backgroundImage": "mountain.jpg",
-    "text": "깨어났을 때, 당신은 끝없는 복도 한가운데 서 있었다.",
+    "text": "빛과 어둠이 구별되기 전, 당신은 어디에 있었습니까?",
     "start": true,
     "end": false,
     "choiceRequests": [
-      { "text": "발걸음을 내딛는다", "nextSceneId": "s01" }
+      { "text": "소리를 따라간다", "nextSceneId": "s01" }
     ]
   },
   {
     "sceneId": "s01",
-    "speaker": "해묵은 발자국",
+    "speaker": "해설",
     "backgroundImage": "mountain.jpg",
-    "text": "바닥엔 오래된 당신의 발자국이 겹겹이 찍혀 있었다.",
+    "text": "1. 〈충돌〉 — 최초의 운석이 영아적 우주를 깨뜨린다. ‘통합’은 산산이 부서져 조각마다 다른 자아를 비춘다.",
     "start": false,
     "end": false,
     "choiceRequests": [
-      { "text": "발자국을 따라간다", "nextSceneId": "s02a" },
-      { "text": "새 길을 만든다", "nextSceneId": "s02b" }
+      { "text": "내면에 전부가 있다 믿는다", "nextSceneId": "s02a" },
+      { "text": "분리가 시작된 틈을 찾는다", "nextSceneId": "s02b" },
+      { "text": "깨진 거울을 현실로 인정한다", "nextSceneId": "s02c" }
     ]
   },
   {
     "sceneId": "s02a",
-    "speaker": "기시감",
+    "speaker": "속삭임",
     "backgroundImage": "mountain.jpg",
-    "text": "“우리는 늘 같은 길을 돌았어.” 익숙한 속삭임이 귓가를 스쳤다.",
+    "text": "“천재의 신화를 선택했군. 이제 질문이다 — 내부의 무한이 외부의 유한을 증명할 수 있는가?”",
     "start": false,
     "end": false,
     "choiceRequests": [
-      { "text": "발자국을 지워버린다", "nextSceneId": "s03a" },
-      { "text": "그 속삭임에 귀를 기울인다", "nextSceneId": "s03b" }
+      { "text": "예, 내 무한은 자족한다", "nextSceneId": "s03a1" },
+      { "text": "아니, 외부의 증명 없이는 공허하다", "nextSceneId": "s03a2" }
+    ]
+  },
+  {
+    "sceneId": "s03a1",
+    "speaker": "해설",
+    "backgroundImage": "mountain.jpg",
+    "text": "당신은 운석을 부정했다. 그러나 거울엔 아직 금이 가 있다. 자족의 논리로 금을 칠해도, 금속성 빛이 균열을 더 또렷이 드러낸다.",
+    "start": false,
+    "end": false,
+    "choiceRequests": [
+      { "text": "금빛을 예찬한다", "nextSceneId": "s04a1" }
+    ]
+  },
+  {
+    "sceneId": "s03a2",
+    "speaker": "해설",
+    "backgroundImage": "mountain.jpg",
+    "text": "당신은 무한이 공허함을 인정했다. 균열은 입구가 된다. 질문이 이어진다 — “비어 있음과 채워 짐, 어느 쪽이 먼저였는가?”",
+    "start": false,
+    "end": false,
+    "choiceRequests": [
+      { "text": "비어 있음이 먼저다", "nextSceneId": "s04a2" },
+      { "text": "채워 짐이 먼저다", "nextSceneId": "s04a3" }
     ]
   },
   {
     "sceneId": "s02b",
-    "speaker": "균열",
+    "speaker": "속삭임",
     "backgroundImage": "mountain.jpg",
-    "text": "바닥이 요동치며 낯선 갈림길이 벌어졌다.",
+    "text": "“틈은 기억의 흉터다. 재현할 것인가, 봉합할 것인가?”",
     "start": false,
     "end": false,
     "choiceRequests": [
-      { "text": "갈림길로 뛰어든다", "nextSceneId": "s03c" },
-      { "text": "두려워 뒤돌아선다", "nextSceneId": "s04" }
+      { "text": "재현 — 반복 속에서 탐구", "nextSceneId": "s03b1" },
+      { "text": "봉합 — 새로운 살로 메운다", "nextSceneId": "s03b2" }
     ]
   },
   {
-    "sceneId": "s03a",
-    "speaker": "흐릿한 기억",
+    "sceneId": "s02c",
+    "speaker": "속삭임",
     "backgroundImage": "mountain.jpg",
-    "text": "발자국이 사라지자, 대신 미지의 문이 떠올랐다 — ‘후회실’.",
+    "text": "“좋다, 깨진 조각을 세어 보라. 셈이 끝나면 그 수가 곧 당신의 시제(tense)가 된다.”",
     "start": false,
     "end": false,
     "choiceRequests": [
-      { "text": "문을 연다", "nextSceneId": "s05" }
+      { "text": "과거형으로 센다", "nextSceneId": "s03c1" },
+      { "text": "현재형으로 센다", "nextSceneId": "s03c2" },
+      { "text": "미래형으로 센다", "nextSceneId": "s03c3" }
     ]
   },
   {
-    "sceneId": "s03b",
-    "speaker": "메아리",
+    "sceneId": "s04a1",
+    "speaker": "해설",
     "backgroundImage": "mountain.jpg",
-    "text": "속삭임이 메아리쳐 복도가 거울처럼 갈라졌다.",
+    "text": "2. 〈병렬 시간〉 — 금으로 메운 흉터들은 각기 다른 광도(亮度)로 현재를 반사한다. 질문: \"모든 순간이 동등한가, 혹은 불공정한가?\"",
     "start": false,
     "end": false,
     "choiceRequests": [
-      { "text": "갈라진 복도 속으로", "nextSceneId": "s05" }
+      { "text": "동등하다 — 프랙탈 구조", "nextSceneId": "s05p1" },
+      { "text": "불공정하다 — 차이의 반복", "nextSceneId": "s05p2" }
     ]
   },
+
   {
-    "sceneId": "s03c",
-    "speaker": "낯선 발자국",
+    "sceneId": "s04a2",
+    "speaker": "해설",
     "backgroundImage": "mountain.jpg",
-    "text": "갈림길 끝엔 당신이 한 번도 신어본 구두 자국이 이어져 있었다.",
+    "text": "허무에서 출발한 시간은 병렬로 갈라졌다. 각 갈래는 '가능했던 나'의 정지화면을 재생한다.",
     "start": false,
     "end": false,
     "choiceRequests": [
-      { "text": "구두를 신어본다", "nextSceneId": "s05" }
+      { "text": "가장 밝은 갈래에 들어간다", "nextSceneId": "s05p1" },
+      { "text": "가장 어두운 갈래에 들어간다", "nextSceneId": "s05p2" }
     ]
   },
+
   {
-    "sceneId": "s04",
-    "speaker": "시스템",
+    "sceneId": "s04a3",
+    "speaker": "해설",
     "backgroundImage": "mountain.jpg",
-    "text": "되돌아간 자리엔 아무것도 남아 있지 않았다 — 공허(↺)를 원하면 처음으로.",
+    "text": "과포화된 충만이 넘쳐 흘러 시간들이 서로 번져 붙는다. 당신은 어느 순간이 현재인지 알 수 없다.",
     "start": false,
     "end": false,
     "choiceRequests": [
-      { "text": "다시 시작한다", "nextSceneId": "s00" }
+      { "text": "멈춰 서서 숨을 고른다", "nextSceneId": "s05p2" }
     ]
   },
+
   {
-    "sceneId": "s05",
-    "speaker": "내면의 서재",
+    "sceneId": "s03b1",
+    "speaker": "해설",
     "backgroundImage": "mountain.jpg",
-    "text": "천장까지 닿은 서가. 책등마다 ‘두려움’, ‘욕망’, ‘가능성’…",
+    "text": "틈을 재현한다 — 기억을 복제해 나열하자, 과거들이 서로를 거울삼아 무한 복도(回廊)가 된다.",
     "start": false,
     "end": false,
     "choiceRequests": [
-      { "text": "‘두려움’을 꺼낸다", "nextSceneId": "s06a" },
-      { "text": "‘욕망’을 꺼낸다", "nextSceneId": "s06b" }
+      { "text": "복도의 끝을 찾는다", "nextSceneId": "s05p1" },
+      { "text": "복도에 눕는다", "nextSceneId": "s05p2" }
     ]
   },
   {
-    "sceneId": "s06a",
-    "speaker": "두려움",
+    "sceneId": "s03b2",
+    "speaker": "해설",
     "backgroundImage": "mountain.jpg",
-    "text": "책장이 열리며 그림자들이 속삭였다 — “우릴 안으면 빛이 난다.”",
+    "text": "틈을 봉합한다 — 새 살이 덧자라 현실과 구분되지 않는다. 그러나 신경 말단이 남아 간헐적 통증을 반사한다.",
     "start": false,
     "end": false,
     "choiceRequests": [
-      { "text": "그림자를 끌어안는다", "nextSceneId": "s07" }
+      { "text": "통증에 이름을 붙인다", "nextSceneId": "s05p2" }
     ]
   },
+
   {
-    "sceneId": "s06b",
-    "speaker": "욕망",
+    "sceneId": "s03c1",
+    "speaker": "해설",
     "backgroundImage": "mountain.jpg",
-    "text": "책 속에서 새가 날았다 — “날 주워 담으면 너도 날 수 있어.”",
+    "text": "과거 시제를 선택 — 숫자가 곧 후회(後悔)의 좌표다. 좌표마다 다른 내가 서 있다.",
     "start": false,
     "end": false,
     "choiceRequests": [
-      { "text": "새를 좇아 뛰어오른다", "nextSceneId": "s07" }
+      { "text": "가장 오래된 나를 부른다", "nextSceneId": "s05p1" },
+      { "text": "가장 최근의 나를 부른다", "nextSceneId": "s05p2" }
     ]
   },
   {
-    "sceneId": "s07",
+    "sceneId": "s03c2",
+    "speaker": "해설",
+    "backgroundImage": "mountain.jpg",
+    "text": "현재 시제를 선택 — 숫자가 곧 심박수다. 박동마다 시간이 리셋된다.",
+    "start": false,
+    "end": false,
+    "choiceRequests": [
+      { "text": "심박을 느린 템포로 낮춘다", "nextSceneId": "s05p1" },
+      { "text": "심박을 빠르게 높인다", "nextSceneId": "s05p2" }
+    ]
+  },
+  {
+    "sceneId": "s03c3",
+    "speaker": "해설",
+    "backgroundImage": "mountain.jpg",
+    "text": "미래 시제를 선택 — 숫자가 곧 가능성의 분기다. 아직 오지 않은 내가 손을 흔든다.",
+    "start": false,
+    "end": false,
+    "choiceRequests": [
+      { "text": "손을 맞잡는다", "nextSceneId": "s05p1" },
+      { "text": "외면한다", "nextSceneId": "s05p2" }
+    ]
+  },
+  {
+    "sceneId": "s05p1",
+    "speaker": "해설",
+    "backgroundImage": "mountain.jpg",
+    "text": "밝은 갈래 — 당신은 상동(相同)성을 통해 타자의 시간을 번역한다. 추론 가능한 감정들이 연결 통로가 된다.",
+    "start": false,
+    "end": false,
+    "choiceRequests": [
+      { "text": "흉터를 겨누어 대화한다", "nextSceneId": "s06" }
+    ]
+  },
+  {
+    "sceneId": "s05p2",
+    "speaker": "해설",
+    "backgroundImage": "mountain.jpg",
+    "text": "어두운 갈래 — 흉터는 역류한다. 방아쇠가 당겨져 금이 핏빛으로 번진다. 당신은 어느 기억에 사로잡혔는가?",
+    "start": false,
+    "end": false,
+    "choiceRequests": [
+      { "text": "사라진 이름을 부른다", "nextSceneId": "s06" }
+    ]
+  },
+  {
+    "sceneId": "s06",
+    "speaker": "해설",
+    "backgroundImage": "mountain.jpg",
+    "text": "3. 〈흉터〉 — 자아상은 흉터를 유리질 렌즈로 굴절한다. 행복을 숭배하면 불행이 흉터, 비극을 숭배하면 행복이 흉터.",
+    "start": false,
+    "end": false,
+    "choiceRequests": [
+      { "text": "행복 숭배의 렌즈를 벗는다", "nextSceneId": "s07a" },
+      { "text": "비극 숭배의 렌즈를 벗는다", "nextSceneId": "s07b" }
+    ]
+  },
+  {
+    "sceneId": "s07a",
+    "speaker": "속삭임",
+    "backgroundImage": "mountain.jpg",
+    "text": "“렌즈 없이 세계를 볼 용기가 있는가? 흉터가 곧 동력이요, 불균형이 곧 생성(生成)이라는 사실을 직면할 텐가?”",
+    "start": false,
+    "end": false,
+    "choiceRequests": [
+      { "text": "직면 — 다른 흉터로 교체", "nextSceneId": "s08" },
+      { "text": "회피 — 렌즈를 다시 낀다", "nextSceneId": "s09" }
+    ]
+  },
+  {
+    "sceneId": "s07b",
+    "speaker": "속삭임",
+    "backgroundImage": "mountain.jpg",
+    "text": "“영웅적 불행 없이는 자랑스러울 수 없다는 굶주림을 버릴 수 있나? 흉터를 봉헌물 아닌 연료로 삼을 수 있나?”",
+    "start": false,
+    "end": false,
+    "choiceRequests": [
+      { "text": "연료로 삼는다", "nextSceneId": "s08" },
+      { "text": "봉헌물을 고수한다", "nextSceneId": "s09" }
+    ]
+  },
+  {
+    "sceneId": "s08",
     "speaker": "주인공",
     "backgroundImage": "mountain.jpg",
-    "text": "그림자·새·발자국… 모두가 하나로 포개져 ‘나’라는 문을 열었다.",
-    "start": false,
-    "end": false,
-    "choiceRequests": [
-      { "text": "문을 통과한다", "nextSceneId": "s08_good" },
-      { "text": "문을 닫아둔다", "nextSceneId": "s08_bad" }
-    ]
-  },
-  {
-    "sceneId": "s08_good",
-    "speaker": "주인공",
-    "backgroundImage": "mountain.jpg",
-    "text": "“나는 나를 탐색하며, 동시에 넘어선다.” — 복도 끝에 새벽이 비쳤다.",
+    "text": "“흉터는 완결될 수 없다는 것, 바로 그 불완전이 나를 추동한다.” — 당신은 흉터를 버리고서야 또 다른 흉터를 주웠음을 깨닫는다. 그러나 이번엔 도망치지 않는다.",
     "start": false,
     "end": true,
     "choiceRequests": []
   },
   {
-    "sceneId": "s08_bad",
+    "sceneId": "s09",
     "speaker": "주인공",
     "backgroundImage": "mountain.jpg",
-    "text": "문을 걸어 잠근 순간, 복도가 무한 반복됐다 — 탐구는 다시 숙제로.",
+    "text": "렌즈 뒤에 숨은 세계는 흐릿하지만 편안하다. 흉터는 다시 봉인된다. 질문은 사라졌고, 답도 사라졌다 — 적어도 다음 균열이 올 때까지.",
     "start": false,
     "end": true,
     "choiceRequests": []
