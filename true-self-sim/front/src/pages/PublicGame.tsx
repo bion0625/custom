@@ -121,7 +121,7 @@ const PublicGame: React.FC = () => {
                     </div>
                 </div>
             </div>
-            <div className="hidden lg:block lg:fixed lg:top-4 lg:right-4 lg:w-64 lg:h-[70vh]">
+            <div className="hidden lg:block lg:fixed lg:top-4 lg:right-4 lg:w-64 lg:h-[70vh] overflow-y-auto">
                 <MemoryLog log={log}/>
             </div>
         </div>
