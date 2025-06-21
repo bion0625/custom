@@ -21,5 +21,4 @@ public class PublicLog extends BaseEntity {
     private Long id;
     private Long userId;
     private String publicSceneId;
-    private Long scenePageId;
 }

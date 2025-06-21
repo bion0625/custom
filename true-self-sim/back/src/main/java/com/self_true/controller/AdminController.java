@@ -43,14 +43,14 @@ public class AdminController {
 
     @Operation(summary = "public 장면 수정")
     @PutMapping("/public/scene/{id}")
-    public ResponseEntity<Response> putScene(@PathVariable Long id, @RequestBody PublicSceneRequest request) {
+    public ResponseEntity<Response> putScene(@PathVariable String id, @RequestBody PublicSceneRequest request) {
         publicStoryService.update(request, id);
         return ResponseEntity.ok(new Response(true, "장면 저장 완료"));
     }
 
     @Operation(summary = "public 장면 삭제")
     @DeleteMapping("/public/scene/{id}")
-    public ResponseEntity<Response> deleteScene(@PathVariable Long id) {
+    public ResponseEntity<Response> deleteScene(@PathVariable String id) {
         publicStoryService.delete(id);
         return ResponseEntity.ok(new Response(true, "장면 삭제 완료"));
     }

@@ -29,7 +29,7 @@ public class PublicController {
 
     @Operation(summary = "(다음) 장면 호출")
     @GetMapping("/scene/{id}")
-    public ResponseEntity<?> getScene(@PathVariable Long id, @AuthenticationPrincipal String memberId) {
+    public ResponseEntity<?> getScene(@PathVariable String id, @AuthenticationPrincipal String memberId) {
         return ResponseEntity.ok(publicStoryService.getPublicScene(id, memberId));
     }
 }

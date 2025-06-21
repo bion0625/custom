@@ -17,7 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @Transactional
@@ -42,20 +41,18 @@ public class PublicStoryService {
     /**
      * 로그인 한 상태일 때만 저장
      * */
-    private void saveSceneLog(String memberId, PublicSceneResponse response, Long id) {
+    private void saveSceneLog(String memberId, PublicSceneResponse response) {
         memberService.findById(memberId)
                 .map(Member::getId)
                 .map(userId -> PublicLog.builder()
                         .publicSceneId(response.getSceneId())
-                        .scenePageId(id)
                         .userId(userId)
                         .build())
                 .ifPresent(publicLogRepository::save);
     }
 
     public PublicSceneResponse getFirstScene(String memberId) {
-        Optional<PublicScene> publicScene = publicSceneRepository.findFirstByIsStartIsTrueAndDeletedAtIsNullOrderByCreatedAtDesc();
-        PublicSceneResponse response = publicScene
+        PublicSceneResponse response = publicSceneRepository.findFirstByIsStartIsTrueAndDeletedAtIsNullOrderByCreatedAtDesc()
                 .map(PublicSceneResponse::fromEntity)
                 .orElse(PublicSceneResponse.builder()
                         .sceneId("")
@@ -66,28 +63,18 @@ public class PublicStoryService {
                         .isEnd(false)
                         .build());
 
-        saveSceneLog(
-                memberId,
-                response,
-                publicScene
-                        .map(PublicScene::getId)
-                        .orElse(0L)
-        );
+        saveSceneLog(memberId, response);
 
         return response;
     }
 
-    public PublicSceneResponse getPublicScene(Long id, String memberId) {
+    public PublicSceneResponse getPublicScene(String id, String memberId) {
 
-        PublicSceneResponse response = publicSceneRepository.findByIdAndDeletedAtIsNull(id)
+        PublicSceneResponse response = publicSceneRepository.findByPublicSceneIdAndDeletedAtIsNull(id)
                 .map(PublicSceneResponse::fromEntity)
                 .orElseThrow(() -> new NotFoundSceneException("not found scene id: " + id));
 
-        saveSceneLog(
-                memberId,
-                response,
-                id
-        );
+        saveSceneLog(memberId, response);
 
         return response;
     }
@@ -112,8 +99,8 @@ public class PublicStoryService {
         publicChoiceRepository.saveAll(choices);
     }
 
-    public void update(PublicSceneRequest request, Long id) {
-        PublicScene entity = publicSceneRepository.findByIdAndDeletedAtIsNull(id)
+    public void update(PublicSceneRequest request, String id) {
+        PublicScene entity = publicSceneRepository.findByPublicSceneIdAndDeletedAtIsNull(id)
                 .orElseThrow(() -> new NotFoundSceneException("not found scene id: " + id));
 
         // 장면 수정
@@ -134,8 +121,8 @@ public class PublicStoryService {
         publicChoiceRepository.saveAll(choices);
     }
 
-    public void delete(Long id) {
-        publicSceneRepository.findByIdAndDeletedAtIsNull(id)
+    public void delete(String id) {
+        publicSceneRepository.findByPublicSceneIdAndDeletedAtIsNull(id)
                 .ifPresent(scene -> {
                     publicChoiceRepository.findByPublicSceneIdAndDeletedAtIsNull(scene.getPublicSceneId())
                             .forEach(cr -> cr.setDeletedAt(LocalDateTime.now()));
