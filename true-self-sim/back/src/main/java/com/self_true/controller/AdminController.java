@@ -9,6 +9,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/admin")
 @Tag(name = "AdminController", description = "관리자 API")
@@ -25,6 +27,12 @@ public class AdminController {
     public ResponseEntity<Response> postScene(@RequestBody PublicSceneRequest request) {
         publicStoryService.save(request);
         return ResponseEntity.ok(new Response(true, "장면 저장 완료"));
+    }
+
+    @PostMapping("/public/scenes/bulk")
+    public ResponseEntity<?> saveBulk(@RequestBody List<PublicSceneRequest> requests) {
+        publicStoryService.saveAll(requests);
+        return ResponseEntity.ok(new Response(true, "벌크 장면 저장 완료"));
     }
 
     @Operation(summary = "public 장면 모두 불러오기", description = "start 플래그는 하나만 있어야 하므로, 전체 불러와서 비교 및 편집 예정")

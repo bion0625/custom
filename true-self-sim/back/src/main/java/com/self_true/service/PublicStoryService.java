@@ -15,6 +15,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @Transactional
@@ -75,6 +77,22 @@ public class PublicStoryService {
         saveSceneLog(memberId, response);
 
         return response;
+    }
+
+    public void saveAll(List<PublicSceneRequest> requests) {
+        List<PublicScene> entities = requests.stream().map(PublicSceneRequest::toEntity).toList();
+        publicSceneRepository.saveAll(entities);
+
+        List<PublicChoice> allChoices = new ArrayList<>();
+
+        entities.forEach(e ->
+            e.getPublicChoices().forEach(pc -> {
+                pc.setPublicScene(e);
+                allChoices.add(pc);
+            })
+        );
+
+        publicChoiceRepository.saveAll(allChoices);
     }
 
     public void save(PublicSceneRequest request) {
