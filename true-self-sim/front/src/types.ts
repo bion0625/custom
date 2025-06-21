@@ -12,7 +12,7 @@ interface Text {
 }
 
 export interface PublicScene {
-    sceneId: number;
+    sceneId: string;
     speaker: string;
     backgroundImage: string;
     text: string;
@@ -34,7 +34,7 @@ interface choiceRequest {
 }
 
 export interface PublicSceneRequest {
-    id?: number;
+    id?: string;
     speaker: string;
     backgroundImage: string;
     text: string;

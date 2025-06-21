@@ -2,7 +2,6 @@ import usePublicStory from "../hook/usePublicStory.ts";
 import usePostPublicScene from "../hook/usePostPublicScene.ts";
 import {useContext, useEffect, useRef, useState} from "react";
 import type {PublicSceneRequest} from "../types.ts";
-import usePutPublicScene from "../hook/usePutPublicScene.ts";
 import {useNavigate} from "react-router-dom";
 import AuthContext from "../context/AuthContext.tsx";
 import useDeletePublicScene from "../hook/useDeletePublicScene.ts";
@@ -18,6 +17,7 @@ const PublicAdmin: React.FC = () => {
     if (error) navigate("/login");
 
     const [request, setRequest] = useState<PublicSceneRequest>({
+        id: "",
         speaker: "",
         backgroundImage: "",
         text: "",
@@ -26,7 +26,7 @@ const PublicAdmin: React.FC = () => {
         end: false
     });
 
-    const [currentId, setCurrentId] = useState(0);
+    const [currentId, setCurrentId] = useState("");
 
     const otherSceneAlreadyStart = data?.publicScenes?.some(scene => scene.start && scene.sceneId !== currentId);
 
@@ -40,11 +40,12 @@ const PublicAdmin: React.FC = () => {
     ]
 
     useEffect(() => {
-        if (currentId === 0) return;
+        if (currentId === "") return;
         if (data?.publicScenes) {
             const currentScene = data.publicScenes.find(scene => currentId ? scene.sceneId === currentId : scene.start);
-            setCurrentId(() => currentScene?.sceneId ?? 0);
+            setCurrentId(() => currentScene?.sceneId ?? "");
             setRequest({
+                id: currentId,
                 speaker: currentScene ? currentScene.speaker : "",
                 backgroundImage: currentScene ? currentScene.backgroundImage : "",
                 text: currentScene ? currentScene.text : "",
@@ -58,6 +59,7 @@ const PublicAdmin: React.FC = () => {
             })
         } else {
             setRequest({
+                id: "",
                 speaker: "",
                 backgroundImage: "",
                 text: "",
@@ -78,8 +80,9 @@ const PublicAdmin: React.FC = () => {
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     const createNew = () => {
-        setCurrentId(0)
+        setCurrentId("")
         setRequest({
+            id: "",
             speaker: "",
             backgroundImage: "",
             text: "",
@@ -90,7 +93,7 @@ const PublicAdmin: React.FC = () => {
     }
 
     const {mutate: postPublicScene, isPending: isPostPending} = usePostPublicScene();
-    const {mutate: putPublicScene, isPending: isPutPending} = usePutPublicScene();
+    // const {mutate: putPublicScene, isPending: isPutPending} = usePutPublicScene();
     const {mutate: deletePublicScene, isPending: isDeletePending} = useDeletePublicScene();
 
     const handleSceneDelete = () => {
@@ -117,6 +120,7 @@ const PublicAdmin: React.FC = () => {
         }
 
         const publicSceneRequest: PublicSceneRequest = {
+            id: request.id,
             speaker: request.speaker,
             backgroundImage: request.backgroundImage,
             text: request.text,
@@ -124,25 +128,15 @@ const PublicAdmin: React.FC = () => {
             start: request.start,
             end: request.end
         };
-        if (currentId === 0) {
-            postPublicScene(publicSceneRequest,
-                {
-                    onError: () => setErrorMsg("장면 저장에 실패했습니다."),
-                    onSuccess: () => {
-                        setSuccessMsg("장면 저장에 성공했습니다.");
-                        window.location.reload();
-                    }
-                });
-        } else {
-            putPublicScene({...publicSceneRequest, id: currentId},
-                {
-                    onError: () => setErrorMsg("장면 저장에 실패했습니다."),
-                    onSuccess: () => {
-                        setSuccessMsg("장면 수정에 성공했습니다.");
-                        window.location.reload();
-                    }
-                });
-        }
+
+        postPublicScene({...publicSceneRequest, id: request.id},
+            {
+                onError: () => setErrorMsg("장면 저장에 실패했습니다."),
+                onSuccess: () => {
+                    setSuccessMsg("장면 저장에 성공했습니다.");
+                    window.location.reload();
+                }
+            });
     }
 
     const addChoice = () => {
@@ -258,7 +252,22 @@ const PublicAdmin: React.FC = () => {
                     </ul>
                 </aside>
                 {/*에디터 폼*/}
-                <section className="w-full md:flex-1 bg-white p-4 rounded-md shadow flex flex-col space-y-4 overflow-auto h-auto md:h-[80vh]">
+                <section
+                    className="w-full md:flex-1 bg-white p-4 rounded-md shadow flex flex-col space-y-4 overflow-auto h-auto md:h-[80vh]">
+
+                    <div>
+                        <label className="block text-sm font-medium">Scene ID</label>
+                        <input
+                            type="text"
+                            className="mt-1 w-full border rounded p-2"
+                            value={request.id}
+                            onChange={(e) =>
+                                setRequest((r) => ({...r, id: e.target.value}))
+                            }
+                            placeholder="예: intro-1"
+                        />
+                    </div>
+
                     {/*TITLE TEXT*/}
                     <div className="mb-4">
                         <label className="block text-sm font-medium">text</label>
@@ -296,20 +305,26 @@ const PublicAdmin: React.FC = () => {
                                 {useCustomImg ? (
                                     <input type="text" className="w-full border rounded p-2"
                                            value={request.backgroundImage}
-                                           onChange={(e) => setRequest((r) => ({...r, backgroundImage: e.target.value}))}
+                                           onChange={(e) => setRequest((r) => ({
+                                               ...r,
+                                               backgroundImage: e.target.value
+                                           }))}
                                            placeholder="https://example.com/bg.jpg"
                                     />
-                                        ) : (
-                                        <select className="w-full border rounded p-2"
-                                                value={request.backgroundImage}
-                                                onChange={(e) => setRequest((r) => ({...r, backgroundImage: e.target.value}))}
-                                        >
-                                            <option value="">배경 이미지 선택</option>
-                                            {backgroundImgs.map((img, index) => (
-                                                <option key={index} value={img}>{img}</option>
-                                            ))}
-                                        </select>
-                                        )}
+                                ) : (
+                                    <select className="w-full border rounded p-2"
+                                            value={request.backgroundImage}
+                                            onChange={(e) => setRequest((r) => ({
+                                                ...r,
+                                                backgroundImage: e.target.value
+                                            }))}
+                                    >
+                                        <option value="">배경 이미지 선택</option>
+                                        {backgroundImgs.map((img, index) => (
+                                            <option key={index} value={img}>{img}</option>
+                                        ))}
+                                    </select>
+                                )}
                             </div>
                         </div>
                     </div>
@@ -333,12 +348,24 @@ const PublicAdmin: React.FC = () => {
                                     <input type="text" placeholder="답변 텍스트" className="border rounded p-1 flex-1"
                                            value={choice.text}
                                            onChange={(e) =>
-                                               setRequest(r => ({...r, choiceRequests: r.choiceRequests.map((c, i) => i === index ? {...c, text: e.target.value} : c)}))}
+                                               setRequest(r => ({
+                                                   ...r,
+                                                   choiceRequests: r.choiceRequests.map((c, i) => i === index ? {
+                                                       ...c,
+                                                       text: e.target.value
+                                                   } : c)
+                                               }))}
                                     />
                                     <select className="border rounded p-1 flex-1"
                                             value={choice.nextSceneId ?? ""}
                                             onChange={(e) =>
-                                                setRequest(r => ({...r, choiceRequests: r.choiceRequests.map((c, i) => i === index ? {...c, nextSceneId: parseInt(e.target.value)} : c)}))}
+                                                setRequest(r => ({
+                                                    ...r,
+                                                    choiceRequests: r.choiceRequests.map((c, i) => i === index ? {
+                                                        ...c,
+                                                        nextSceneId: parseInt(e.target.value)
+                                                    } : c)
+                                                }))}
                                     >
                                         <option value="" disabled>다음 장면 선택</option>
                                         {data?.publicScenes?.filter(scene => scene.sceneId !== currentId)
@@ -346,10 +373,13 @@ const PublicAdmin: React.FC = () => {
                                                 <option key={scene.sceneId} value={scene.sceneId}>
                                                     [{scene.sceneId}] {scene.text.length > 20 ? scene.text.slice(0, 20) + "..." : scene.text}
                                                 </option>
-                                        ))}
+                                            ))}
                                     </select>
                                     <button className="text-red-600 self-center"
-                                            onClick={() => setRequest(r => ({...r, choiceRequests: r.choiceRequests.filter((_, i) => i !== index)}))}
+                                            onClick={() => setRequest(r => ({
+                                                ...r,
+                                                choiceRequests: r.choiceRequests.filter((_, i) => i !== index)
+                                            }))}
                                     >
                                         x
                                     </button>
@@ -365,7 +395,8 @@ const PublicAdmin: React.FC = () => {
                                 시작 장면은 하나만 지정할 수 있습니다.
                             </p>
                         )}
-                        <label className={`inline-flex items-center space-x-2 ${otherSceneAlreadyStart ? "opacity-50 pointer-events-none" : ""}`}>
+                        <label
+                            className={`inline-flex items-center space-x-2 ${otherSceneAlreadyStart ? "opacity-50 pointer-events-none" : ""}`}>
                             <input type="checkbox" className="form-checkbox"
                                    checked={request.start}
                                    onChange={(e) =>
@@ -388,17 +419,20 @@ const PublicAdmin: React.FC = () => {
 
                     {/*버튼*/}
                     <div className="flex flex-col sm:flex-row sm:space-x-2 space-y-2 sm:space-y-0">
-                        <button className="w-full sm:w-auto px-4 py-2 bg-blue-600 text-white rounded-lg" onClick={handleSceneSave}>
-                            {isPostPending || isPutPending ? '저장중...' : '저장'}
+                        <button className="w-full sm:w-auto px-4 py-2 bg-blue-600 text-white rounded-lg"
+                                onClick={handleSceneSave}>
+                            {isPostPending ? '저장중...' : '저장'}
                         </button>
-                        {currentId !== 0 && (
-                            <button className="w-full sm:w-auto px-4 py-2 bg-red-600 text-white rounded-lg" onClick={handleSceneDelete}>
+                        {currentId !== "" && (
+                            <button className="w-full sm:w-auto px-4 py-2 bg-red-600 text-white rounded-lg"
+                                    onClick={handleSceneDelete}>
                                 {isDeletePending ? '삭제중...' : '삭제'}
                             </button>
                         )}
                         <button
                             className="w-full sm:w-auto px-4 py-2 bg-gray-400 text-white rounded-lg"
                             onClick={() => setRequest({
+                                id: "",
                                 speaker: "",
                                 backgroundImage: "",
                                 text: "",
@@ -445,9 +479,9 @@ const PublicAdmin: React.FC = () => {
                                         <li key={idx} className="border-b pb-2">
                                             {/* 씬 메인 텍스트 */}
                                             <div className="flex items-center mb-1">
-                <span className="text-indigo-600 font-mono mr-2">
-                  [{sc.speaker}]
-                </span>
+                                                <span className="text-indigo-600 font-mono mr-2">
+                                                    [{sc.speaker}]
+                                                </span>
                                                 <span className="font-medium">{sc.text}</span>
                                             </div>
                                             {/* choiceRequests 렌더 */}
@@ -456,9 +490,7 @@ const PublicAdmin: React.FC = () => {
                                                     {sc.choiceRequests.map((choice, cidx) => (
                                                         <li key={cidx}>
                                                             {choice.text}
-                                                            <span className="text-gray-500 ml-1">
-                        (→ {choice.nextSceneId})
-                      </span>
+                                                            <span className="text-gray-500 ml-1">(→ {choice.nextSceneId})</span>
                                                         </li>
                                                     ))}
                                                 </ul>

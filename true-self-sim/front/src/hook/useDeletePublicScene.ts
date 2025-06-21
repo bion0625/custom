@@ -3,7 +3,7 @@ import {deletePublicScene} from "../api/adminPublic.ts";
 
 const useDeletePublicScene = () => {
     return useMutation({
-        mutationFn: (id: number) => deletePublicScene(id)
+        mutationFn: (id: string) => deletePublicScene(id)
     })
 }
 
