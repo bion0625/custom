@@ -6,7 +6,7 @@ export const getPublicFirstScene = async () : Promise<PublicScene> => {
     return res.data;
 }
 
-export const getPublicScene = async (id: number) : Promise<PublicScene> => {
+export const getPublicScene = async (id: string) : Promise<PublicScene> => {
     const res = await api.get<PublicScene>(`/public/scene/${id}`);
     return res.data;
 }
