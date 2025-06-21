@@ -7,7 +7,7 @@ export interface User {
 
 interface Text {
     text: string;
-    nextPublicSceneId: number;
+    nextPublicSceneId: string;
     nextText: string;
 }
 
@@ -28,7 +28,7 @@ export interface PublicStory {
 }
 
 interface choiceRequest {
-    nextSceneId: number | null;
+    nextSceneId: string | null;
     text: string;
     nextText?: string;
 }

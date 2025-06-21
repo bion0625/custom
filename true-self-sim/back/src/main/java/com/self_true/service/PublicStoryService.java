@@ -1,8 +1,8 @@
 package com.self_true.service;
 
-import com.self_true.exception.DuplicateSceneIdException;
 import com.self_true.exception.NotFoundSceneException;
 import com.self_true.model.dto.request.PublicSceneRequest;
+import com.self_true.model.dto.response.PublicChoiceResponce;
 import com.self_true.model.dto.response.PublicSceneResponse;
 import com.self_true.model.dto.response.PublicStoryResponse;
 import com.self_true.model.entity.Member;
@@ -80,18 +80,6 @@ public class PublicStoryService {
         return response;
     }
 
-    public void save(PublicSceneRequest request) {
-        PublicScene publicScene = request.toEntity();
-        publicSceneRepository.findByPublicSceneId(publicScene.getPublicSceneId())
-                        .ifPresent(ps -> {
-                            throw new DuplicateSceneIdException("Scene Id is already exists: " + publicScene.getPublicSceneId() + "[" + ps.getId() + "]");
-                        });
-        publicSceneRepository.save(publicScene);
-
-        List<PublicChoice> choices = request.getChoiceRequests().stream().map(cr -> cr.toEntity(request.getSceneId())).toList();
-        publicChoiceRepository.saveAll(choices);
-    }
-
     public void saveAll(List<PublicSceneRequest> requests) {
         List<PublicScene> entities = requests.stream().map(PublicSceneRequest::toEntity).toList();
         publicSceneRepository.saveAll(entities);
@@ -118,34 +106,17 @@ public class PublicStoryService {
         }
 
         // 기존 선택지 삭제
-        publicChoiceRepository.findByPublicSceneIdAndDeletedAtIsNull(request.getSceneId())
+        publicChoiceRepository.findByPublicSceneIdAndDeletedAtIsNull(id)
                 .forEach(cr -> cr.setDeletedAt(LocalDateTime.now()));
 
 
         // 새로운 선택지 저장
-        List<PublicChoice> choices = request.getChoiceRequests().stream().map(cr -> cr.toEntity(request.getSceneId())).toList();
-        publicChoiceRepository.saveAll(choices);
-    }
-
-    public void update(PublicSceneRequest request, String id) {
-        PublicScene entity = publicSceneRepository.findByPublicSceneIdAndDeletedAtIsNull(id)
-                .orElseThrow(() -> new NotFoundSceneException("not found scene id: " + id));
-
-        // 장면 수정
-        entity.setPublicSceneId(request.getSceneId());
-        entity.setSpeaker(request.getSpeaker());
-        entity.setBackgroundImage(request.getBackgroundImage());
-        entity.setText(request.getText());
-        entity.setIsStart(request.isStart());
-        entity.setIsEnd(request.isEnd());
-
-        // 기존 선택지 삭제
-        publicChoiceRepository.findByPublicSceneIdAndDeletedAtIsNull(request.getSceneId())
-                        .forEach(cr -> cr.setDeletedAt(LocalDateTime.now()));
-
-
-        // 새로운 선택지 저장
-        List<PublicChoice> choices = request.getChoiceRequests().stream().map(cr -> cr.toEntity(request.getSceneId())).toList();
+        List<PublicChoice> choices = request.getChoiceRequests().stream()
+                .map(cr -> {
+                    PublicChoice entity = cr.toEntity(request.getSceneId());
+                    entity.setPublicSceneId(id);
+                    return entity;
+                }).toList();
         publicChoiceRepository.saveAll(choices);
     }
 
@@ -155,11 +126,18 @@ public class PublicStoryService {
                     publicChoiceRepository.findByPublicSceneIdAndDeletedAtIsNull(scene.getPublicSceneId())
                             .forEach(cr -> cr.setDeletedAt(LocalDateTime.now()));
                     publicSceneRepository.save(scene);
+                    scene.setDeletedAt(LocalDateTime.now());
                 });
     }
 
     @Transactional(readOnly = true)
     public PublicStoryResponse getPublicScenes() {
-        return PublicStoryResponse.fromEntity(publicSceneRepository.findAllByDeletedAtIsNullOrderByCreatedAtDesc());
+        PublicStoryResponse publicStoryResponse = PublicStoryResponse.fromEntity(publicSceneRepository.findAllByDeletedAtIsNullOrderByCreatedAtDesc());
+        publicStoryResponse.getPublicScenes().forEach(scene -> {
+            List<PublicChoice> choices = publicChoiceRepository.findByPublicSceneIdAndDeletedAtIsNull(scene.getSceneId());
+            List<PublicChoiceResponce> list = choices.stream().map(c -> PublicChoiceResponce.builder().text(c.getText()).nextPublicSceneId(c.getNextPublicSceneId()).build()).toList();
+            scene.setTexts(list);
+        });
+        return publicStoryResponse;
     }
 }

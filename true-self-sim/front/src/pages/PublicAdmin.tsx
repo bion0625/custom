@@ -363,7 +363,7 @@ const PublicAdmin: React.FC = () => {
                                                     ...r,
                                                     choiceRequests: r.choiceRequests.map((c, i) => i === index ? {
                                                         ...c,
-                                                        nextSceneId: parseInt(e.target.value)
+                                                        nextSceneId: e.target.value
                                                     } : c)
                                                 }))}
                                     >

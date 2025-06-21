@@ -11,6 +11,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class PublicChoiceResponce {
     private String text;
-    private Long nextPublicSceneId;
+    private String nextPublicSceneId;
     private String nextText;
 }
