@@ -113,6 +113,7 @@ public class PublicStoryService {
             entity.setIsEnd(request.isEnd());
         } else {
             PublicScene entity = request.toEntity();
+            entity.setPublicSceneId(id);
             publicSceneRepository.save(entity);
         }
 
