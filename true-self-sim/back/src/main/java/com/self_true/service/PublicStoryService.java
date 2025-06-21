@@ -63,6 +63,7 @@ public class PublicStoryService {
                         .isStart(false)
                         .isEnd(false)
                         .build());
+        response.setTexts(getChoiceResponcesBySceneId(response.getSceneId()));
 
         saveSceneLog(memberId, response);
 
@@ -74,10 +75,20 @@ public class PublicStoryService {
         PublicSceneResponse response = publicSceneRepository.findByPublicSceneIdAndDeletedAtIsNull(id)
                 .map(PublicSceneResponse::fromEntity)
                 .orElseThrow(() -> new NotFoundSceneException("not found scene id: " + id));
+        response.setTexts(getChoiceResponcesBySceneId(response.getSceneId()));
 
         saveSceneLog(memberId, response);
 
         return response;
+    }
+
+    private List<PublicChoiceResponce> getChoiceResponcesBySceneId(String sceneId) {
+        return publicChoiceRepository.findByPublicSceneIdAndDeletedAtIsNull(sceneId).stream()
+                .map(pc -> PublicChoiceResponce.builder()
+                        .text(pc.getText())
+                        .nextPublicSceneId(pc.getNextPublicSceneId())
+                        .build())
+                .toList();
     }
 
     public void saveAll(List<PublicSceneRequest> requests) {
