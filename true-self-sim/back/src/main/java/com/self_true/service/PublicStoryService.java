@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -96,6 +97,32 @@ public class PublicStoryService {
         publicSceneRepository.saveAll(entities);
 
         List<PublicChoice> choices = requests.stream().flatMap(rs -> rs.getChoiceRequests().stream().map(cr -> cr.toEntity(rs.getSceneId()))).toList();
+        publicChoiceRepository.saveAll(choices);
+    }
+
+    public void createOrUpdate(PublicSceneRequest request, String id) {
+        Optional<PublicScene> optEntity = publicSceneRepository.findByPublicSceneIdAndDeletedAtIsNull(id);
+
+        if (optEntity.isPresent()) {
+            PublicScene entity = optEntity.get();
+            // 장면 수정
+            entity.setSpeaker(request.getSpeaker());
+            entity.setBackgroundImage(request.getBackgroundImage());
+            entity.setText(request.getText());
+            entity.setIsStart(request.isStart());
+            entity.setIsEnd(request.isEnd());
+        } else {
+            PublicScene entity = request.toEntity();
+            publicSceneRepository.save(entity);
+        }
+
+        // 기존 선택지 삭제
+        publicChoiceRepository.findByPublicSceneIdAndDeletedAtIsNull(request.getSceneId())
+                .forEach(cr -> cr.setDeletedAt(LocalDateTime.now()));
+
+
+        // 새로운 선택지 저장
+        List<PublicChoice> choices = request.getChoiceRequests().stream().map(cr -> cr.toEntity(request.getSceneId())).toList();
         publicChoiceRepository.saveAll(choices);
     }
 
