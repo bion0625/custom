@@ -17,7 +17,7 @@ const PublicAdmin: React.FC = () => {
     if (error) navigate("/login");
 
     const [request, setRequest] = useState<PublicSceneRequest>({
-        id: "",
+        sceneId: "",
         speaker: "",
         backgroundImage: "",
         text: "",
@@ -45,7 +45,7 @@ const PublicAdmin: React.FC = () => {
             const currentScene = data.publicScenes.find(scene => currentId ? scene.sceneId === currentId : scene.start);
             setCurrentId(() => currentScene?.sceneId ?? "");
             setRequest({
-                id: currentId,
+                sceneId: currentId,
                 speaker: currentScene ? currentScene.speaker : "",
                 backgroundImage: currentScene ? currentScene.backgroundImage : "",
                 text: currentScene ? currentScene.text : "",
@@ -59,7 +59,7 @@ const PublicAdmin: React.FC = () => {
             })
         } else {
             setRequest({
-                id: "",
+                sceneId: "",
                 speaker: "",
                 backgroundImage: "",
                 text: "",
@@ -82,7 +82,7 @@ const PublicAdmin: React.FC = () => {
     const createNew = () => {
         setCurrentId("")
         setRequest({
-            id: "",
+            sceneId: "",
             speaker: "",
             backgroundImage: "",
             text: "",
@@ -120,7 +120,7 @@ const PublicAdmin: React.FC = () => {
         }
 
         const publicSceneRequest: PublicSceneRequest = {
-            id: request.id,
+            sceneId: request.sceneId,
             speaker: request.speaker,
             backgroundImage: request.backgroundImage,
             text: request.text,
@@ -129,7 +129,7 @@ const PublicAdmin: React.FC = () => {
             end: request.end
         };
 
-        postPublicScene({...publicSceneRequest, id: request.id},
+        postPublicScene({...publicSceneRequest, sceneId: request.sceneId},
             {
                 onError: () => setErrorMsg("장면 저장에 실패했습니다."),
                 onSuccess: () => {
@@ -164,7 +164,7 @@ const PublicAdmin: React.FC = () => {
                 // 최소 검증
                 const invalid = parsed.find(
                     (p) =>
-                        !p.speaker?.trim() || !p.backgroundImage?.trim() || !p.text?.trim()
+                        !p.speaker?.trim() || !p.backgroundImage?.trim() || !p.text?.trim() || !p.sceneId?.trim()
                 );
                 if (invalid) throw new Error("필수값 누락 행이 있습니다.");
 
@@ -226,7 +226,6 @@ const PublicAdmin: React.FC = () => {
                     <label htmlFor="bulkFile"
                            className="mb-4 w-full py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition block text-center">
                         Bulk 업로드
-
                     </label>
 
                     <ul className="space-y-2">
@@ -260,7 +259,7 @@ const PublicAdmin: React.FC = () => {
                         <input
                             type="text"
                             className="mt-1 w-full border rounded p-2"
-                            value={request.id}
+                            value={request.sceneId}
                             onChange={(e) =>
                                 setRequest((r) => ({...r, id: e.target.value}))
                             }
@@ -432,7 +431,7 @@ const PublicAdmin: React.FC = () => {
                         <button
                             className="w-full sm:w-auto px-4 py-2 bg-gray-400 text-white rounded-lg"
                             onClick={() => setRequest({
-                                id: "",
+                                sceneId: "",
                                 speaker: "",
                                 backgroundImage: "",
                                 text: "",
@@ -500,8 +499,7 @@ const PublicAdmin: React.FC = () => {
                                 </ul>
 
                                 <button
-                                    className="w-full py-3 bg-purple-600 text-white rounded-lg
-                     hover:bg-purple-700 disabled:opacity-50"
+                                    className="w-full py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 disabled:opacity-50"
                                     disabled={isBulkPending}
                                     onClick={() =>
                                         postBulk(bulkPreview, {

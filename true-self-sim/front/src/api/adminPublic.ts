@@ -7,13 +7,12 @@ export const getPublicStory = async (): Promise<PublicStory> => {
 }
 
 export const postPublicSceneBulk = async (body: PublicSceneRequest[]) => {
-    const withOutId = body.map(({id: _id, ...rest}) => rest);
-    const res = await api.post("/admin/public/scenes/bulk", withOutId);
+    const res = await api.post("/admin/public/scenes/bulk", body);
     return res.data;
 }
 
-export const postPublicScene = async ({id, speaker, backgroundImage, text, choiceRequests, start, end}: PublicSceneRequest) => {
-    const res = await api.post(`/admin/public/scene/${id}`, {speaker, backgroundImage, text, choiceRequests, start, end});
+export const postPublicScene = async ({sceneId, speaker, backgroundImage, text, choiceRequests, start, end}: PublicSceneRequest) => {
+    const res = await api.post(`/admin/public/scene/${sceneId}`, {speaker, backgroundImage, text, choiceRequests, start, end});
     return res.data;
 }
 

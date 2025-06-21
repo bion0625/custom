@@ -34,7 +34,7 @@ interface choiceRequest {
 }
 
 export interface PublicSceneRequest {
-    id?: string;
+    sceneId?: string;
     speaker: string;
     backgroundImage: string;
     text: string;
