@@ -2,122 +2,145 @@
   {
     "sceneId": "s00",
     "speaker": "시스템",
-    "backgroundImage": "loading-background1.png",
-    "text": "환영합니다, ‘거울 도시’에 오신 것을.",
+    "backgroundImage": "mountain.jpg",
+    "text": "깨어났을 때, 당신은 끝없는 복도 한가운데 서 있었다.",
     "start": true,
     "end": false,
     "choiceRequests": [
-      { "text": "다음", "nextSceneId": "s01" }
+      { "text": "발걸음을 내딛는다", "nextSceneId": "s01" }
     ]
   },
   {
     "sceneId": "s01",
-    "speaker": "주인공",
+    "speaker": "해묵은 발자국",
     "backgroundImage": "mountain.jpg",
-    "text": "…내가 비치는 거울엔 셀 수 없는 ‘나’가 있다.",
+    "text": "바닥엔 오래된 당신의 발자국이 겹겹이 찍혀 있었다.",
     "start": false,
     "end": false,
     "choiceRequests": [
-      { "text": "거울을 깨뜨린다", "nextSceneId": "s02a" },
-      { "text": "거울에 손을 댄다", "nextSceneId": "s02b" }
+      { "text": "발자국을 따라간다", "nextSceneId": "s02a" },
+      { "text": "새 길을 만든다", "nextSceneId": "s02b" }
     ]
   },
   {
     "sceneId": "s02a",
-    "speaker": "거울 속 나",
+    "speaker": "기시감",
     "backgroundImage": "mountain.jpg",
-    "text": "깨진 조각마다 다른 표정… 어느 게 진짜일까?",
+    "text": "“우리는 늘 같은 길을 돌았어.” 익숙한 속삭임이 귓가를 스쳤다.",
     "start": false,
     "end": false,
     "choiceRequests": [
-      { "text": "조각을 껴안는다", "nextSceneId": "s03a" },
-      { "text": "조각을 외면한다", "nextSceneId": "s04" }
-    ]
-  },
-  {
-    "sceneId": "s03a",
-    "speaker": "시스템",
-    "backgroundImage": "mountain.jpg",
-    "text": "손엔 피, 대신 조각들이 모여 ‘불안’이라는 글자를 만든다.",
-    "start": false,
-    "end": false,
-    "choiceRequests": [
-      { "text": "불안을 읽는다", "nextSceneId": "s05" }
+      { "text": "발자국을 지워버린다", "nextSceneId": "s03a" },
+      { "text": "그 속삭임에 귀를 기울인다", "nextSceneId": "s03b" }
     ]
   },
   {
     "sceneId": "s02b",
-    "speaker": "거울 속 나",
+    "speaker": "균열",
     "backgroundImage": "mountain.jpg",
-    "text": "표면이 일렁이며 낯선 목소리가 겹친다 — “네 불안은 누구의 것?”",
+    "text": "바닥이 요동치며 낯선 갈림길이 벌어졌다.",
     "start": false,
     "end": false,
     "choiceRequests": [
-      { "text": "타인의 그림자를 본다", "nextSceneId": "s03b" },
-      { "text": "도망친다", "nextSceneId": "s04" }
+      { "text": "갈림길로 뛰어든다", "nextSceneId": "s03c" },
+      { "text": "두려워 뒤돌아선다", "nextSceneId": "s04" }
+    ]
+  },
+  {
+    "sceneId": "s03a",
+    "speaker": "흐릿한 기억",
+    "backgroundImage": "mountain.jpg",
+    "text": "발자국이 사라지자, 대신 미지의 문이 떠올랐다 — ‘후회실’.",
+    "start": false,
+    "end": false,
+    "choiceRequests": [
+      { "text": "문을 연다", "nextSceneId": "s05" }
     ]
   },
   {
     "sceneId": "s03b",
-    "speaker": "타자",
+    "speaker": "메아리",
     "backgroundImage": "mountain.jpg",
-    "text": "그림자는 내 이름을 부르며 웃는다. ‘나’를 흉내 내는 ‘너’.",
+    "text": "속삭임이 메아리쳐 복도가 거울처럼 갈라졌다.",
     "start": false,
     "end": false,
     "choiceRequests": [
-      { "text": "그림자에게 손을 내민다", "nextSceneId": "s05" }
+      { "text": "갈라진 복도 속으로", "nextSceneId": "s05" }
+    ]
+  },
+  {
+    "sceneId": "s03c",
+    "speaker": "낯선 발자국",
+    "backgroundImage": "mountain.jpg",
+    "text": "갈림길 끝엔 당신이 한 번도 신어본 구두 자국이 이어져 있었다.",
+    "start": false,
+    "end": false,
+    "choiceRequests": [
+      { "text": "구두를 신어본다", "nextSceneId": "s05" }
     ]
   },
   {
     "sceneId": "s04",
     "speaker": "시스템",
     "backgroundImage": "mountain.jpg",
-    "text": "도피 끝엔 아무것도 없다. 회귀(↺)를 희망하면 [거울]로 돌아가시오.",
+    "text": "되돌아간 자리엔 아무것도 남아 있지 않았다 — 공허(↺)를 원하면 처음으로.",
     "start": false,
     "end": false,
     "choiceRequests": [
-      { "text": "거울로 되돌아간다", "nextSceneId": "s01" }
+      { "text": "다시 시작한다", "nextSceneId": "s00" }
     ]
   },
   {
     "sceneId": "s05",
-    "speaker": "주인공",
+    "speaker": "내면의 서재",
     "backgroundImage": "mountain.jpg",
-    "text": "조각·그림자·불안… 모두가 책장에 꽂힌 ‘사전’ 같아.",
+    "text": "천장까지 닿은 서가. 책등마다 ‘두려움’, ‘욕망’, ‘가능성’…",
     "start": false,
     "end": false,
     "choiceRequests": [
-      { "text": "책 한 권 펼친다", "nextSceneId": "s06" }
+      { "text": "‘두려움’을 꺼낸다", "nextSceneId": "s06a" },
+      { "text": "‘욕망’을 꺼낸다", "nextSceneId": "s06b" }
     ]
   },
   {
-    "sceneId": "s06",
-    "speaker": "책 속 문장",
+    "sceneId": "s06a",
+    "speaker": "두려움",
     "backgroundImage": "mountain.jpg",
-    "text": "“필연은 우연을 가장해 온다. 타자를 환대할 때 비로소 자아는 줄어든다.”",
+    "text": "책장이 열리며 그림자들이 속삭였다 — “우릴 안으면 빛이 난다.”",
     "start": false,
     "end": false,
     "choiceRequests": [
-      { "text": "책장을 덮는다", "nextSceneId": "s07" }
+      { "text": "그림자를 끌어안는다", "nextSceneId": "s07" }
+    ]
+  },
+  {
+    "sceneId": "s06b",
+    "speaker": "욕망",
+    "backgroundImage": "mountain.jpg",
+    "text": "책 속에서 새가 날았다 — “날 주워 담으면 너도 날 수 있어.”",
+    "start": false,
+    "end": false,
+    "choiceRequests": [
+      { "text": "새를 좇아 뛰어오른다", "nextSceneId": "s07" }
     ]
   },
   {
     "sceneId": "s07",
-    "speaker": "시스템",
+    "speaker": "주인공",
     "backgroundImage": "mountain.jpg",
-    "text": "두 길이 앞에 놓였다.",
+    "text": "그림자·새·발자국… 모두가 하나로 포개져 ‘나’라는 문을 열었다.",
     "start": false,
     "end": false,
     "choiceRequests": [
-      { "text": "불안을 끌어안고 나아간다", "nextSceneId": "s08_good" },
-      { "text": "거울 도시를 망각한다", "nextSceneId": "s08_bad" }
+      { "text": "문을 통과한다", "nextSceneId": "s08_good" },
+      { "text": "문을 닫아둔다", "nextSceneId": "s08_bad" }
     ]
   },
   {
     "sceneId": "s08_good",
     "speaker": "주인공",
     "backgroundImage": "mountain.jpg",
-    "text": "“타자와 함께 흔들리며 살아가겠다.” — 작은 해가 솟는다.",
+    "text": "“나는 나를 탐색하며, 동시에 넘어선다.” — 복도 끝에 새벽이 비쳤다.",
     "start": false,
     "end": true,
     "choiceRequests": []
@@ -126,7 +149,7 @@
     "sceneId": "s08_bad",
     "speaker": "주인공",
     "backgroundImage": "mountain.jpg",
-    "text": "눈을 뜨자 다시 거울 앞… ‘환대’가 숙제로 남는다.",
+    "text": "문을 걸어 잠근 순간, 복도가 무한 반복됐다 — 탐구는 다시 숙제로.",
     "start": false,
     "end": true,
     "choiceRequests": []
