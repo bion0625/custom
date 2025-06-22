@@ -203,7 +203,7 @@ const PublicAdmin: React.FC = () => {
                     >
                         돌아가기
                     </button>
-                    <button className="mb-4 w-full py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition"
+                    <button className="mb-2 w-full py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition"
                             onClick={async () => {
                                 await logout();
                                 await refreshUser();
@@ -212,7 +212,7 @@ const PublicAdmin: React.FC = () => {
                     >
                         로그아웃
                     </button>
-                    <button className="mb-4 w-full py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition"
+                    <button className="mb-2 w-full py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition"
                             onClick={createNew}
                     >
                         + 새 장면
@@ -224,9 +224,14 @@ const PublicAdmin: React.FC = () => {
                            onChange={handleFileSelect}
                     />
                     <label htmlFor="bulkFile"
-                           className="mb-4 w-full py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition block text-center">
+                           className="mb-2 w-full py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition block text-center">
                         Bulk 업로드
                     </label>
+                    <button className="mb-2 w-full py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+                            onClick={() => navigate("/admin/public/graph")}
+                    >
+                        그래프
+                    </button>
 
                     <ul className="space-y-2">
                         {data?.publicScenes?.map((scene, index) => (

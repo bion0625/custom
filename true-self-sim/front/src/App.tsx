@@ -9,6 +9,7 @@ function App() {
     const Register = lazy(() => import("./pages/Register.tsx"))
     const PublicGame = lazy(() => import("./pages/PublicGame.tsx"))
     const PublicAdmin = lazy(() => import("./pages/PublicAdmin.tsx"))
+    const PublicAdminGraph = lazy(() => import("./pages/PublicAdminGraph.tsx"))
 
   return (
       <AuthProvider>
@@ -20,6 +21,7 @@ function App() {
                           <Route path={"/login"} element={<Login/>}/>
                           <Route path={"/register"} element={<Register/>}/>
                           <Route path={"/admin/public"} element={<PublicAdmin/>}/>
+                          <Route path={"/admin/public/graph"} element={<PublicAdminGraph/>}/>
                       </Routes>
                   </Suspense>
               </ErrorBoundary>
