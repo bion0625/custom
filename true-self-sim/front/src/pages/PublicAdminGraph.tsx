@@ -26,10 +26,11 @@ const EditableNode = memo(({ id, data, selected }: any) => {
     const [fields, setFields] = useState({ ...data });
     const onDoubleClick = () => setEditMode(true);
     const onChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        const { name, value, type, checked } = e.target as HTMLInputElement;
+        const { name, value, type, checked } = e.target;
         setFields({ ...fields, [name]: type === 'checkbox' ? checked : value });
     };
-    const onBlur = () => {
+
+    const onSave = () => {
         data.onUpdate(id, fields);
         setEditMode(false);
     };
@@ -37,17 +38,39 @@ const EditableNode = memo(({ id, data, selected }: any) => {
     return (
         <div
             onDoubleClick={onDoubleClick}
-            style={{ padding: 10, border: selected ? '2px solid #007aff' : '1px solid #777', borderRadius: 5, background: '#fff', width: 180 }}
+            style={{
+                padding: 10,
+                border: selected ? '2px solid #007aff' : '1px solid #777',
+                borderRadius: 5,
+                background: '#fff',
+                width: 180,
+            }}
         >
             <Handle type="target" position={Position.Top} style={{ background: '#555' }} />
             {editMode ? (
                 <div style={{ display: 'flex', flexDirection: 'column' }}>
-                    <input name="sceneId" value={fields.sceneId} onChange={onChange} onBlur={onBlur} placeholder="sceneId" style={{ marginBottom: 4 }} />
-                    <input name="speaker" value={fields.speaker} onChange={onChange} onBlur={onBlur} placeholder="speaker" style={{ marginBottom: 4 }} />
-                    <input name="backgroundImage" value={fields.backgroundImage} onChange={onChange} onBlur={onBlur} placeholder="backgroundImage" style={{ marginBottom: 4 }} />
-                    <textarea name="text" value={fields.text} onChange={onChange} onBlur={onBlur} placeholder="text" rows={3} style={{ marginBottom: 4 }} />
-                    <label style={{ fontSize: 12 }}><input type="checkbox" name="start" checked={fields.start} onChange={onChange} /> Start</label>
-                    <label style={{ fontSize: 12 }}><input type="checkbox" name="end" checked={fields.end} onChange={onChange} /> End</label>
+                    <input name="sceneId" value={fields.sceneId} onChange={onChange} placeholder="sceneId" />
+                    <input name="speaker" value={fields.speaker} onChange={onChange} placeholder="speaker" />
+                    <input name="backgroundImage" value={fields.backgroundImage} onChange={onChange} placeholder="backgroundImage" />
+                    <textarea name="text" value={fields.text} onChange={onChange} rows={3} placeholder="text" />
+                    <label style={{ fontSize: 12 }}>
+                        <input type="checkbox" name="start" checked={fields.start} onChange={onChange} /> Start
+                    </label>
+                    <label style={{ fontSize: 12 }}>
+                        <input type="checkbox" name="end" checked={fields.end} onChange={onChange} /> End
+                    </label>
+                    <button
+                        onClick={onSave}
+                        disabled={
+                            !fields.sceneId.trim() ||
+                            !fields.speaker.trim() ||
+                            !fields.backgroundImage.trim() ||
+                            !fields.text.trim()
+                        }
+                        className="mt-1 px-2 py-1 rounded bg-blue-500 text-white disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                        Save
+                    </button>
                 </div>
             ) : (
                 <div>
