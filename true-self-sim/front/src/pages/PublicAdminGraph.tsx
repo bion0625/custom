@@ -17,10 +17,8 @@ import type {
 } from 'reactflow';
 import 'reactflow/dist/style.css';
 
-import EditableNode, {
-    EditableNodeData,
-    NodeFormData,
-} from '../component/EditableNode';
+import EditableNode from '../component/EditableNode';
+import type { EditableNodeData, NodeFormData } from '../component/EditableNode';
 
 const nodeTypes = { editableNode: EditableNode };
 
