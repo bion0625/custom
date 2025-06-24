@@ -3,7 +3,6 @@ import ReactFlow, {
     MiniMap,
     Controls,
     Background,
-    addEdge,
     MarkerType,
     ReactFlowProvider,
     useNodesState,
@@ -172,10 +171,21 @@ const PublicAdminGraph: React.FC = () => {
         setSelection({ nodes: [], edges: [] });
     }
 
+
     const onConnect = useCallback((connection: Connection) => {
-        const id = `e${Date.now()}`;
-        const newEdge = { ...connection, id, label: '', markerEnd: { type: MarkerType.ArrowClosed } };
-        setEdges((eds) => assignOffsets(addEdge(newEdge, eds)));
+        const newEdge: FlowEdge = {
+            id: `e${Date.now()}`,
+            source: connection.source!,
+            target: connection.target!,
+            sourceHandle: connection.sourceHandle,
+            targetHandle: connection.targetHandle,
+            type: 'default',
+            markerEnd: { type: MarkerType.ArrowClosed },
+        };
+        setEdges((eds) =>
+            // 기존 addEdge 대신, 배열에 직접 추가
+            assignOffsets([...eds, newEdge])
+        );
     }, [setEdges]);
 
     const onSelectionChange = useCallback((sel: Selection) => {
@@ -238,7 +248,7 @@ const PublicAdminGraph: React.FC = () => {
         setNodes((nds) =>
             nds.map((n) => ({
                 ...n,
-                data: { ...n.data, invalid: !!invalidNodes[n.id] },
+                data: { ...n.data, invalid: invalidNodes[n.id] ?? false },
             }))
         );
     }, [invalidNodes, setNodes]);
