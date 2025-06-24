@@ -13,8 +13,8 @@ spec:
         app: frontend
     spec:
       containers:
-      - name: bion0625/ts-frontend:v1
-        image: frontend:latest
+      - name: frontend
+        image: bion0625/ts-frontend:v1
         env:
         - name: VITE_API_URL
           valueFrom:
