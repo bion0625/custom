@@ -6,6 +6,7 @@ import {useNavigate} from "react-router-dom";
 import AuthContext from "../context/AuthContext.tsx";
 import useDeletePublicScene from "../hook/useDeletePublicScene.ts";
 import usePostPublicSceneBulk from "../hook/usePostPublicSceneBulk.ts";
+import { backgroundImgs } from "../constants/backgroundImages.ts";
 
 const PublicAdmin: React.FC = () => {
 
@@ -31,13 +32,6 @@ const PublicAdmin: React.FC = () => {
     const otherSceneAlreadyStart = data?.publicScenes?.some(scene => scene.start && scene.sceneId !== currentId);
 
     const [useCustomImg, setUseCustomImg] = useState(false);
-    const backgroundImgs = [
-        "mountain.jpg",
-        'loading-background1.png',
-        'loading-background2.png',
-        'loading-background3.png',
-        'loading-background4.png',
-    ]
 
     useEffect(() => {
         if (currentId === "") return;
