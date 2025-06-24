@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useRef } from 'react';
+import React, { useState, useCallback, useRef, useEffect } from 'react';
 import ReactFlow, {
     MiniMap,
     Controls,
@@ -18,6 +18,7 @@ import 'reactflow/dist/style.css';
 
 import EditableNode from '../component/EditableNode';
 import type { EditableNodeData, NodeFormData } from '../component/EditableNode';
+import usePublicStory from "../hook/usePublicStory.ts";
 
 type Selection = {
     nodes: FlowNode[];
@@ -51,6 +52,7 @@ const PublicAdminGraph: React.FC = () => {
     const [edges, setEdges, onEdgesChange] = useEdgesState([]);
     const [selection, setSelection] = useState<Selection>({ nodes: [], edges: [] });
     const [edgeLabel, setEdgeLabel] = useState('');
+    const { data } = usePublicStory();
 
     const handleNodeUpdate = useCallback((id: string, newData: NodeFormData) => {
         setNodes((nds) =>
@@ -62,11 +64,35 @@ const PublicAdminGraph: React.FC = () => {
         );
     }, [setNodes]);
 
-    // Add initial node once
-    React.useEffect(() => {
-        const initialId = `s0`;
-        setNodes([{ id: initialId, type: 'editableNode', position: { x: 50, y: 50 }, data: { sceneId: initialId, speaker: '', backgroundImage: '', text: '', start: true, end: false, onUpdate: handleNodeUpdate } }]);
-    }, [setNodes, handleNodeUpdate]);
+    useEffect(() => {
+        if (!data) return;
+        const loadedNodes = data.publicScenes.map((scene, idx) => ({
+            id: scene.sceneId,
+            type: 'editableNode',
+            position: { x: idx * 200, y: 50 },
+            data: {
+                sceneId: scene.sceneId,
+                speaker: scene.speaker,
+                backgroundImage: scene.backgroundImage,
+                text: scene.text,
+                start: scene.start,
+                end: scene.end,
+                onUpdate: handleNodeUpdate,
+            },
+        }));
+        const loadedEdges = data.publicScenes.flatMap((scene) =>
+            scene.texts.map((choice) => ({
+                id: `${scene.sceneId}-${choice.nextPublicSceneId}`,
+                source: scene.sceneId,
+                target: choice.nextPublicSceneId,
+                label: choice.text,
+                markerEnd: { type: MarkerType.ArrowClosed },
+            }))
+        );
+        setNodes(loadedNodes);
+        setEdges(loadedEdges);
+        idCounter.current = loadedNodes.length + 1;
+    }, [data, setNodes, setEdges, handleNodeUpdate]);
 
     function handleDeleteScene() {
         const selNode = selection.nodes[0]; if (!selNode) return;
@@ -107,7 +133,7 @@ const PublicAdminGraph: React.FC = () => {
     };
 
     // keep end flag in sync with outgoing edges and enforce single start node
-    React.useEffect(() => {
+    useEffect(() => {
         setNodes((nds) => {
             if (nds.length === 0) return nds;
             const firstId = nds[0].id;
