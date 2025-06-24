@@ -1,4 +1,4 @@
-import { memo, useState } from 'react';
+import { memo, useState, useEffect } from 'react';
 import { Handle, Position } from 'reactflow';
 
 export interface NodeFormData {
@@ -30,6 +30,11 @@ const EditableNode: React.FC<EditableNodeProps> = memo(({ id, data, selected }) 
         start: data.start,
         end: data.end,
     });
+
+    // Keep local state in sync when start or end flags change externally
+    useEffect(() => {
+        setFields((prev) => ({ ...prev, start: data.start, end: data.end }));
+    }, [data.start, data.end]);
 
     const onDoubleClick = () => setEditMode(true);
 
