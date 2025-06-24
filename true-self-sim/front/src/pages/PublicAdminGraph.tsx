@@ -75,6 +75,8 @@ const PublicAdminGraph: React.FC = () => {
     const { data } = usePublicStory();
     const { mutate: saveBulk, isPending } = usePostPublicSceneBulk();
     const { mutate: deletePublicScene, isPending: isDeletePending } = useDeletePublicScene();
+    const [errorMsg, setErrorMsg] = useState('');
+    const [successMsg, setSuccessMsg] = useState('');
     const navigate = useNavigate();
 
     const handleNodeUpdate = useCallback((id: string, newData: NodeFormData) => {
@@ -197,8 +199,30 @@ const PublicAdminGraph: React.FC = () => {
     };
 
     const handleSave = () => {
+        setErrorMsg('');
+        setSuccessMsg('');
         const requests = toRequests(nodes, edges);
-        saveBulk(requests);
+
+        for (const scene of requests) {
+            if (
+                !scene.sceneId.trim() ||
+                !scene.speaker.trim() ||
+                !scene.backgroundImage.trim() ||
+                !scene.text.trim()
+            ) {
+                setErrorMsg('모든 필수 항목을 입력해주세요.');
+                return;
+            }
+            if (scene.choiceRequests.some(cr => !cr.text.trim() || !cr.nextSceneId)) {
+                setErrorMsg('모든 필수 항목을 입력해주세요.');
+                return;
+            }
+        }
+
+        saveBulk(requests, {
+            onError: () => setErrorMsg('장면 저장에 실패했습니다.'),
+            onSuccess: () => setSuccessMsg('장면 저장에 성공했습니다.'),
+        });
     };
 
     return (
@@ -209,6 +233,8 @@ const PublicAdminGraph: React.FC = () => {
                 <button onClick={handleAddScene} style={{ marginRight: 8 }}>New Scene</button>
                 <button onClick={handleExport} style={{ marginRight: 8 }}>Export JSON</button>
                 <button onClick={handleSave} style={{ marginRight: 8 }} disabled={isPending}>Save</button>
+                {errorMsg && <span style={{ color: 'red', marginRight: 8 }}>{errorMsg}</span>}
+                {successMsg && <span style={{ color: 'green', marginRight: 8 }}>{successMsg}</span>}
                 <button
                     onClick={handleDeleteScene}
                     disabled={selection.nodes.length === 0 || isDeletePending}
