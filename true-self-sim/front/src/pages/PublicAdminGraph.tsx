@@ -22,6 +22,7 @@ import usePublicStory from "../hook/usePublicStory.ts";
 import usePostPublicSceneBulk from "../hook/usePostPublicSceneBulk.ts";
 import useDeletePublicScene from "../hook/useDeletePublicScene.ts";
 import { useNavigate } from 'react-router-dom';
+import { backgroundImgs } from "../constants/backgroundImages.ts";
 
 type Selection = {
     nodes: FlowNode[];
@@ -157,7 +158,20 @@ const PublicAdminGraph: React.FC = () => {
 
     const handleAddScene = () => {
         const newId = `s${idCounter.current++}`;
-        setNodes((nds) => nds.concat({ id: newId, type: 'editableNode', position: { x: 100, y: 100 }, data: { sceneId: newId, speaker: '', backgroundImage: '', text: '', start: false, end: false, onUpdate: handleNodeUpdate } }));
+        setNodes((nds) => nds.concat({
+            id: newId,
+            type: 'editableNode',
+            position: { x: 100, y: 100 },
+            data: {
+                sceneId: newId,
+                speaker: '',
+                backgroundImage: backgroundImgs[0],
+                text: '',
+                start: false,
+                end: false,
+                onUpdate: handleNodeUpdate
+            }
+        }));
     };
 
     // keep end flag in sync with outgoing edges and enforce single start node
