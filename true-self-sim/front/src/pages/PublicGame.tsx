@@ -93,32 +93,34 @@ const PublicGame: React.FC = () => {
                         )}
                     </div>
                 </div>
-                {isFinished ? (
-                    <FullLog log={fullLog} onRestart={() => {
-                        setLog([]);
-                        setFullLog([]);
-                        setIsFinished(false);
-                        if (firstScene) setScene(firstScene);
-                    }} />
-                ) : (
-                    <div className="bg-white/10 backdrop-blur-md rounded-xl shadow-lg p-6 w-full max-w-xl md:max-w-2xl">
-                        <h2 className="text-indigo-300 text-lg md:text-xl mb-2">
-                            {scene.speaker}
-                        </h2>
-                        <p className="text-xl md:text-2xl mb-4">
-                            {scene.text}
-                        </p>
-                        <div className="space-y-2">
-                            {scene?.texts?.map((t, index) => (
-                                <button className="block w-full py-2 px-4 bg-indigo-600 hover:bg-indigo-700 rounded-lg text-sm md:text-base"
-                                        key={index}
-                                        onClick={() => handleNextScene(t.nextPublicSceneId, t.text)}
-                                >
-                                    {t.text}
-                                </button>
-                            ))}
-                        </div>
+                <div className="bg-white/10 backdrop-blur-md rounded-xl shadow-lg p-6 w-full max-w-xl md:max-w-2xl">
+                    <h2 className="text-indigo-300 text-lg md:text-xl mb-2">
+                        {scene.speaker}
+                    </h2>
+                    <p className="text-xl md:text-2xl mb-4">
+                        {scene.text}
+                    </p>
+                    <div className="space-y-2">
+                        {scene?.texts?.map((t, index) => (
+                            <button className="block w-full py-2 px-4 bg-indigo-600 hover:bg-indigo-700 rounded-lg text-sm md:text-base"
+                                    key={index}
+                                    onClick={() => handleNextScene(t.nextPublicSceneId, t.text)}
+                            >
+                                {t.text}
+                            </button>
+                        ))}
                     </div>
+                </div>
+                {isFinished && (
+                    <FullLog
+                        log={fullLog}
+                        onRestart={() => {
+                            setLog([]);
+                            setFullLog([]);
+                            setIsFinished(false);
+                            if (firstScene) setScene(firstScene);
+                        }}
+                    />
                 )}
             </div>
             {!isFinished && (
