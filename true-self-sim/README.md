@@ -38,7 +38,16 @@ The application will be available on:
 
 ## Deploying to Kubernetes
 
-Use the manifests under `k8s/` to deploy:
+Build the container images:
+
+```bash
+docker build -t backend:latest back
+docker build --build-arg VITE_API_URL=<API_URL> -t frontend:latest front
+```
+
+Push the images to your registry with `docker push` or load them into your local cluster.
+
+Apply the manifests:
 
 ```bash
 kubectl apply -f k8s/
