@@ -36,7 +36,17 @@ const EditableNode: React.FC<EditableNodeProps> = memo(({ id, data, selected }) 
         setFields((prev) => ({ ...prev, start: data.start, end: data.end }));
     }, [data.start, data.end]);
 
-    const onDoubleClick = () => setEditMode(true);
+    const onDoubleClick = () => {
+        setFields({
+            sceneId: data.sceneId,
+            speaker: data.speaker,
+            backgroundImage: data.backgroundImage,
+            text: data.text,
+            start: data.start,
+            end: data.end,
+        });
+        setEditMode(true);
+    };
 
     const onChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value, type, checked } = e.target;
