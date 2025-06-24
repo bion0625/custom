@@ -9,6 +9,7 @@ import ReactFlow, {
     useNodesState,
     useEdgesState,
     applyEdgeChanges,
+    ConnectionMode,
     type EdgeChange,
 } from 'reactflow';
 import type {
@@ -358,7 +359,7 @@ const PublicAdminGraph: React.FC = () => {
                 edges={edges}
                 nodeTypes={nodeTypes}
                 edgeTypes={edgeTypes}
-                connectionMode="loose"
+                connectionMode={ConnectionMode.Loose}
                 onConnect={onConnect}
                 onNodesChange={onNodesChange}
                 onEdgesChange={onEdgesChange}
