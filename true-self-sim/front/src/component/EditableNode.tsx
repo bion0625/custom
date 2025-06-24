@@ -31,6 +31,7 @@ const EditableNode: React.FC<EditableNodeProps> = memo(({ id, data, selected }) 
         end: data.end,
     });
 
+
     // Keep local state in sync when start or end flags change externally
     useEffect(() => {
         setFields((prev) => ({ ...prev, start: data.start, end: data.end }));
@@ -45,8 +46,6 @@ const EditableNode: React.FC<EditableNodeProps> = memo(({ id, data, selected }) 
             start: data.start,
             end: data.end,
         });
-        setEditMode(true);
-    };
 
     const onChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value, type, checked } = e.target;
@@ -76,12 +75,6 @@ const EditableNode: React.FC<EditableNodeProps> = memo(({ id, data, selected }) 
                     <input name="speaker" value={fields.speaker} onChange={onChange} placeholder="speaker" />
                     <input name="backgroundImage" value={fields.backgroundImage} onChange={onChange} placeholder="backgroundImage" />
                     <textarea name="text" value={fields.text} onChange={onChange} rows={3} placeholder="text" />
-                    <label style={{ fontSize: 12 }}>
-                        <input type="checkbox" name="start" checked={fields.start} onChange={onChange} /> Start
-                    </label>
-                    <label style={{ fontSize: 12 }}>
-                        <input type="checkbox" name="end" checked={fields.end} onChange={onChange} /> End
-                    </label>
                     <button
                         onClick={onSave}
                         disabled={
