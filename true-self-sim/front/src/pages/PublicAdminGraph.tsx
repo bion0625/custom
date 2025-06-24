@@ -19,6 +19,7 @@ import 'reactflow/dist/style.css';
 import EditableNode from '../component/EditableNode';
 import type { EditableNodeData, NodeFormData } from '../component/EditableNode';
 import usePublicStory from "../hook/usePublicStory.ts";
+import usePostPublicSceneBulk from "../hook/usePostPublicSceneBulk.ts";
 
 type Selection = {
     nodes: FlowNode[];
@@ -46,6 +47,22 @@ const exportAsScenes = (nodes: FlowNode<EditableNodeData>[], edges: FlowEdge[]):
         };
     });
 
+// Convert nodes and edges to API request type
+const toRequests = (nodes: FlowNode<EditableNodeData>[], edges: FlowEdge[]) =>
+    nodes.map((node) => {
+        const data = node.data;
+        const outgoing = edges.filter((e) => e.source === node.id);
+        return {
+            sceneId: data.sceneId,
+            speaker: data.speaker,
+            backgroundImage: data.backgroundImage,
+            text: data.text,
+            start: data.start,
+            end: data.end,
+            choiceRequests: outgoing.map((e) => ({ text: e.label as string, nextSceneId: e.target })),
+        };
+    });
+
 const PublicAdminGraph: React.FC = () => {
     const idCounter = useRef(1);
     const [nodes, setNodes, onNodesChange] = useNodesState<EditableNodeData>([]);
@@ -53,6 +70,7 @@ const PublicAdminGraph: React.FC = () => {
     const [selection, setSelection] = useState<Selection>({ nodes: [], edges: [] });
     const [edgeLabel, setEdgeLabel] = useState('');
     const { data } = usePublicStory();
+    const { mutate: saveBulk, isPending } = usePostPublicSceneBulk();
 
     const handleNodeUpdate = useCallback((id: string, newData: NodeFormData) => {
         setNodes((nds) =>
@@ -154,12 +172,18 @@ const PublicAdminGraph: React.FC = () => {
         const a = document.createElement('a'); a.href = url; a.download = 'scenes.json'; a.click(); URL.revokeObjectURL(url);
     };
 
+    const handleSave = () => {
+        const requests = toRequests(nodes, edges);
+        saveBulk(requests);
+    };
+
     return (
         <ReactFlowProvider>
         <div style={{ width: '100%', height: '100vh', position: 'relative' }}>
             <div style={{ position: 'absolute', zIndex: 10, top: 10, left: 10, background: 'rgba(255,255,255,0.9)', padding: 8, borderRadius: 4 }}>
                 <button onClick={handleAddScene} style={{ marginRight: 8 }}>New Scene</button>
                 <button onClick={handleExport} style={{ marginRight: 8 }}>Export JSON</button>
+                <button onClick={handleSave} style={{ marginRight: 8 }} disabled={isPending}>Save</button>
                 <button onClick={handleDeleteScene} disabled={selection.nodes.length === 0} style={{ marginRight: 8 }}>Delete Scene</button>
                 <button onClick={handleDeleteEdge} disabled={selection.edges.length === 0} style={{ marginRight: 8 }}>Delete Edge</button>
                 {selection.edges.length === 1 && (
