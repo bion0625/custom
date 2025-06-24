@@ -13,12 +13,16 @@ import type {
     Node as FlowNode,
     Edge as FlowEdge,
     Connection,
-    Selection,
 } from 'reactflow';
 import 'reactflow/dist/style.css';
 
 import EditableNode from '../component/EditableNode';
 import type { EditableNodeData, NodeFormData } from '../component/EditableNode';
+
+type Selection = {
+    nodes: FlowNode[];
+    edges: FlowEdge[];
+};
 
 const nodeTypes = { editableNode: EditableNode };
 
@@ -48,15 +52,21 @@ const PublicAdminGraph: React.FC = () => {
     const [selection, setSelection] = useState<Selection>({ nodes: [], edges: [] });
     const [edgeLabel, setEdgeLabel] = useState('');
 
+    const handleNodeUpdate = useCallback((id: string, newData: NodeFormData) => {
+        setNodes((nds) =>
+            nds.map((n) =>
+                n.id === id
+                    ? { ...n, data: { ...newData, onUpdate: handleNodeUpdate } }
+                    : n
+            )
+        );
+    }, [setNodes]);
+
     // Add initial node once
     React.useEffect(() => {
         const initialId = `s0`;
         setNodes([{ id: initialId, type: 'editableNode', position: { x: 50, y: 50 }, data: { sceneId: initialId, speaker: '', backgroundImage: '', text: '', start: true, end: false, onUpdate: handleNodeUpdate } }]);
-    }, []);
-
-    function handleNodeUpdate(id: string, newData: NodeFormData) {
-        setNodes((nds) => nds.map((n) => (n.id === id ? { ...n, data: { ...newData, onUpdate: handleNodeUpdate } } : n)));
-    }
+    }, [setNodes, handleNodeUpdate]);
 
     function handleDeleteScene() {
         const selNode = selection.nodes[0]; if (!selNode) return;
@@ -74,7 +84,7 @@ const PublicAdminGraph: React.FC = () => {
     const onConnect = useCallback((connection: Connection) => {
         // Add edge with temporary empty label
         setEdges((eds) => addEdge({ ...connection, label: '' , markerEnd: { type: MarkerType.ArrowClosed } }, eds));
-    }, []);
+    }, [setEdges]);
 
     const onSelectionChange = useCallback((sel: Selection) => {
         setSelection(sel);
@@ -109,7 +119,7 @@ const PublicAdminGraph: React.FC = () => {
                 return { ...n, data: { ...n.data, start: shouldStart, end: shouldEnd } };
             });
         });
-    }, [edges, nodes.length]);
+    }, [edges, nodes.length, setNodes]);
 
     const handleExport = () => {
         const scenes = exportAsScenes(nodes, edges);
