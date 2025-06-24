@@ -36,9 +36,9 @@ const PublicGame: React.FC = () => {
     // 다음 장면 로드 함수
     const handleNextScene = async (nextSceneId: string, nextText: string) => {
 
-        setFullLog(full => [`${scene.speaker}: ${scene.text}`, `-> me: ${nextText}`, ...full])
+        setFullLog(full => [`${scene.speaker}: ${scene.text}`, `-> U: ${nextText}`, ...full])
         setLog(prev => {
-            const logEntry = [`${scene.speaker}: ${scene.text}`, `-> me: ${nextText}`, ...prev]
+            const logEntry = [`${scene.speaker}: ${scene.text}`, `-> U: ${nextText}`, ...prev]
             return logEntry.slice(0, 5)
         })
 
