@@ -3,11 +3,13 @@ import ReactFlow, {
     MiniMap,
     Controls,
     Background,
-    addEdge,
     MarkerType,
     ReactFlowProvider,
     useNodesState,
     useEdgesState,
+    applyEdgeChanges,
+    ConnectionMode,
+    type EdgeChange,
 } from 'reactflow';
 import type {
     Node as FlowNode,
@@ -23,6 +25,7 @@ import usePostPublicSceneBulk from "../hook/usePostPublicSceneBulk.ts";
 import useDeletePublicScene from "../hook/useDeletePublicScene.ts";
 import { useNavigate } from 'react-router-dom';
 import { backgroundImgs } from "../constants/backgroundImages.ts";
+import CurvedEdge from '../component/CurvedEdge';
 
 type Selection = {
     nodes: FlowNode[];
@@ -30,6 +33,26 @@ type Selection = {
 };
 
 const nodeTypes = { editableNode: EditableNode };
+const edgeTypes = { curved: CurvedEdge };
+
+const assignOffsets = (eds: FlowEdge[]): FlowEdge[] => {
+    const groups: Record<string, FlowEdge[]> = {};
+    for (const e of eds) {
+        const key = `${e.source}-${e.target}`;
+        if (!groups[key]) groups[key] = [];
+        groups[key].push(e);
+    }
+    return eds.map((e) => {
+        const group = groups[`${e.source}-${e.target}`];
+        const index = group.indexOf(e);
+        const offsetIndex = index - (group.length - 1) / 2;
+        return {
+            ...e,
+            type: 'curved',
+            data: { ...(e.data || {}), label: e.label, offset: offsetIndex },
+        };
+    });
+};
 
 interface ChoiceRequest { text: string; nextSceneId: string; }
 interface Scene { sceneId: string; speaker: string; backgroundImage: string; text: string; start: boolean; end: boolean; choiceRequests: ChoiceRequest[]; }
@@ -69,7 +92,10 @@ const toRequests = (nodes: FlowNode<EditableNodeData>[], edges: FlowEdge[]) =>
 const PublicAdminGraph: React.FC = () => {
     const idCounter = useRef(1);
     const [nodes, setNodes, onNodesChange] = useNodesState<EditableNodeData>([]);
-    const [edges, setEdges, onEdgesChange] = useEdgesState([]);
+    const [edges, setEdges] = useEdgesState<FlowEdge[]>([]);
+    const onEdgesChange = useCallback((changes: EdgeChange[]) => {
+        setEdges((eds) => assignOffsets(applyEdgeChanges(changes, eds)));
+    }, [setEdges]);
     const [selection, setSelection] = useState<Selection>({ nodes: [], edges: [] });
     const [edgeLabel, setEdgeLabel] = useState('');
     const { data } = usePublicStory();
@@ -113,8 +139,8 @@ const PublicAdminGraph: React.FC = () => {
             },
         }));
         const loadedEdges = data.publicScenes.flatMap((scene) =>
-            scene.texts.map((choice) => ({
-                id: `${scene.sceneId}-${choice.nextPublicSceneId}`,
+            scene.texts.map((choice, idx) => ({
+                id: `${scene.sceneId}-${choice.nextPublicSceneId}-${idx}`,
                 source: scene.sceneId,
                 target: choice.nextPublicSceneId,
                 label: choice.text,
@@ -122,7 +148,7 @@ const PublicAdminGraph: React.FC = () => {
             }))
         );
         setNodes(loadedNodes);
-        setEdges(loadedEdges);
+        setEdges(assignOffsets(loadedEdges));
         idCounter.current = loadedNodes.length + 1;
     }, [data, setNodes, setEdges, handleNodeUpdate]);
 
@@ -133,7 +159,7 @@ const PublicAdminGraph: React.FC = () => {
         deletePublicScene(selNode.id, {
             onSuccess: () => {
                 setNodes((nds) => nds.filter((n) => n.id !== selNode.id));
-                setEdges((eds) => eds.filter((e) => e.source !== selNode.id && e.target !== selNode.id));
+                setEdges((eds) => assignOffsets(eds.filter((e) => e.source !== selNode.id && e.target !== selNode.id)));
                 setSelection({ nodes: [], edges: [] });
             }
         });
@@ -141,13 +167,25 @@ const PublicAdminGraph: React.FC = () => {
 
     function handleDeleteEdge() {
         const selEdge = selection.edges[0]; if (!selEdge) return;
-        setEdges((eds) => eds.filter((e) => e.id !== selEdge.id));
+        setEdges((eds) => assignOffsets(eds.filter((e) => e.id !== selEdge.id)));
         setSelection({ nodes: [], edges: [] });
     }
 
+
     const onConnect = useCallback((connection: Connection) => {
-        // Add edge with temporary empty label
-        setEdges((eds) => addEdge({ ...connection, label: '' , markerEnd: { type: MarkerType.ArrowClosed } }, eds));
+        const newEdge: FlowEdge = {
+            id: `e${Date.now()}`,
+            source: connection.source!,
+            target: connection.target!,
+            sourceHandle: connection.sourceHandle,
+            targetHandle: connection.targetHandle,
+            type: 'default',
+            markerEnd: { type: MarkerType.ArrowClosed },
+        };
+        setEdges((eds) =>
+            // 기존 addEdge 대신, 배열에 직접 추가
+            assignOffsets([...eds, newEdge])
+        );
     }, [setEdges]);
 
     const onSelectionChange = useCallback((sel: Selection) => {
@@ -162,7 +200,13 @@ const PublicAdminGraph: React.FC = () => {
     const handleEdgeLabelSave = () => {
         if (selection.edges.length !== 1) return;
         const edgeId = selection.edges[0].id;
-        setEdges((eds) => eds.map((edge) => edge.id === edgeId ? { ...edge, label: edgeLabel } : edge));
+        setEdges((eds) =>
+            assignOffsets(
+                eds.map((edge) =>
+                    edge.id === edgeId ? { ...edge, label: edgeLabel } : edge
+                )
+            )
+        );
     };
 
     const handleAddScene = () => {
@@ -204,7 +248,7 @@ const PublicAdminGraph: React.FC = () => {
         setNodes((nds) =>
             nds.map((n) => ({
                 ...n,
-                data: { ...n.data, invalid: !!invalidNodes[n.id] },
+                data: { ...n.data, invalid: invalidNodes[n.id] ?? false },
             }))
         );
     }, [invalidNodes, setNodes]);
@@ -324,6 +368,8 @@ const PublicAdminGraph: React.FC = () => {
                 nodes={nodes}
                 edges={edges}
                 nodeTypes={nodeTypes}
+                edgeTypes={edgeTypes}
+                connectionMode={ConnectionMode.Loose}
                 onConnect={onConnect}
                 onNodesChange={onNodesChange}
                 onEdgesChange={onEdgesChange}
