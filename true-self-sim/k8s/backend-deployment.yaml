@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: backend
-        image: backend:latest
+        image: bion0625/ts-backend:v1
         env:
         - name: DB_HOST
           valueFrom:
