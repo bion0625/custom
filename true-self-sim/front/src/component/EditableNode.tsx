@@ -52,7 +52,7 @@ const EditableNode: React.FC<EditableNodeProps> = memo(({ id, data, selected }) 
         setEditMode(true);
     }
 
-    const onChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const onChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         const target = e.target as HTMLInputElement;
         const { name, value, type, checked } = target;
         setFields({ ...fields, [name]: type === 'checkbox' ? checked : value });
