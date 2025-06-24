@@ -1,5 +1,6 @@
 import { memo, useState, useEffect } from 'react';
 import { Handle, Position } from 'reactflow';
+import { backgroundImgs } from '../constants/backgroundImages';
 
 export interface NodeFormData {
     sceneId: string;
@@ -22,6 +23,7 @@ export interface EditableNodeProps {
 
 const EditableNode: React.FC<EditableNodeProps> = memo(({ id, data, selected }) => {
     const [editMode, setEditMode] = useState(false);
+    const [useCustomImg, setUseCustomImg] = useState(false);
     const [fields, setFields] = useState<NodeFormData>({
         sceneId: data.sceneId,
         speaker: data.speaker,
@@ -46,7 +48,8 @@ const EditableNode: React.FC<EditableNodeProps> = memo(({ id, data, selected }) 
             start: data.start,
             end: data.end,
         });
-        setEditMode(true)
+        setUseCustomImg(!backgroundImgs.includes(data.backgroundImage));
+        setEditMode(true);
     }
 
     const onChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -76,7 +79,33 @@ const EditableNode: React.FC<EditableNodeProps> = memo(({ id, data, selected }) 
                 <div style={{ display: 'flex', flexDirection: 'column' }}>
                     <input name="sceneId" value={fields.sceneId} onChange={onChange} placeholder="sceneId" />
                     <input name="speaker" value={fields.speaker} onChange={onChange} placeholder="speaker" />
-                    <input name="backgroundImage" value={fields.backgroundImage} onChange={onChange} placeholder="backgroundImage" />
+                    <label style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                        <input
+                            type="checkbox"
+                            checked={useCustomImg}
+                            onChange={(e) => setUseCustomImg(e.target.checked)}
+                        />
+                        <span style={{ fontSize: 12 }}>Custom URL</span>
+                    </label>
+                    {useCustomImg ? (
+                        <input
+                            name="backgroundImage"
+                            value={fields.backgroundImage}
+                            onChange={onChange}
+                            placeholder="backgroundImage"
+                        />
+                    ) : (
+                        <select
+                            name="backgroundImage"
+                            value={fields.backgroundImage}
+                            onChange={onChange}
+                        >
+                            <option value="">Select Background</option>
+                            {backgroundImgs.map((img, idx) => (
+                                <option key={idx} value={img}>{img}</option>
+                            ))}
+                        </select>
+                    )}
                     <textarea name="text" value={fields.text} onChange={onChange} rows={3} placeholder="text" />
                     <button
                         onClick={onSave}
