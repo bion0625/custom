@@ -96,6 +96,21 @@ const PublicAdminGraph: React.FC = () => {
         setNodes((nds) => nds.concat({ id: newId, type: 'editableNode', position: { x: 100, y: 100 }, data: { sceneId: newId, speaker: '', backgroundImage: '', text: '', start: false, end: false, onUpdate: handleNodeUpdate } }));
     };
 
+    // keep end flag in sync with outgoing edges and enforce single start node
+    React.useEffect(() => {
+        setNodes((nds) => {
+            if (nds.length === 0) return nds;
+            const firstId = nds[0].id;
+            return nds.map((n) => {
+                const hasOutgoing = edges.some((e) => e.source === n.id);
+                const shouldStart = n.id === firstId;
+                const shouldEnd = !hasOutgoing;
+                if (n.data.start === shouldStart && n.data.end === shouldEnd) return n;
+                return { ...n, data: { ...n.data, start: shouldStart, end: shouldEnd } };
+            });
+        });
+    }, [edges, nodes.length]);
+
     const handleExport = () => {
         const scenes = exportAsScenes(nodes, edges);
         const blob = new Blob([JSON.stringify(scenes, null, 2)], { type: 'application/json' });
