@@ -46,6 +46,8 @@ const EditableNode: React.FC<EditableNodeProps> = memo(({ id, data, selected }) 
             start: data.start,
             end: data.end,
         });
+        setEditMode(true)
+    }
 
     const onChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value, type, checked } = e.target;
