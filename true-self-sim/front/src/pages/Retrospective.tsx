@@ -1,8 +1,11 @@
 import type {RetrospectiveProps} from "../props.ts";
 
-export const Retrospective: React.FC<RetrospectiveProps> = ({ log, onRestart }) => {
+export const Retrospective: React.FC<RetrospectiveProps> = ({ log, onRestart, finalText }) => {
     return (
         <div className="bg-white/10 backdrop-blur-md rounded-xl shadow-lg p-8 max-w-xl w-full space-y-6 text-white">
+            {finalText && (
+                <p className="text-lg mb-4">{finalText}</p>
+            )}
             <h2 className="text-2xl font-bold text-indigo-300">당신의 여정</h2>
             <ul className="list-decimal list-inside space-y-1 text-sm max-h-60 overflow-auto">
                 {log.map((entry, index) => (

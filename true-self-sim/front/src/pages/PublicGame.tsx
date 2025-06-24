@@ -65,7 +65,7 @@ const PublicGame: React.FC = () => {
                 <>
                     <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40" />
                     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-                        <Retrospective log={log} onRestart={handleRestart} />
+                        <Retrospective log={log} finalText={scene.text} onRestart={handleRestart} />
                     </div>
                 </>
             )}
