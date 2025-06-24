@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface PublicChoiceRepository extends JpaRepository<PublicChoice, Long> {
     List<PublicChoice> findByPublicSceneIdAndDeletedAtIsNull(String publicSceneId);
+    List<PublicChoice> findByPublicSceneIdInAndDeletedAtIsNull(List<String> publicSceneIds);
 }

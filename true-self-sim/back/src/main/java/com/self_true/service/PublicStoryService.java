@@ -17,7 +17,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -92,8 +95,42 @@ public class PublicStoryService {
     }
 
     public void saveAll(List<PublicSceneRequest> requests) {
-        List<PublicScene> entities = requests.stream().map(PublicSceneRequest::toEntity).toList();
-        publicSceneRepository.saveAll(entities);
+
+        // 1) 요청에 포함된 sceneId 리스트 뽑기
+        List<String> sceneIds = requests.stream()
+                .map(PublicSceneRequest::getSceneId)
+                .toList();
+
+        // 1-1) 존재하는 관련 선택지들 삭제
+        publicChoiceRepository.findByPublicSceneIdInAndDeletedAtIsNull(sceneIds)
+                .forEach(cr -> cr.setDeletedAt(LocalDateTime.now()));
+
+        // 2) DB에서 기존에 저장된 엔티티 한 번에 조회
+        List<PublicScene> existingScenes = publicSceneRepository.findByPublicSceneIdInAndDeletedAtIsNull(sceneIds);
+        Map<String, PublicScene> existingMap = existingScenes.stream()
+                .collect(Collectors.toMap(PublicScene::getPublicSceneId, Function.identity()));
+
+        // 3) 요청별로 업서트용 엔티티 준비
+        List<PublicScene> scenesToSave = requests.stream()
+                .map(req -> {
+                    PublicScene scene = existingMap.getOrDefault(req.getSceneId(),
+                            // 없으면 새로 빌더로 생성
+                            PublicScene.builder()
+                                    .publicSceneId(req.getSceneId())
+                                    .build()
+                    );
+                    // 공통 필드 업데이트
+                    scene.setSpeaker(req.getSpeaker());
+                    scene.setBackgroundImage(req.getBackgroundImage());
+                    scene.setText(req.getText());
+                    scene.setIsStart(req.isStart());
+                    scene.setIsEnd(req.isEnd());
+                    return scene;
+                })
+                .toList();
+
+        // 4) 저장 (JPA가 id가 null인 건 INSERT, 있으면 UPDATE 처리)
+        publicSceneRepository.saveAll(scenesToSave);
 
         List<PublicChoice> choices = requests.stream().flatMap(rs -> rs.getChoiceRequests().stream().map(cr -> cr.toEntity(rs.getSceneId()))).toList();
         publicChoiceRepository.saveAll(choices);
