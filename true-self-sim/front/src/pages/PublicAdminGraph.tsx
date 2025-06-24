@@ -46,7 +46,11 @@ const assignOffsets = (eds: FlowEdge[]): FlowEdge[] => {
         const group = groups[`${e.source}-${e.target}`];
         const index = group.indexOf(e);
         const offsetIndex = index - (group.length - 1) / 2;
-        return { ...e, type: 'curved', data: { ...(e.data || {}), offset: offsetIndex } };
+        return {
+            ...e,
+            type: 'curved',
+            data: { ...(e.data || {}), label: e.label, offset: offsetIndex },
+        };
     });
 };
 
@@ -185,7 +189,13 @@ const PublicAdminGraph: React.FC = () => {
     const handleEdgeLabelSave = () => {
         if (selection.edges.length !== 1) return;
         const edgeId = selection.edges[0].id;
-        setEdges((eds) => eds.map((edge) => edge.id === edgeId ? { ...edge, label: edgeLabel } : edge));
+        setEdges((eds) =>
+            assignOffsets(
+                eds.map((edge) =>
+                    edge.id === edgeId ? { ...edge, label: edgeLabel } : edge
+                )
+            )
+        );
     };
 
     const handleAddScene = () => {
@@ -348,6 +358,7 @@ const PublicAdminGraph: React.FC = () => {
                 edges={edges}
                 nodeTypes={nodeTypes}
                 edgeTypes={edgeTypes}
+                connectionMode="loose"
                 onConnect={onConnect}
                 onNodesChange={onNodesChange}
                 onEdgesChange={onEdgesChange}
