@@ -1,4 +1,3 @@
-import React from 'react';
 import { BaseEdge, EdgeLabelRenderer, type EdgeProps } from 'reactflow';
 
 const OFFSET_DISTANCE = 40;
