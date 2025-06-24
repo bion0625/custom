@@ -12,7 +12,7 @@ COPY --from=build /workspace/build/libs/*.jar app.jar
 COPY docker-entrypoint.sh /app/entrypoint.sh
 RUN chmod +x /app/entrypoint.sh
 ENV DB_HOST=db \
-    DB_PORT=5432 \
+    DB_PORT=5433 \
     DB_USER=postgres \
     DB_PASSWORD=postgres \
     DB_NAME=true_self
