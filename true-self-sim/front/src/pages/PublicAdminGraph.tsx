@@ -20,6 +20,7 @@ import EditableNode from '../component/EditableNode';
 import type { EditableNodeData, NodeFormData } from '../component/EditableNode';
 import usePublicStory from "../hook/usePublicStory.ts";
 import usePostPublicSceneBulk from "../hook/usePostPublicSceneBulk.ts";
+import useDeletePublicScene from "../hook/useDeletePublicScene.ts";
 
 type Selection = {
     nodes: FlowNode[];
@@ -71,6 +72,7 @@ const PublicAdminGraph: React.FC = () => {
     const [edgeLabel, setEdgeLabel] = useState('');
     const { data } = usePublicStory();
     const { mutate: saveBulk, isPending } = usePostPublicSceneBulk();
+    const { mutate: deletePublicScene, isPending: isDeletePending } = useDeletePublicScene();
 
     const handleNodeUpdate = useCallback((id: string, newData: NodeFormData) => {
         setNodes((nds) =>
@@ -113,10 +115,16 @@ const PublicAdminGraph: React.FC = () => {
     }, [data, setNodes, setEdges, handleNodeUpdate]);
 
     function handleDeleteScene() {
-        const selNode = selection.nodes[0]; if (!selNode) return;
-        setNodes((nds) => nds.filter((n) => n.id !== selNode.id));
-        setEdges((eds) => eds.filter((e) => e.source !== selNode.id && e.target !== selNode.id));
-        setSelection({ nodes: [], edges: [] });
+        const selNode = selection.nodes[0];
+        if (!selNode) return;
+        if (!confirm("정말로 이 장면을 삭제하시겠습니까?")) return;
+        deletePublicScene(selNode.id, {
+            onSuccess: () => {
+                setNodes((nds) => nds.filter((n) => n.id !== selNode.id));
+                setEdges((eds) => eds.filter((e) => e.source !== selNode.id && e.target !== selNode.id));
+                setSelection({ nodes: [], edges: [] });
+            }
+        });
     }
 
     function handleDeleteEdge() {
@@ -184,7 +192,13 @@ const PublicAdminGraph: React.FC = () => {
                 <button onClick={handleAddScene} style={{ marginRight: 8 }}>New Scene</button>
                 <button onClick={handleExport} style={{ marginRight: 8 }}>Export JSON</button>
                 <button onClick={handleSave} style={{ marginRight: 8 }} disabled={isPending}>Save</button>
-                <button onClick={handleDeleteScene} disabled={selection.nodes.length === 0} style={{ marginRight: 8 }}>Delete Scene</button>
+                <button
+                    onClick={handleDeleteScene}
+                    disabled={selection.nodes.length === 0 || isDeletePending}
+                    style={{ marginRight: 8 }}
+                >
+                    {isDeletePending ? "Deleting…" : "Delete Scene"}
+                </button>
                 <button onClick={handleDeleteEdge} disabled={selection.edges.length === 0} style={{ marginRight: 8 }}>Delete Edge</button>
                 {selection.edges.length === 1 && (
                     <span style={{ marginLeft: 8 }}>
