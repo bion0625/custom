@@ -260,27 +260,64 @@ const PublicAdminGraph: React.FC = () => {
 
     return (
         <ReactFlowProvider>
-        <div style={{ width: '100%', height: '100vh', position: 'relative' }}>
-            <div style={{ position: 'absolute', zIndex: 10, top: 10, left: 10, background: 'rgba(255,255,255,0.9)', padding: 8, borderRadius: 4 }}>
-                <button onClick={() => navigate('/admin/public')} style={{ marginRight: 8 }}>돌아가기</button>
-                <button onClick={handleAddScene} style={{ marginRight: 8 }}>New Scene</button>
-                <button onClick={handleExport} style={{ marginRight: 8 }}>Export JSON</button>
-                <button onClick={handleSave} style={{ marginRight: 8 }} disabled={isPending}>Save</button>
-                {errorMsg && <span style={{ color: 'red', marginRight: 8 }}>{errorMsg}</span>}
-                {successMsg && <span style={{ color: 'green', marginRight: 8 }}>{successMsg}</span>}
+        <div className="relative w-full h-screen">
+            <div className="absolute z-10 top-4 left-4 bg-white/90 p-4 rounded shadow flex flex-wrap items-center gap-2">
+                <button
+                    onClick={() => navigate('/admin/public')}
+                    className="px-2 py-1 bg-gray-200 rounded hover:bg-gray-300"
+                >
+                    돌아가기
+                </button>
+                <button
+                    onClick={handleAddScene}
+                    className="px-2 py-1 bg-green-600 text-white rounded hover:bg-green-700"
+                >
+                    New Scene
+                </button>
+                <button
+                    onClick={handleExport}
+                    className="px-2 py-1 bg-purple-600 text-white rounded hover:bg-purple-700"
+                >
+                    Export JSON
+                </button>
+                <button
+                    onClick={handleSave}
+                    disabled={isPending}
+                    className="px-2 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
+                >
+                    Save
+                </button>
+                {errorMsg && <span className="text-red-500 mr-2">{errorMsg}</span>}
+                {successMsg && <span className="text-green-600 mr-2">{successMsg}</span>}
                 <button
                     onClick={handleDeleteScene}
                     disabled={selection.nodes.length === 0 || isDeletePending}
-                    style={{ marginRight: 8 }}
+                    className="px-2 py-1 bg-red-600 text-white rounded hover:bg-red-700 disabled:opacity-50"
                 >
                     {isDeletePending ? "Deleting…" : "Delete Scene"}
                 </button>
-                <button onClick={handleDeleteEdge} disabled={selection.edges.length === 0} style={{ marginRight: 8 }}>Delete Edge</button>
+                <button
+                    onClick={handleDeleteEdge}
+                    disabled={selection.edges.length === 0}
+                    className="px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600 disabled:opacity-50"
+                >
+                    Delete Edge
+                </button>
                 {selection.edges.length === 1 && (
-                    <span style={{ marginLeft: 8 }}>
-            <input value={edgeLabel} onChange={handleEdgeLabelChange} placeholder="Edge label" style={{ marginRight: 4 }} />
-            <button onClick={handleEdgeLabelSave}>Save Label</button>
-          </span>
+                    <span className="flex items-center gap-1 ml-2">
+                        <input
+                            value={edgeLabel}
+                            onChange={handleEdgeLabelChange}
+                            placeholder="Edge label"
+                            className="border rounded p-1 text-sm"
+                        />
+                        <button
+                            onClick={handleEdgeLabelSave}
+                            className="px-2 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
+                        >
+                            Save Label
+                        </button>
+                    </span>
                 )}
             </div>
             <ReactFlow
