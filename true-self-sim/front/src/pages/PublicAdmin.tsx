@@ -266,7 +266,7 @@ const PublicAdmin: React.FC = () => {
                             className="mt-1 w-full border rounded p-2"
                             value={request.sceneId}
                             onChange={(e) =>
-                                setRequest((r) => ({...r, id: e.target.value}))
+                                setRequest((r) => ({...r, sceneId: e.target.value}))
                             }
                             placeholder="예: intro-1"
                         />
