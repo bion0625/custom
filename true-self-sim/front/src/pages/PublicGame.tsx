@@ -5,7 +5,7 @@ import usePublicFirstScene from "../hook/usePublicFirstScene.ts";
 import type {PublicScene} from "../types.ts";
 import {getPublicScene} from "../api/publicScene.ts";
 import MemoryLog from "../component/MemoryLog.tsx";
-import {Retrospective} from "./Retrospective.tsx";
+import FullLog from "../component/FullLog.tsx";
 
 const PublicGame: React.FC = () => {
     const navigate = useNavigate();
@@ -22,6 +22,7 @@ const PublicGame: React.FC = () => {
     });
 
     const [log, setLog] = useState<string[]>([])
+    const [fullLog, setFullLog] = useState<string[]>([])
 
     const [isFinished, setIsFinished] = useState(false);
 
@@ -35,9 +36,10 @@ const PublicGame: React.FC = () => {
     // 다음 장면 로드 함수
     const handleNextScene = async (nextSceneId: string, nextText: string) => {
 
-        setLog(log => {
-            const logEntry = [`${scene.speaker}: ${scene.text}`, `-> me: ${nextText}`, ...log];
-            return [...logEntry.slice(0, 10), '...']
+        setFullLog(full => [`${scene.speaker}: ${scene.text}`, `-> me: ${nextText}`, ...full])
+        setLog(prev => {
+            const logEntry = [`${scene.speaker}: ${scene.text}`, `-> me: ${nextText}`, ...prev]
+            return logEntry.slice(0, 5)
         })
 
         try {
@@ -52,17 +54,6 @@ const PublicGame: React.FC = () => {
     const isExternalUrl = (url: string) => /^https?:\/\//.test(url);
 
     const bgSrc = isExternalUrl(scene.backgroundImage) ? scene.backgroundImage : `background/${scene.backgroundImage}`;
-
-    if (isFinished) {
-        return (
-            <Retrospective log={log} onRestart={() => {
-                setLog([]);
-                setIsFinished(false);
-                if (firstScene) setScene(firstScene);
-            }}
-            />
-        )
-    }
 
     return (
         <div className="relative min-h-screen w-full overflow-hidden bg-black text-white flex flex-col md:flex-row">
@@ -102,28 +93,39 @@ const PublicGame: React.FC = () => {
                         )}
                     </div>
                 </div>
-                <div className="bg-white/10 backdrop-blur-md rounded-xl shadow-lg p-6 w-full max-w-xl md:max-w-2xl">
-                    <h2 className="text-indigo-300 text-lg md:text-xl mb-2">
-                        {scene.speaker}
-                    </h2>
-                    <p className="text-xl md:text-2xl mb-4">
-                        {scene.text}
-                    </p>
-                    <div className="space-y-2">
-                        {scene?.texts?.map((t, index) => (
-                            <button className="block w-full py-2 px-4 bg-indigo-600 hover:bg-indigo-700 rounded-lg text-sm md:text-base"
-                                    key={index}
-                                    onClick={() => handleNextScene(t.nextPublicSceneId, t.text)}
-                            >
-                                {t.text}
-                            </button>
-                        ))}
+                {isFinished ? (
+                    <FullLog log={fullLog} onRestart={() => {
+                        setLog([]);
+                        setFullLog([]);
+                        setIsFinished(false);
+                        if (firstScene) setScene(firstScene);
+                    }} />
+                ) : (
+                    <div className="bg-white/10 backdrop-blur-md rounded-xl shadow-lg p-6 w-full max-w-xl md:max-w-2xl">
+                        <h2 className="text-indigo-300 text-lg md:text-xl mb-2">
+                            {scene.speaker}
+                        </h2>
+                        <p className="text-xl md:text-2xl mb-4">
+                            {scene.text}
+                        </p>
+                        <div className="space-y-2">
+                            {scene?.texts?.map((t, index) => (
+                                <button className="block w-full py-2 px-4 bg-indigo-600 hover:bg-indigo-700 rounded-lg text-sm md:text-base"
+                                        key={index}
+                                        onClick={() => handleNextScene(t.nextPublicSceneId, t.text)}
+                                >
+                                    {t.text}
+                                </button>
+                            ))}
+                        </div>
                     </div>
+                )}
+            </div>
+            {!isFinished && (
+                <div className="hidden lg:block lg:fixed lg:top-4 lg:right-4 lg:w-64 lg:h-[70vh] overflow-y-auto">
+                    <MemoryLog log={log}/>
                 </div>
-            </div>
-            <div className="hidden lg:block lg:fixed lg:top-4 lg:right-4 lg:w-64 lg:h-[70vh] overflow-y-auto">
-                <MemoryLog log={log}/>
-            </div>
+            )}
         </div>
     )
 }
