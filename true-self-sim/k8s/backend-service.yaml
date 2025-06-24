@@ -3,7 +3,9 @@ kind: Service
 metadata:
   name: backend
 spec:
-  ports:
-    - port: 8080
   selector:
     app: backend
+  ports:
+    - protocol: TCP
+      port: 8000
+      targetPort: 8000
