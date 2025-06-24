@@ -53,19 +53,22 @@ const PublicGame: React.FC = () => {
 
     const bgSrc = isExternalUrl(scene.backgroundImage) ? scene.backgroundImage : `background/${scene.backgroundImage}`;
 
-    if (isFinished) {
-        return (
-            <Retrospective log={log} onRestart={() => {
-                setLog([]);
-                setIsFinished(false);
-                if (firstScene) setScene(firstScene);
-            }}
-            />
-        )
-    }
+    const handleRestart = () => {
+        setLog([]);
+        setIsFinished(false);
+        if (firstScene) setScene(firstScene);
+    };
 
     return (
         <div className="relative min-h-screen w-full overflow-hidden bg-black text-white flex flex-col md:flex-row">
+            {isFinished && (
+                <>
+                    <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40" />
+                    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+                        <Retrospective log={log} onRestart={handleRestart} />
+                    </div>
+                </>
+            )}
             <img className="absolute inset-0 w-full h-full object-cover opacity-50" alt="background"
                  src={bgSrc}
             />
