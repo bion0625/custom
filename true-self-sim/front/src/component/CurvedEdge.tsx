@@ -3,7 +3,7 @@ import { BaseEdge, EdgeLabelRenderer, type EdgeProps } from 'reactflow';
 
 const OFFSET_DISTANCE = 40;
 
-export default function CurvedEdge({ id, sourceX, sourceY, targetX, targetY, markerEnd, style, data }: EdgeProps) {
+export default function CurvedEdge({ id, sourceX, sourceY, targetX, targetY, markerEnd, style, label, data }: EdgeProps) {
   const index = data?.offset ?? 0;
   const offset = index * OFFSET_DISTANCE;
   const horizontal = Math.abs(sourceX - targetX) > Math.abs(sourceY - targetY);
@@ -15,7 +15,7 @@ export default function CurvedEdge({ id, sourceX, sourceY, targetX, targetY, mar
   return (
     <>
       <BaseEdge id={id} path={path} markerEnd={markerEnd} style={style} />
-      {data?.label && (
+      {(data?.label || label) && (
         <EdgeLabelRenderer>
           <div
             style={{
@@ -26,7 +26,7 @@ export default function CurvedEdge({ id, sourceX, sourceY, targetX, targetY, mar
             }}
             className="nodrag nopan"
           >
-            {data.label}
+            {data?.label ?? label}
           </div>
         </EdgeLabelRenderer>
       )}
