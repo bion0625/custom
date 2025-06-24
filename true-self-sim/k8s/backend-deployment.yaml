@@ -42,4 +42,4 @@ spec:
               name: postgres-secret
               key: POSTGRES_PASSWORD
         ports:
-        - containerPort: 8000
+        - containerPort: 8080
