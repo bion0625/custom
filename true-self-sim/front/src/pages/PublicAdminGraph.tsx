@@ -21,6 +21,7 @@ import type { EditableNodeData, NodeFormData } from '../component/EditableNode';
 import usePublicStory from "../hook/usePublicStory.ts";
 import usePostPublicSceneBulk from "../hook/usePostPublicSceneBulk.ts";
 import useDeletePublicScene from "../hook/useDeletePublicScene.ts";
+import { useNavigate } from 'react-router-dom';
 
 type Selection = {
     nodes: FlowNode[];
@@ -73,6 +74,7 @@ const PublicAdminGraph: React.FC = () => {
     const { data } = usePublicStory();
     const { mutate: saveBulk, isPending } = usePostPublicSceneBulk();
     const { mutate: deletePublicScene, isPending: isDeletePending } = useDeletePublicScene();
+    const navigate = useNavigate();
 
     const handleNodeUpdate = useCallback((id: string, newData: NodeFormData) => {
         setNodes((nds) =>
@@ -189,6 +191,7 @@ const PublicAdminGraph: React.FC = () => {
         <ReactFlowProvider>
         <div style={{ width: '100%', height: '100vh', position: 'relative' }}>
             <div style={{ position: 'absolute', zIndex: 10, top: 10, left: 10, background: 'rgba(255,255,255,0.9)', padding: 8, borderRadius: 4 }}>
+                <button onClick={() => navigate('/admin/public')} style={{ marginRight: 8 }}>돌아가기</button>
                 <button onClick={handleAddScene} style={{ marginRight: 8 }}>New Scene</button>
                 <button onClick={handleExport} style={{ marginRight: 8 }}>Export JSON</button>
                 <button onClick={handleSave} style={{ marginRight: 8 }} disabled={isPending}>Save</button>
