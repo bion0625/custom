@@ -8,8 +8,8 @@ import ReactFlow, {
     ReactFlowProvider,
     useNodesState,
     useEdgesState,
-    EdgeChange,
     applyEdgeChanges,
+    type EdgeChange,
 } from 'reactflow';
 import type {
     Node as FlowNode,
