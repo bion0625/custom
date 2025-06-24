@@ -9,6 +9,7 @@ export interface NodeFormData {
     text: string;
     start: boolean;
     end: boolean;
+    invalid?: boolean;
 }
 
 export interface EditableNodeData extends NodeFormData {
@@ -31,6 +32,7 @@ const EditableNode: React.FC<EditableNodeProps> = memo(({ id, data, selected }) 
         text: data.text,
         start: data.start,
         end: data.end,
+        invalid: data.invalid,
     });
 
 
@@ -47,6 +49,7 @@ const EditableNode: React.FC<EditableNodeProps> = memo(({ id, data, selected }) 
             text: data.text,
             start: data.start,
             end: data.end,
+            invalid: data.invalid,
         });
         setUseCustomImg(!backgroundImgs.includes(data.backgroundImage));
         setEditMode(true);
@@ -63,12 +66,18 @@ const EditableNode: React.FC<EditableNodeProps> = memo(({ id, data, selected }) 
         setEditMode(false);
     };
 
+    const borderColor = data.invalid
+        ? '2px solid red'
+        : selected
+            ? '2px solid #007aff'
+            : '1px solid #777';
+
     return (
         <div
             onDoubleClick={onDoubleClick}
             style={{
                 padding: 10,
-                border: selected ? '2px solid #007aff' : '1px solid #777',
+                border: borderColor,
                 borderRadius: 5,
                 background: '#fff',
                 width: 180,

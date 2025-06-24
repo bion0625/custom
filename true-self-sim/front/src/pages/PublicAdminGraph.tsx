@@ -77,6 +77,7 @@ const PublicAdminGraph: React.FC = () => {
     const { mutate: deletePublicScene, isPending: isDeletePending } = useDeletePublicScene();
     const [errorMsg, setErrorMsg] = useState('');
     const [successMsg, setSuccessMsg] = useState('');
+    const [invalidNodes, setInvalidNodes] = useState<Record<string, boolean>>({});
     const navigate = useNavigate();
 
     const handleNodeUpdate = useCallback((id: string, newData: NodeFormData) => {
@@ -87,6 +88,11 @@ const PublicAdminGraph: React.FC = () => {
                     : n
             )
         );
+        setInvalidNodes((prev) => {
+            const copy = { ...prev };
+            delete copy[id];
+            return copy;
+        });
     }, [setNodes]);
 
     useEffect(() => {
@@ -102,6 +108,7 @@ const PublicAdminGraph: React.FC = () => {
                 text: scene.text,
                 start: scene.start,
                 end: scene.end,
+                invalid: false,
                 onUpdate: handleNodeUpdate,
             },
         }));
@@ -171,6 +178,7 @@ const PublicAdminGraph: React.FC = () => {
                 text: '',
                 start: false,
                 end: false,
+                invalid: false,
                 onUpdate: handleNodeUpdate
             }
         }));
@@ -191,6 +199,16 @@ const PublicAdminGraph: React.FC = () => {
         });
     }, [edges, nodes.length, setNodes]);
 
+    // update invalid flag styling
+    useEffect(() => {
+        setNodes((nds) =>
+            nds.map((n) => ({
+                ...n,
+                data: { ...n.data, invalid: !!invalidNodes[n.id] },
+            }))
+        );
+    }, [invalidNodes, setNodes]);
+
     const handleExport = () => {
         const scenes = exportAsScenes(nodes, edges);
         const blob = new Blob([JSON.stringify(scenes, null, 2)], { type: 'application/json' });
@@ -201,21 +219,36 @@ const PublicAdminGraph: React.FC = () => {
     const handleSave = () => {
         setErrorMsg('');
         setSuccessMsg('');
+        setInvalidNodes({});
         const requests = toRequests(nodes, edges);
 
         for (const scene of requests) {
-            if (
-                !scene.sceneId.trim() ||
-                !scene.speaker.trim() ||
-                !scene.backgroundImage.trim() ||
-                !scene.text.trim()
-            ) {
-                setErrorMsg('모든 필수 항목을 입력해주세요.');
+            if (!scene.speaker.trim()) {
+                setInvalidNodes({ [scene.sceneId]: true });
+                setErrorMsg(`[${scene.sceneId}] 화자 입력이 필요합니다`);
                 return;
             }
-            if (scene.choiceRequests.some(cr => !cr.text.trim() || !cr.nextSceneId)) {
-                setErrorMsg('모든 필수 항목을 입력해주세요.');
+            if (!scene.backgroundImage.trim()) {
+                setInvalidNodes({ [scene.sceneId]: true });
+                setErrorMsg(`[${scene.sceneId}] backgroundImage가 비어 있습니다`);
                 return;
+            }
+            if (!scene.text.trim()) {
+                setInvalidNodes({ [scene.sceneId]: true });
+                setErrorMsg(`[${scene.sceneId}] text가 비어 있습니다`);
+                return;
+            }
+            for (const cr of scene.choiceRequests) {
+                if (!cr.text.trim()) {
+                    setInvalidNodes({ [scene.sceneId]: true });
+                    setErrorMsg(`[${scene.sceneId}] 선택지 text가 비어 있습니다`);
+                    return;
+                }
+                if (!cr.nextSceneId) {
+                    setInvalidNodes({ [scene.sceneId]: true });
+                    setErrorMsg(`[${scene.sceneId}] nextSceneId가 비어 있습니다`);
+                    return;
+                }
             }
         }
 
