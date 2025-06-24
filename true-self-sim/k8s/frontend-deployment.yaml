@@ -13,7 +13,7 @@ spec:
         app: frontend
     spec:
       containers:
-      - name: frontend
+      - name: bion0625/ts-frontend:v1
         image: frontend:latest
         env:
         - name: VITE_API_URL

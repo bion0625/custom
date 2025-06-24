@@ -10,6 +10,7 @@ services:
 
   backend:
     build: ./back
+    image: bion0625/ts-backend:v1
     environment:
       DB_HOST: db
       DB_PORT: 5432
@@ -26,6 +27,7 @@ services:
       context: ./front
       args:
         VITE_API_URL: http://localhost:8080
+    image: bion0625/ts-frontend:v1
     depends_on:
       - backend
     ports:
