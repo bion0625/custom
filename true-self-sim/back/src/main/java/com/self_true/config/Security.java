@@ -54,6 +54,7 @@ public class Security {
                                          * */
                                         "/admin/**"
                                 ).hasRole("ADMIN")
+                                .requestMatchers("/my/**").authenticated()
                                 .anyRequest().authenticated());
 
         return http.build();
