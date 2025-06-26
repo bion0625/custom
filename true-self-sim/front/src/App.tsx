@@ -10,6 +10,7 @@ function App() {
     const PublicGame = lazy(() => import("./pages/PublicGame.tsx"))
     const PublicAdmin = lazy(() => import("./pages/PublicAdmin.tsx"))
     const PublicAdminGraph = lazy(() => import("./pages/PublicAdminGraph.tsx"))
+    const PrivateAdmin = lazy(() => import("./pages/PrivateAdmin.tsx"))
 
   return (
       <AuthProvider>
@@ -21,7 +22,8 @@ function App() {
                           <Route path={"/login"} element={<Login/>}/>
                           <Route path={"/register"} element={<Register/>}/>
                           <Route path={"/admin/public"} element={<PublicAdmin/>}/>
-                          <Route path={"/admin/public/graph"} element={<PublicAdminGraph/>}/>
+                        <Route path={"/admin/public/graph"} element={<PublicAdminGraph/>}/>
+                        <Route path={"/my"} element={<PrivateAdmin/>}/>
                       </Routes>
                   </Suspense>
               </ErrorBoundary>
