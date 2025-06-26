@@ -28,7 +28,7 @@ const PrivateAdmin: React.FC = () => {
 
     useEffect(() => {
         if (!currentId) return;
-        const sc = data?.publicScenes.find(s => s.sceneId === currentId);
+        const sc = data?.privateScenes.find(s => s.sceneId === currentId);
         if (sc) {
             setRequest({
                 sceneId: sc.sceneId,
@@ -37,7 +37,7 @@ const PrivateAdmin: React.FC = () => {
                 text: sc.text,
                 choiceRequests: Array.isArray(sc.texts)
                     ? sc.texts.map(t => ({
-                        nextSceneId: t.nextPublicSceneId,
+                        nextSceneId: t.nextPrivateSceneId,
                         text: t.text
                     }))
                     : [],
@@ -77,7 +77,7 @@ const PrivateAdmin: React.FC = () => {
                         로그아웃
                     </button>
                     <ul className="space-y-2">
-                        {data?.publicScenes?.map((sc) => (
+                        {data?.privateScenes?.map((sc) => (
                             <li key={sc.sceneId}>
                                 <button
                                     onClick={() => setCurrentId(sc.sceneId)}

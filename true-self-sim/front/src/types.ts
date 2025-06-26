@@ -62,3 +62,25 @@ export interface RegisterRequest {
     phoneNumber: string;
     email: string;
 }
+
+export interface PrivateChoice {
+    text: string;
+    nextPrivateSceneId: string;
+    nextText: string;
+}
+
+export interface PrivateScene {
+    sceneId: string;
+    speaker: string;
+    backgroundImage: string;
+    text: string;
+    texts: PrivateChoice[];
+    start: boolean;
+    end: boolean;
+}
+
+export interface PrivateStory {
+    isSuccess: boolean;
+    message: string;
+    privateScenes: PrivateScene[];
+}
