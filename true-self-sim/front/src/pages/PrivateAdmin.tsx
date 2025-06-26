@@ -57,26 +57,85 @@ const PrivateAdmin: React.FC = () => {
     };
 
     return (
-        <div className="p-4">
-            <button onClick={() => navigate("/")}>돌아가기</button>
-            <button onClick={async () => {await logout();await refreshUser();navigate("/")}}>로그아웃</button>
-            <div className="flex">
-                <aside className="w-1/4">
-                    <ul>
-                        {data?.publicScenes?.map(sc => (
+        <div className="min-h-screen bg-gray-50 p-4 sm:p-6">
+            <div className="max-w-5xl mx-auto flex flex-col md:flex-row gap-6">
+                <aside className="w-full md:w-1/4 border-b md:border-b-0 md:border-r bg-gray-100 p-4 rounded-md md:rounded-none overflow-auto">
+                    <button
+                        className="mb-2 w-full py-2 bg-indigo-500 text-white rounded-lg hover:bg-indigo-600 transition"
+                        onClick={() => navigate('/')}
+                    >
+                        돌아가기
+                    </button>
+                    <button
+                        className="mb-2 w-full py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition"
+                        onClick={async () => {
+                            await logout();
+                            await refreshUser();
+                            navigate('/');
+                        }}
+                    >
+                        로그아웃
+                    </button>
+                    <ul className="space-y-2">
+                        {data?.publicScenes?.map((sc) => (
                             <li key={sc.sceneId}>
-                                <button onClick={() => setCurrentId(sc.sceneId)}>{sc.sceneId}</button>
+                                <button
+                                    onClick={() => setCurrentId(sc.sceneId)}
+                                    className={`w-full text-left px-2 py-1 rounded ${sc.sceneId === currentId ? 'bg-indigo-200 font-semibold' : 'hover:bg-gray-200'}`}
+                                >
+                                    <span className="text-sm text-gray-700 font-mono">[{sc.sceneId}]</span> {sc.text}
+                                </button>
                             </li>
                         ))}
                     </ul>
                 </aside>
-                <section className="flex-1">
-                    <input value={request.sceneId} onChange={e => setRequest(r=>({...r,sceneId:e.target.value}))} />
-                    <input value={request.speaker} onChange={e=>setRequest(r=>({...r,speaker:e.target.value}))}/>
-                    <input value={request.backgroundImage} onChange={e=>setRequest(r=>({...r,backgroundImage:e.target.value}))}/>
-                    <textarea value={request.text} onChange={e=>setRequest(r=>({...r,text:e.target.value}))}/>
-                    <button onClick={handleSave}>저장</button>
-                    {currentId && <button onClick={handleDelete}>삭제</button>}
+                <section className="w-full md:flex-1 bg-white p-4 rounded-md shadow flex flex-col space-y-4 overflow-auto">
+                    <div>
+                        <label className="block text-sm font-medium">Scene ID</label>
+                        <input
+                            type="text"
+                            className="mt-1 w-full border rounded p-2"
+                            value={request.sceneId}
+                            onChange={(e) => setRequest((r) => ({ ...r, sceneId: e.target.value }))}
+                        />
+                    </div>
+                    <div>
+                        <label className="block text-sm font-medium">Speaker</label>
+                        <input
+                            type="text"
+                            className="mt-1 w-full border rounded p-2"
+                            value={request.speaker}
+                            onChange={(e) => setRequest((r) => ({ ...r, speaker: e.target.value }))}
+                        />
+                    </div>
+                    <div>
+                        <label className="block text-sm font-medium">Background Image</label>
+                        <input
+                            type="text"
+                            className="mt-1 w-full border rounded p-2"
+                            value={request.backgroundImage}
+                            onChange={(e) => setRequest((r) => ({ ...r, backgroundImage: e.target.value }))}
+                            placeholder="https://example.com/bg.jpg"
+                        />
+                    </div>
+                    <div>
+                        <label className="block text-sm font-medium">Text</label>
+                        <textarea
+                            className="mt-1 w-full border rounded p-2 h-32"
+                            value={request.text}
+                            onChange={(e) => setRequest((r) => ({ ...r, text: e.target.value }))}
+                        />
+                    </div>
+                    <div className="flex space-x-2">
+                        <button className="px-4 py-2 bg-blue-600 text-white rounded-lg" onClick={handleSave}>
+                            저장
+                        </button>
+                        {currentId && (
+                            <button className="px-4 py-2 bg-red-600 text-white rounded-lg" onClick={handleDelete}>
+                                삭제
+                            </button>
+                        )}
+                    </div>
                 </section>
             </div>
         </div>
