@@ -1,8 +1,9 @@
 import {useSuspenseQuery} from "@tanstack/react-query";
 import {getMyStory} from "../api/myScene.ts";
+import type {PrivateStory} from "../types.ts";
 
 const useMyStory = () => {
-    return useSuspenseQuery({
+    return useSuspenseQuery<PrivateStory>({
         queryKey: ['myStory'],
         queryFn: getMyStory,
     });
