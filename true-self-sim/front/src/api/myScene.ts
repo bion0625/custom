@@ -1,8 +1,8 @@
-import type {PublicSceneRequest, PublicStory} from "../types.ts";
+import type {PublicSceneRequest, PrivateStory} from "../types.ts";
 import api from "./api.ts";
 
-export const getMyStory = async (): Promise<PublicStory> => {
-    const res = await api.get<PublicStory>("/my/story");
+export const getMyStory = async (): Promise<PrivateStory> => {
+    const res = await api.get<PrivateStory>("/my/story");
     return res.data;
 }
 
