@@ -84,3 +84,18 @@ export interface PrivateStory {
     message: string;
     privateScenes: PrivateScene[];
 }
+
+export interface PrivateChoiceRequest {
+    nextSceneId: string | null;
+    text: string;
+}
+
+export interface PrivateSceneRequest {
+    sceneId?: string;
+    speaker: string;
+    backgroundImage: string;
+    text: string;
+    choiceRequests: PrivateChoiceRequest[];
+    start: boolean;
+    end: boolean;
+}
