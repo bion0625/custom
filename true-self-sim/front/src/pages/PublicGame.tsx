@@ -6,6 +6,8 @@ import type {PublicScene} from "../types.ts";
 import {getPublicScene} from "../api/publicScene.ts";
 import MemoryLog from "../component/MemoryLog.tsx";
 import FullLog from "../component/FullLog.tsx";
+import GameHeader from "../component/GameHeader.tsx";
+import { backgroundSrc } from "../utils/url.ts";
 
 const PublicGame: React.FC = () => {
     const navigate = useNavigate();
@@ -51,9 +53,7 @@ const PublicGame: React.FC = () => {
         }
     };
 
-    const isExternalUrl = (url: string) => /^https?:\/\//.test(url);
-
-    const bgSrc = isExternalUrl(scene.backgroundImage) ? scene.backgroundImage : `background/${scene.backgroundImage}`;
+    const bgSrc = backgroundSrc(scene.backgroundImage);
 
     return (
         <div className="relative min-h-screen w-full overflow-hidden bg-black text-white flex flex-col md:flex-row">
@@ -61,38 +61,7 @@ const PublicGame: React.FC = () => {
                  src={bgSrc}
             />
             <div className="relative z-10 flex-1 flex flex-col items-center pt-6 px-4 space-y-6 md:items-center md:px-8 lg:px-16 lg:pr-72">
-                <div className="w-full max-w-xl flex justify-between items-center">
-                    <h1 className="text-2xl md:text-3xl font-bold text-indigo-300">
-                        Welcome to the public page!
-                    </h1>
-                    <div className="flex space-x-4">
-                        {user?.isAdmin && (
-                            <button className="text-sm md:text-base text-green-400 hover:text-green-600"
-                                    onClick={() => navigate("/admin/public")}
-                            >
-                                관리자
-                            </button>
-                        )}
-                        {!user && (
-                            <button className="text-sm md:text-base text-blue-400 hover:text-blue-600"
-                                    onClick={() => navigate("/login")}
-                            >
-                                로그인
-                            </button>
-                        )}
-                        {user && (
-                            <button className="text-sm md:text-base text-red-500 hover:text-red-600"
-                                    onClick={async () => {
-                                        await logout();
-                                        await refreshUser();
-                                        navigate("/")
-                                    }}
-                            >
-                                로그아웃
-                            </button>
-                        )}
-                    </div>
-                </div>
+                <GameHeader title="Welcome to the public page!" showLogin logoutRedirect="/" />
                 <div className="bg-white/10 backdrop-blur-md rounded-xl shadow-lg p-6 w-full max-w-xl md:max-w-2xl">
                     <h2 className="text-indigo-300 text-lg md:text-xl mb-2">
                         {scene.speaker}
