@@ -9,4 +9,5 @@ import java.util.Optional;
 public interface PrivateStoryRepository extends JpaRepository<PrivateStory, Long> {
     List<PrivateStory> findByMemberIdAndDeletedAtIsNullOrderByCreatedAtDesc(Long memberId);
     Optional<PrivateStory> findByIdAndMemberIdAndDeletedAtIsNull(Long id, Long memberId);
+    List<PrivateStory> findByMemberIdInAndDeletedAtIsNullOrderByCreatedAtDesc(List<Long> memberIds);
 }

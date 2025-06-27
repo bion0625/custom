@@ -8,6 +8,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Transactional
@@ -32,5 +33,9 @@ public class MemberService {
 
     public Optional<Member> findById(String memberId) {
         return memberRepository.findByMemberIdAndDeletedAtIsNull(memberId);
+    }
+
+    public List<Member> findByRole(String role) {
+        return memberRepository.findByRoleAndDeletedAtIsNull(role);
     }
 }
