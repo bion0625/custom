@@ -15,3 +15,8 @@ export const deleteMyScene = async (id: string) => {
     const res = await api.delete(`/my/scene/${id}`);
     return res.data;
 }
+
+export const postMySceneBulk = async (data: PrivateSceneRequest[]) => {
+    const res = await api.post('/my/scenes/bulk', data);
+    return res.data;
+}

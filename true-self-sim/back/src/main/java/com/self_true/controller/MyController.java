@@ -4,6 +4,7 @@ import com.self_true.model.dto.request.PrivateSceneRequest;
 import com.self_true.model.dto.response.PrivateStoryResponse;
 import com.self_true.model.dto.response.Response;
 import com.self_true.service.PrivateStoryService;
+import java.util.List;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
@@ -29,6 +30,13 @@ public class MyController {
                                                    @AuthenticationPrincipal String memberId) {
         privateStoryService.createOrUpdate(request, id, memberId);
         return ResponseEntity.ok(new Response(true, "장면 저장 완료"));
+    }
+
+    @PostMapping("/scenes/bulk")
+    public ResponseEntity<Response> saveBulk(@RequestBody List<PrivateSceneRequest> requests,
+                                             @AuthenticationPrincipal String memberId) {
+        privateStoryService.saveAll(requests, memberId);
+        return ResponseEntity.ok(new Response(true, "벌크 장면 저장 완료"));
     }
 
     @Operation(summary = "내 장면 삭제")
