@@ -1,17 +1,17 @@
 import { useNavigate } from "react-router-dom";
 import { useContext, useEffect, useState } from "react";
 import AuthContext from "../context/AuthContext.tsx";
-import usePublicFirstScene from "../hook/usePublicFirstScene.ts";
-import type { PublicScene } from "../types.ts";
-import { getPublicScene } from "../api/publicScene.ts";
+import usePrivateFirstScene from "../hook/usePrivateFirstScene.ts";
+import type { PrivateScene } from "../types.ts";
+import { getPrivateScene } from "../api/privateScene.ts";
 import MemoryLog from "../component/MemoryLog.tsx";
 import FullLog from "../component/FullLog.tsx";
 
 const PrivateGame: React.FC = () => {
     const navigate = useNavigate();
     const { user, logout, refreshUser, loading } = useContext(AuthContext);
-    const { data: firstScene } = usePublicFirstScene();
-    const [scene, setScene] = useState<PublicScene>({
+    const { data: firstScene } = usePrivateFirstScene();
+    const [scene, setScene] = useState<PrivateScene>({
         sceneId: "",
         speaker: "",
         backgroundImage: "",
@@ -46,7 +46,7 @@ const PrivateGame: React.FC = () => {
         });
 
         try {
-            const nextScene = await getPublicScene(nextSceneId);
+            const nextScene = await getPrivateScene(nextSceneId);
             setScene(nextScene);
             setIsFinished(nextScene.end);
         } catch (err) {
@@ -79,7 +79,7 @@ const PrivateGame: React.FC = () => {
                     <p className="text-xl md:text-2xl mb-4">{scene.text}</p>
                     <div className="space-y-2">
                         {scene?.texts?.map((t, index) => (
-                            <button key={index} onClick={() => handleNextScene(t.nextPublicSceneId, t.text)} className="block w-full py-2 px-4 bg-indigo-600 hover:bg-indigo-700 rounded-lg text-sm md:text-base">
+                            <button key={index} onClick={() => handleNextScene(t.nextPrivateSceneId, t.text)} className="block w-full py-2 px-4 bg-indigo-600 hover:bg-indigo-700 rounded-lg text-sm md:text-base">
                                 {t.text}
                             </button>
                         ))}
