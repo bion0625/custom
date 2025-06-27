@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useContext, useEffect, useState } from "react";
 import AuthContext from "../context/AuthContext.tsx";
 import usePrivateFirstScene from "../hook/usePrivateFirstScene.ts";
@@ -11,8 +11,9 @@ import { backgroundSrc } from "../utils/url.ts";
 
 const PrivateGame: React.FC = () => {
     const navigate = useNavigate();
+    const { id } = useParams();
     const { user, loading } = useContext(AuthContext);
-    const { data: firstScene } = usePrivateFirstScene();
+    const { data: firstScene } = usePrivateFirstScene(id);
     const [scene, setScene] = useState<PrivateScene>({
         sceneId: "",
         speaker: "",
@@ -38,7 +39,7 @@ const PrivateGame: React.FC = () => {
             setScene(firstScene);
         }
         setIsFinished(firstScene.end);
-    }, [firstScene]);
+    }, [firstScene, id]);
 
     const handleNextScene = async (nextSceneId: string, nextText: string) => {
         setFullLog(full => [`${scene.speaker}: ${scene.text}`, `-> ${user?.name ?? "U"}: ${nextText}`, ...full]);
@@ -48,7 +49,7 @@ const PrivateGame: React.FC = () => {
         });
 
         try {
-            const nextScene = await getPrivateScene(nextSceneId);
+            const nextScene = await getPrivateScene(nextSceneId, id);
             setScene(nextScene);
             setIsFinished(nextScene.end);
         } catch (err) {

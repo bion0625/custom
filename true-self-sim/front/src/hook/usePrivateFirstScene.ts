@@ -1,10 +1,10 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { getPrivateFirstScene } from "../api/privateScene.ts";
 
-const usePrivateFirstScene = () => {
+const usePrivateFirstScene = (memberId?: string) => {
     return useSuspenseQuery({
-        queryKey: ["usePrivateFirstScene"],
-        queryFn: getPrivateFirstScene,
+        queryKey: ["usePrivateFirstScene", memberId],
+        queryFn: () => getPrivateFirstScene(memberId),
     });
 };
 

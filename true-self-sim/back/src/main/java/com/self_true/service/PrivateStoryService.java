@@ -52,7 +52,11 @@ public class PrivateStoryService {
     }
 
     public PrivateSceneResponse getFirstScene(String memberId) {
-        Long userId = memberService.findById(memberId).map(Member::getId).orElse(null);
+        return getFirstScene(memberId, memberId);
+    }
+
+    public PrivateSceneResponse getFirstScene(String targetMemberId, String logMemberId) {
+        Long userId = memberService.findById(targetMemberId).map(Member::getId).orElse(null);
         PrivateSceneResponse response = Optional.ofNullable(userId)
                 .flatMap(id -> sceneRepository.findFirstByMemberIdAndIsStartIsTrueAndDeletedAtIsNullOrderByCreatedAtDesc(id))
                 .map(PrivateSceneResponse::fromEntity)
@@ -65,17 +69,21 @@ public class PrivateStoryService {
                         .isEnd(false)
                         .build());
         response.setTexts(getChoiceResponsesBySceneId(response.getSceneId(), userId));
-        if (userId != null) saveSceneLog(memberId, response);
+        if (logMemberId != null) saveSceneLog(logMemberId, response);
         return response;
     }
 
     public PrivateSceneResponse getPrivateScene(String id, String memberId) {
-        Long userId = memberService.findById(memberId).map(Member::getId).orElseThrow();
+        return getPrivateScene(id, memberId, memberId);
+    }
+
+    public PrivateSceneResponse getPrivateScene(String id, String targetMemberId, String logMemberId) {
+        Long userId = memberService.findById(targetMemberId).map(Member::getId).orElseThrow();
         PrivateSceneResponse response = sceneRepository.findByMemberIdAndPrivateSceneIdAndDeletedAtIsNull(userId, id)
                 .map(PrivateSceneResponse::fromEntity)
                 .orElseThrow(() -> new NotFoundSceneException("not found scene id: " + id));
         response.setTexts(getChoiceResponsesBySceneId(response.getSceneId(), userId));
-        saveSceneLog(memberId, response);
+        saveSceneLog(logMemberId, response);
         return response;
     }
 
