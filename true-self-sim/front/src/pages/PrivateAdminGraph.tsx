@@ -264,6 +264,13 @@ const PrivateAdminGraph: React.FC = () => {
         setErrorMsg('');
         setSuccessMsg('');
         setInvalidNodes({});
+        for (const e of edges) {
+            const label = e.label as string | undefined;
+            if (!label || !label.trim()) {
+                setErrorMsg('label이 비어 있는 edge가 있습니다');
+                return;
+            }
+        }
         const requests = toRequests(nodes, edges);
 
         for (const scene of requests) {
