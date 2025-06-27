@@ -22,13 +22,9 @@ const PrivateAdmin: React.FC = () => {
     const { mutate: deleteScene } = useDeleteMyScene(storyId ?? 0);
     const { refreshUser, logout } = useContext(AuthContext);
 
-    if (error) navigate("/login");
+    const noStories = stories && stories.length === 0;
 
-    if (stories && stories.length === 0) {
-        return (
-            <div className="p-4">No stories found. Create one first. <Link className="text-blue-600 underline" to="/my/stories">Go to list</Link></div>
-        );
-    }
+    if (error) navigate("/login");
 
     const [currentId, setCurrentId] = useState("");
     const [request, setRequest] = useState<PrivateSceneRequest>({
@@ -113,6 +109,12 @@ const PrivateAdmin: React.FC = () => {
         await refreshUser();
         navigate("/");
     };
+
+    if (noStories) {
+        return (
+            <div className="p-4">No stories found. Create one first. <Link className="text-blue-600 underline" to="/my/stories">Go to list</Link></div>
+        );
+    }
 
     return (
         <div className="min-h-screen bg-gray-50 p-4 sm:p-6">
