@@ -1,4 +1,5 @@
-import AdminGraph, { GraphScene } from "../component/AdminGraph";
+import AdminGraph from "../component/AdminGraph";
+import type { GraphScene } from "../component/AdminGraph";
 import useMyStory from "../hook/useMyStory.ts";
 import usePostMySceneBulk from "../hook/usePostMySceneBulk.ts";
 import useDeleteMyScene from "../hook/useDeleteMyScene.ts";

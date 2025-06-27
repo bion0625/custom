@@ -1,4 +1,5 @@
-import AdminGraph, { GraphScene } from "../component/AdminGraph";
+import AdminGraph from "../component/AdminGraph";
+import type { GraphScene } from "../component/AdminGraph";
 import usePublicStory from "../hook/usePublicStory.ts";
 import usePostPublicSceneBulk from "../hook/usePostPublicSceneBulk.ts";
 import useDeletePublicScene from "../hook/useDeletePublicScene.ts";

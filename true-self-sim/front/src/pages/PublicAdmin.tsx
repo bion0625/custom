@@ -5,9 +5,9 @@ import usePostPublicScene from "../hook/usePostPublicScene.ts";
 import useDeletePublicScene from "../hook/useDeletePublicScene.ts";
 import usePostPublicSceneBulk from "../hook/usePostPublicSceneBulk.ts";
 import AuthContext from "../context/AuthContext.tsx";
-import { backgroundImgs } from "../constants/backgroundImages.ts";
 import AdminSidebar from "../component/AdminSidebar";
-import AdminEditorForm, { SceneRequest } from "../component/AdminEditorForm";
+import AdminEditorForm from "../component/AdminEditorForm";
+import type { SceneRequest } from "../component/AdminEditorForm";
 import type { PublicSceneRequest } from "../types.ts";
 
 const emptyRequest: PublicSceneRequest = {
