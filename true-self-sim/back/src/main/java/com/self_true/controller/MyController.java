@@ -1,9 +1,11 @@
 package com.self_true.controller;
 
 import com.self_true.model.dto.request.PrivateSceneRequest;
+import com.self_true.model.dto.request.PrivateStoryRequest;
 import com.self_true.model.dto.response.PrivateStoryResponse;
 import com.self_true.model.dto.response.Response;
 import com.self_true.service.PrivateStoryService;
+import com.self_true.model.entity.PrivateStory;
 import java.util.List;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -27,6 +29,13 @@ public class MyController {
     @GetMapping("/stories")
     public ResponseEntity<?> getStories(@AuthenticationPrincipal String memberId) {
         return ResponseEntity.ok(privateStoryService.getStories(memberId));
+    }
+
+    @Operation(summary = "새 스토리 생성")
+    @PostMapping("/stories")
+    public ResponseEntity<PrivateStory> createStory(@RequestBody PrivateStoryRequest request,
+                                                   @AuthenticationPrincipal String memberId) {
+        return ResponseEntity.ok(privateStoryService.createStory(request.getTitle(), memberId));
     }
 
     @Operation(summary = "내 장면 저장")

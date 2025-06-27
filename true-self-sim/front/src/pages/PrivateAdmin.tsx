@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link, useSearchParams } from "react-router-dom";
 import useMyStory from "../hook/useMyStory.ts";
 import useMyStories from "../hook/useMyStories.ts";
 import usePostMyScene from "../hook/usePostMyScene.ts";
@@ -13,14 +13,22 @@ import type { PrivateSceneRequest } from "../types.ts";
 
 const PrivateAdmin: React.FC = () => {
     const navigate = useNavigate();
+    const [searchParams] = useSearchParams();
     const { data: stories } = useMyStories();
-    const [storyId, setStoryId] = useState<number>();
+    const initial = searchParams.get('storyId');
+    const [storyId, setStoryId] = useState<number | undefined>(initial ? Number(initial) : undefined);
     const { data, error } = useMyStory(storyId ?? 0);
     const { mutate: saveScene } = usePostMyScene();
     const { mutate: deleteScene } = useDeleteMyScene(storyId ?? 0);
     const { refreshUser, logout } = useContext(AuthContext);
 
     if (error) navigate("/login");
+
+    if (stories && stories.length === 0) {
+        return (
+            <div className="p-4">No stories found. Create one first. <Link className="text-blue-600 underline" to="/my/stories">Go to list</Link></div>
+        );
+    }
 
     const [currentId, setCurrentId] = useState("");
     const [request, setRequest] = useState<PrivateSceneRequest>({

@@ -61,6 +61,15 @@ public class PrivateStoryService {
         return storyRepository.findByMemberIdAndDeletedAtIsNullOrderByCreatedAtDesc(userId);
     }
 
+    public PrivateStory createStory(String title, String memberId) {
+        Long userId = memberService.findById(memberId).map(Member::getId).orElseThrow();
+        PrivateStory story = PrivateStory.builder()
+                .memberId(userId)
+                .title(title)
+                .build();
+        return storyRepository.save(story);
+    }
+
     public PrivateSceneResponse getFirstScene(Long storyId, String memberId) {
         return getFirstScene(storyId, memberId, memberId);
     }

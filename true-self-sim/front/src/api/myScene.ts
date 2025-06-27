@@ -25,3 +25,9 @@ export const postMySceneBulk = async (storyId: number, data: PrivateSceneRequest
     const res = await api.post(`/my/story/${storyId}/scenes/bulk`, data);
     return res.data;
 }
+
+export const postMyStory = async (title: string): Promise<PrivateStoryInfo> => {
+    const res = await api.post<PrivateStoryInfo>("/my/stories", { title });
+    return res.data;
+};
+

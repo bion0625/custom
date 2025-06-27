@@ -5,6 +5,7 @@ import useMyStories from "../hook/useMyStories.ts";
 import usePostMySceneBulk from "../hook/usePostMySceneBulk.ts";
 import useDeleteMyScene from "../hook/useDeleteMyScene.ts";
 import { useEffect, useState } from "react";
+import { Link, useSearchParams } from "react-router-dom";
 
 const selectScenes = (data: any): GraphScene[] =>
     data.privateScenes.map((scene: any) => ({
@@ -18,8 +19,14 @@ const selectScenes = (data: any): GraphScene[] =>
     }));
 
 const PrivateAdminGraph: React.FC = () => {
+    const [searchParams] = useSearchParams();
     const { data: stories } = useMyStories();
-    const [storyId, setStoryId] = useState<number>();
+    const initial = searchParams.get('storyId');
+    const [storyId, setStoryId] = useState<number | undefined>(initial ? Number(initial) : undefined);
+
+    if (stories && stories.length === 0) {
+        return <div className="p-4">No stories found. Create one first. <Link className="text-blue-600 underline" to="/my/stories">Go to list</Link></div>;
+    }
 
     useEffect(() => {
         if (!storyId && stories && stories.length > 0) setStoryId(stories[0].id);
