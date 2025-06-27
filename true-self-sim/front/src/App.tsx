@@ -1,8 +1,8 @@
 import {BrowserRouter, Route, Routes} from "react-router-dom";
 import AuthProvider from "./provider/AuthProvider.tsx";
 import {lazy, Suspense} from "react";
-import LoadingScreen from "./pages/LoadingScreen.tsx";
-import ErrorBoundary from "./pages/ErrorBoundary.tsx";
+import LoadingScreen from "./component/LoadingScreen.tsx";
+import ErrorBoundary from "./component/ErrorBoundary.tsx";
 import PrivateRoute from "./component/PrivateRoute.tsx";
 
 function App() {
