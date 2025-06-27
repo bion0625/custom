@@ -2,6 +2,7 @@ package com.self_true.service;
 
 import com.self_true.exception.NotFoundSceneException;
 import com.self_true.model.dto.request.PrivateSceneRequest;
+import com.self_true.model.dto.response.AdminStoryInfo;
 import com.self_true.model.dto.response.PrivateChoiceResponse;
 import com.self_true.model.dto.response.PrivateSceneResponse;
 import com.self_true.model.dto.response.PrivateStoryResponse;
@@ -190,5 +191,17 @@ public class PrivateStoryService {
             scene.setTexts(list);
         });
         return resp;
+    }
+
+    @Transactional(readOnly = true)
+    public List<AdminStoryInfo> getAdminStories() {
+        List<Member> admins = memberService.findByRole("ADMIN");
+        if (admins.isEmpty()) return List.of();
+        Map<Long, String> idMap = admins.stream()
+                .collect(Collectors.toMap(Member::getId, Member::getMemberId));
+        List<PrivateStory> stories = storyRepository.findByMemberIdInAndDeletedAtIsNullOrderByCreatedAtDesc(admins.stream().map(Member::getId).toList());
+        return stories.stream()
+                .map(story -> new AdminStoryInfo(story.getId(), story.getTitle(), idMap.get(story.getMemberId())))
+                .toList();
     }
 }
