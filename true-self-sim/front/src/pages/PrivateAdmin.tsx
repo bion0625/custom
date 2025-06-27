@@ -1,6 +1,7 @@
 import { useContext, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link, useSearchParams } from "react-router-dom";
 import useMyStory from "../hook/useMyStory.ts";
+import useMyStories from "../hook/useMyStories.ts";
 import usePostMyScene from "../hook/usePostMyScene.ts";
 import useDeleteMyScene from "../hook/useDeleteMyScene.ts";
 import AuthContext from "../context/AuthContext.tsx";
@@ -12,10 +13,16 @@ import type { PrivateSceneRequest } from "../types.ts";
 
 const PrivateAdmin: React.FC = () => {
     const navigate = useNavigate();
-    const { data, error } = useMyStory();
+    const [searchParams] = useSearchParams();
+    const { data: stories } = useMyStories();
+    const initial = searchParams.get('storyId');
+    const [storyId, setStoryId] = useState<number | undefined>(initial ? Number(initial) : undefined);
+    const { data, error } = useMyStory(storyId ?? 0);
     const { mutate: saveScene } = usePostMyScene();
-    const { mutate: deleteScene } = useDeleteMyScene();
+    const { mutate: deleteScene } = useDeleteMyScene(storyId ?? 0);
     const { refreshUser, logout } = useContext(AuthContext);
+
+    const noStories = stories && stories.length === 0;
 
     if (error) navigate("/login");
 
@@ -28,12 +35,20 @@ const PrivateAdmin: React.FC = () => {
         choiceRequests: [],
         start: false,
         end: false,
+        storyId: 0,
     });
     const [useCustomImg, setUseCustomImg] = useState(false);
 
     const otherSceneAlreadyStart = data?.privateScenes?.some(
         scene => scene.start && scene.sceneId !== currentId
     );
+
+    useEffect(() => {
+        if (!storyId && stories && stories.length > 0) {
+            setStoryId(stories[0].id);
+            setRequest(r => ({...r, storyId: stories[0].id}));
+        }
+    }, [stories, storyId]);
 
     const createNew = () => {
         setCurrentId("");
@@ -45,6 +60,7 @@ const PrivateAdmin: React.FC = () => {
             choiceRequests: [],
             start: false,
             end: false,
+            storyId: storyId ?? 0,
         });
         setUseCustomImg(false);
     };
@@ -69,7 +85,7 @@ const PrivateAdmin: React.FC = () => {
     }, [currentId, data]);
 
     const handleSave = () => {
-        saveScene(request, { onSuccess: () => window.location.reload() });
+        saveScene({ ...request, storyId: storyId ?? 0 }, { onSuccess: () => window.location.reload() });
     };
 
     const handleDelete = () => {
@@ -85,6 +101,7 @@ const PrivateAdmin: React.FC = () => {
         choiceRequests: [],
         start: false,
         end: false,
+        storyId: storyId ?? 0,
     });
 
     const handleLogout = async () => {
@@ -93,8 +110,25 @@ const PrivateAdmin: React.FC = () => {
         navigate("/");
     };
 
+    if (noStories) {
+        return (
+            <div className="p-4">No stories found. Create one first. <Link className="text-blue-600 underline" to="/my/stories">Go to list</Link></div>
+        );
+    }
+
     return (
         <div className="min-h-screen bg-gray-50 p-4 sm:p-6">
+            <div className="mb-4">
+                <select
+                    className="border p-2"
+                    value={storyId}
+                    onChange={e => { const id = Number(e.target.value); setStoryId(id); setRequest(r=>({...r, storyId:id})); }}
+                >
+                    {stories?.map(s => (
+                        <option key={s.id} value={s.id}>{s.title}</option>
+                    ))}
+                </select>
+            </div>
             <div className="max-w-5xl mx-auto flex flex-col md:flex-row gap-6">
                 <AdminSidebar
                     scenes={data?.privateScenes}

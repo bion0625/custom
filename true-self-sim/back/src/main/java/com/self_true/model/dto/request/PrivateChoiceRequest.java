@@ -8,11 +8,14 @@ public class PrivateChoiceRequest {
     private String nextSceneId;
     private String text;
 
-    public PrivateChoice toEntity(String privateSceneId, Long memberId) {
+    private Long storyId;
+
+    public PrivateChoice toEntity(String privateSceneId, Long storyId, Long memberId) {
         return PrivateChoice.builder()
                 .text(this.text)
                 .nextPrivateSceneId(this.nextSceneId)
                 .privateSceneId(privateSceneId)
+                .storyId(storyId)
                 .memberId(memberId)
                 .build();
     }

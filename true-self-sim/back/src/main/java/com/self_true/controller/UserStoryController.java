@@ -18,17 +18,25 @@ public class UserStoryController {
         this.privateStoryService = privateStoryService;
     }
 
+    @Operation(summary = "사용자 스토리 목록 조회")
+    @GetMapping("/{memberId}/stories")
+    public ResponseEntity<?> getStories(@PathVariable String memberId) {
+        return ResponseEntity.ok(privateStoryService.getStories(memberId));
+    }
+
     @Operation(summary = "사용자 첫 장면 호출")
-    @GetMapping("/{memberId}/scene")
+    @GetMapping("/{memberId}/story/{storyId}/scene")
     public ResponseEntity<?> getFirst(@PathVariable String memberId,
+                                      @PathVariable Long storyId,
                                       @AuthenticationPrincipal String viewerId) {
-        return ResponseEntity.ok(privateStoryService.getFirstScene(memberId, viewerId));
+        return ResponseEntity.ok(privateStoryService.getFirstScene(storyId, memberId, viewerId));
     }
 
     @Operation(summary = "사용자 특정 장면 호출")
-    @GetMapping("/{memberId}/scene/{id}")
-    public ResponseEntity<?> getScene(@PathVariable String memberId, @PathVariable String id,
+    @GetMapping("/{memberId}/story/{storyId}/scene/{id}")
+    public ResponseEntity<?> getScene(@PathVariable String memberId, @PathVariable Long storyId,
+                                      @PathVariable String id,
                                       @AuthenticationPrincipal String viewerId) {
-        return ResponseEntity.ok(privateStoryService.getPrivateScene(id, memberId, viewerId));
+        return ResponseEntity.ok(privateStoryService.getPrivateScene(id, storyId, memberId, viewerId));
     }
 }

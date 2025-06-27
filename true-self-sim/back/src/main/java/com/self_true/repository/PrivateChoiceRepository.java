@@ -6,6 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface PrivateChoiceRepository extends JpaRepository<PrivateChoice, Long> {
-    List<PrivateChoice> findByMemberIdAndPrivateSceneIdAndDeletedAtIsNull(Long memberId, String privateSceneId);
-    List<PrivateChoice> findByMemberIdAndPrivateSceneIdInAndDeletedAtIsNull(Long memberId, List<String> privateSceneIds);
+    List<PrivateChoice> findByMemberIdAndStoryIdAndPrivateSceneIdAndDeletedAtIsNull(Long memberId, Long storyId, String privateSceneId);
+    List<PrivateChoice> findByMemberIdAndStoryIdAndPrivateSceneIdInAndDeletedAtIsNull(Long memberId, Long storyId, List<String> privateSceneIds);
 }

@@ -7,11 +7,11 @@ import java.util.List;
 import java.util.Optional;
 
 public interface PrivateSceneRepository extends JpaRepository<PrivateScene, Long> {
-    List<PrivateScene> findAllByMemberIdAndDeletedAtIsNullOrderByCreatedAtDesc(Long memberId);
+    List<PrivateScene> findAllByMemberIdAndStoryIdAndDeletedAtIsNullOrderByCreatedAtDesc(Long memberId, Long storyId);
 
-    Optional<PrivateScene> findFirstByMemberIdAndIsStartIsTrueAndDeletedAtIsNullOrderByCreatedAtDesc(Long memberId);
+    Optional<PrivateScene> findFirstByMemberIdAndStoryIdAndIsStartIsTrueAndDeletedAtIsNullOrderByCreatedAtDesc(Long memberId, Long storyId);
 
-    Optional<PrivateScene> findByMemberIdAndPrivateSceneIdAndDeletedAtIsNull(Long memberId, String privateSceneId);
+    Optional<PrivateScene> findByMemberIdAndStoryIdAndPrivateSceneIdAndDeletedAtIsNull(Long memberId, Long storyId, String privateSceneId);
 
-    List<PrivateScene> findByMemberIdAndPrivateSceneIdInAndDeletedAtIsNull(Long memberId, List<String> privateSceneIds);
+    List<PrivateScene> findByMemberIdAndStoryIdAndPrivateSceneIdInAndDeletedAtIsNull(Long memberId, Long storyId, List<String> privateSceneIds);
 }

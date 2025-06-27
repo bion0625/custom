@@ -7,20 +7,15 @@ import lombok.*;
 @Builder
 @Data
 @Entity
-@EqualsAndHashCode(callSuper = false)
-@NoArgsConstructor
 @AllArgsConstructor
-public class PrivateChoice extends BaseEntity {
+@NoArgsConstructor
+@EqualsAndHashCode(callSuper = false)
+public class PrivateStory extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String text;
-    private String privateSceneId;
-    private String nextPrivateSceneId;
-
-    private Long storyId;
-
     private Long memberId;
-}
 
+    private String title;
+}

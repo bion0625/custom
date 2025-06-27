@@ -2,9 +2,9 @@ import {useMutation} from "@tanstack/react-query";
 import type {PrivateSceneRequest} from "../types.ts";
 import {postMySceneBulk} from "../api/myScene.ts";
 
-const usePostMySceneBulk = () => {
+const usePostMySceneBulk = (storyId: number) => {
     return useMutation({
-        mutationFn: (data: PrivateSceneRequest[]) => postMySceneBulk(data)
+        mutationFn: (data: PrivateSceneRequest[]) => postMySceneBulk(storyId, data)
     });
 };
 
