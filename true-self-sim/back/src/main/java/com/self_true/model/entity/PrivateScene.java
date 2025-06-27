@@ -23,6 +23,8 @@ public class PrivateScene extends BaseEntity {
     private Boolean isStart;
     private Boolean isEnd;
 
+    private Long storyId;
+
     private Long memberId;
 }
 

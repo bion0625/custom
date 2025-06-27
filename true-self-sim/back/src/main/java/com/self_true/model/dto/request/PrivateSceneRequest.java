@@ -14,6 +14,7 @@ public class PrivateSceneRequest {
     private String text;
     private boolean isStart = false;
     private boolean isEnd = false;
+    private Long storyId;
     private List<PrivateChoiceRequest> choiceRequests;
 
     public PrivateScene toEntity(Long memberId) {
@@ -24,13 +25,14 @@ public class PrivateSceneRequest {
                 .text(text)
                 .isStart(isStart)
                 .isEnd(isEnd)
+                .storyId(storyId)
                 .memberId(memberId)
                 .build();
     }
 
     public List<PrivateChoice> toChoiceEntities(Long memberId) {
         return choiceRequests.stream()
-                .map(cr -> cr.toEntity(sceneId, memberId))
+                .map(cr -> cr.toEntity(sceneId, storyId, memberId))
                 .toList();
     }
 }

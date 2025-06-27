@@ -11,9 +11,9 @@ import { backgroundSrc } from "../utils/url.ts";
 
 const PrivateGame: React.FC = () => {
     const navigate = useNavigate();
-    const { id } = useParams();
+    const { memberId, storyId } = useParams();
     const { user, loading } = useContext(AuthContext);
-    const { data: firstScene } = usePrivateFirstScene(id);
+    const { data: firstScene } = usePrivateFirstScene(Number(storyId), memberId);
     const [scene, setScene] = useState<PrivateScene>({
         sceneId: "",
         speaker: "",
@@ -39,7 +39,7 @@ const PrivateGame: React.FC = () => {
             setScene(firstScene);
         }
         setIsFinished(firstScene.end);
-    }, [firstScene, id]);
+    }, [firstScene, memberId, storyId]);
 
     const handleNextScene = async (nextSceneId: string, nextText: string) => {
         setFullLog(full => [`${scene.speaker}: ${scene.text}`, `-> ${user?.name ?? "U"}: ${nextText}`, ...full]);
@@ -49,7 +49,7 @@ const PrivateGame: React.FC = () => {
         });
 
         try {
-            const nextScene = await getPrivateScene(nextSceneId, id);
+            const nextScene = await getPrivateScene(nextSceneId, Number(storyId), memberId);
             setScene(nextScene);
             setIsFinished(nextScene.end);
         } catch (err) {

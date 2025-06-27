@@ -88,6 +88,7 @@ export interface PrivateStory {
 export interface PrivateChoiceRequest {
     nextSceneId: string | null;
     text: string;
+    storyId: number;
 }
 
 export interface PrivateSceneRequest {
@@ -98,4 +99,10 @@ export interface PrivateSceneRequest {
     choiceRequests: PrivateChoiceRequest[];
     start: boolean;
     end: boolean;
+    storyId: number;
+}
+
+export interface PrivateStoryInfo {
+    id: number;
+    title: string;
 }

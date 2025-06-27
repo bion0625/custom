@@ -24,7 +24,7 @@ function App() {
                           <Route path={"/"} element={<PublicGame/>}/>
                           <Route path={"/login"} element={<Login/>}/>
                           <Route path={"/register"} element={<Register/>}/>
-                          <Route path={"/game/:id"} element={<PrivateRoute><PrivateGame/></PrivateRoute>}/>
+                          <Route path={"/game/:memberId/:storyId"} element={<PrivateRoute><PrivateGame/></PrivateRoute>}/>
                           <Route path={"/admin/public"} element={<PublicAdmin/>}/>
                         <Route path={"/admin/public/graph"} element={<PublicAdminGraph/>}/>
                         <Route path={"/my"} element={<PrivateAdmin/>}/>

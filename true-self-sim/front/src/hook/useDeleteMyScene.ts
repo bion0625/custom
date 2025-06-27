@@ -1,9 +1,9 @@
 import {useMutation} from "@tanstack/react-query";
 import {deleteMyScene} from "../api/myScene.ts";
 
-const useDeleteMyScene = () => {
+const useDeleteMyScene = (storyId: number) => {
     return useMutation({
-        mutationFn: (id: string) => deleteMyScene(id)
+        mutationFn: (id: string) => deleteMyScene(id, storyId)
     })
 }
 
