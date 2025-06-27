@@ -18,7 +18,8 @@ import type {
 } from 'reactflow';
 import 'reactflow/dist/style.css';
 
-import EditableNode, { EditableNodeData, NodeFormData } from './EditableNode';
+import EditableNode from './EditableNode';
+import type { EditableNodeData, NodeFormData } from './EditableNode';
 import { backgroundImgs } from '../constants/backgroundImages';
 import CurvedEdge from './CurvedEdge';
 import { useNavigate } from 'react-router-dom';
@@ -36,8 +37,14 @@ export interface GraphScene {
 
 export interface AdminGraphProps {
     useStory: () => { data?: any };
-    useSaveBulk: () => { mutate: (reqs: any[]) => void; isPending?: boolean };
-    useDeleteScene: () => { mutate: (id: string) => void; isPending?: boolean };
+    useSaveBulk: () => {
+        mutate: (reqs: any[], options?: { onSuccess?: () => void; onError?: () => void }) => void;
+        isPending?: boolean;
+    };
+    useDeleteScene: () => {
+        mutate: (id: string, options?: { onSuccess?: () => void; onError?: () => void }) => void;
+        isPending?: boolean;
+    };
     selectScenes: (data: any) => GraphScene[];
     backPath: string;
 }
