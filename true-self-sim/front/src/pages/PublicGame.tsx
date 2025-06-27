@@ -1,6 +1,4 @@
-import {useNavigate} from "react-router-dom";
-import {useContext, useEffect, useState} from "react";
-import AuthContext from "../context/AuthContext.tsx";
+import { useEffect, useState} from "react";
 import usePublicFirstScene from "../hook/usePublicFirstScene.ts";
 import type {PublicScene} from "../types.ts";
 import {getPublicScene} from "../api/publicScene.ts";
@@ -10,8 +8,6 @@ import GameHeader from "../component/GameHeader.tsx";
 import { backgroundSrc } from "../utils/url.ts";
 
 const PublicGame: React.FC = () => {
-    const navigate = useNavigate();
-    const { user, logout, refreshUser} = useContext(AuthContext);
     const { data: firstScene } = usePublicFirstScene();
     const [scene, setScene] = useState<PublicScene>({
         sceneId: "",

@@ -11,7 +11,7 @@ import { backgroundSrc } from "../utils/url.ts";
 
 const PrivateGame: React.FC = () => {
     const navigate = useNavigate();
-    const { user, logout, refreshUser, loading } = useContext(AuthContext);
+    const { user, loading } = useContext(AuthContext);
     const { data: firstScene } = usePrivateFirstScene();
     const [scene, setScene] = useState<PrivateScene>({
         sceneId: "",
