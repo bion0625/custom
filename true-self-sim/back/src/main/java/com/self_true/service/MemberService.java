@@ -33,4 +33,8 @@ public class MemberService {
     public Optional<Member> findById(String memberId) {
         return memberRepository.findByMemberIdAndDeletedAtIsNull(memberId);
     }
+
+    public Optional<Member> findFirstByRole(String role) {
+        return memberRepository.findFirstByRoleAndDeletedAtIsNull(role);
+    }
 }

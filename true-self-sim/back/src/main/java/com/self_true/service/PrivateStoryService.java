@@ -1,5 +1,6 @@
 package com.self_true.service;
 
+import com.self_true.exception.NotFoundMemberException;
 import com.self_true.exception.NotFoundSceneException;
 import com.self_true.model.dto.request.PrivateSceneRequest;
 import com.self_true.model.dto.response.PrivateChoiceResponse;
@@ -57,7 +58,10 @@ public class PrivateStoryService {
     }
 
     public List<PrivateStory> getStories(String memberId) {
-        Long userId = memberService.findById(memberId).map(Member::getId).orElseThrow();
+        Long userId = memberService.findById(memberId)
+                .map(Member::getId)
+                .or(() -> memberService.findFirstByRole("ADMIN").map(Member::getId))
+                .orElseThrow(() -> new NotFoundMemberException("not found member id: " + memberId));
         return storyRepository.findByMemberIdAndDeletedAtIsNullOrderByCreatedAtDesc(userId);
     }
 
