@@ -106,3 +106,9 @@ export interface PrivateStoryInfo {
     id: number;
     title: string;
 }
+
+export interface AdminStoryInfo {
+    id: number;
+    title: string;
+    memberId: string;
+}
