@@ -41,4 +41,19 @@ class MyControllerTest {
                 .content(objectMapper.writeValueAsString(req)))
                 .andExpect(status().isOk());
     }
+
+    @Test
+    @WithMockUser
+    void saveBulk() throws Exception {
+        PrivateSceneRequest req = new PrivateSceneRequest();
+        req.setSceneId("a");
+        req.setSpeaker("sp");
+        req.setBackgroundImage("bg");
+        req.setText("t");
+        req.setChoiceRequests(List.of());
+        mvc.perform(post("/my/scenes/bulk")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(List.of(req))))
+                .andExpect(status().isOk());
+    }
 }

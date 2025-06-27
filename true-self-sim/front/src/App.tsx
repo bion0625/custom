@@ -12,6 +12,7 @@ function App() {
     const PrivateGame = lazy(() => import("./pages/PrivateGame.tsx"))
     const PublicAdmin = lazy(() => import("./pages/PublicAdmin.tsx"))
     const PublicAdminGraph = lazy(() => import("./pages/PublicAdminGraph.tsx"))
+    const PrivateAdminGraph = lazy(() => import("./pages/PrivateAdminGraph.tsx"))
     const PrivateAdmin = lazy(() => import("./pages/PrivateAdmin.tsx"))
 
   return (
@@ -27,6 +28,7 @@ function App() {
                           <Route path={"/admin/public"} element={<PublicAdmin/>}/>
                         <Route path={"/admin/public/graph"} element={<PublicAdminGraph/>}/>
                         <Route path={"/my"} element={<PrivateAdmin/>}/>
+                        <Route path={"/my/graph"} element={<PrivateAdminGraph/>}/>
                       </Routes>
                   </Suspense>
               </ErrorBoundary>
