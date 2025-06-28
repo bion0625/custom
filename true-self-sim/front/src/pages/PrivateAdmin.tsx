@@ -134,7 +134,7 @@ const PrivateAdmin: React.FC = () => {
                     scenes={data?.privateScenes}
                     currentId={currentId}
                     onSelect={setCurrentId}
-                    onBack={() => navigate("/")}
+                    onBack={() => navigate("/my/stories")}
                     onLogout={handleLogout}
                     onCreate={createNew}
                 />
