@@ -44,7 +44,7 @@ const PrivateAdminGraph: React.FC = () => {
                 useSaveBulk={() => usePostMySceneBulk(storyId)}
                 useDeleteScene={() => useDeleteMyScene(storyId)}
                 selectScenes={selectScenes}
-                backPath="/my"
+                backPath="/my/stories"
             />
         </div>
     );

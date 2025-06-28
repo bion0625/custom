@@ -23,11 +23,11 @@ const GameHeader: React.FC<GameHeaderProps> = ({ title, showLogin, logoutRedirec
   return (
     <div className="w-full max-w-xl flex justify-between items-center">
       <h1 className="text-2xl md:text-3xl font-bold text-indigo-300">{title}</h1>
-      <div className="flex space-x-4">
+      <div className="flex flex-wrap gap-2 sm:gap-4 justify-end">
         {stories?.map((s) => (
           <button
             key={s.id}
-            className="text-sm text-indigo-400"
+            className="px-2 py-1 rounded-md bg-indigo-500/20 text-sm text-indigo-100 hover:bg-indigo-500/40 transition"
             onClick={() => navigate(`/game/${s.memberId}/${s.id}`)}
           >
             {s.title}
@@ -39,6 +39,14 @@ const GameHeader: React.FC<GameHeaderProps> = ({ title, showLogin, logoutRedirec
             onClick={() => navigate('/admin/public')}
           >
             관리자
+          </button>
+        )}
+        {user && (
+          <button
+            className="text-sm md:text-base text-yellow-300 hover:text-yellow-500"
+            onClick={() => navigate('/my/stories')}
+          >
+            My Stories
           </button>
         )}
         {showLogin && !user && (
