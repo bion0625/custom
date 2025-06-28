@@ -6,16 +6,17 @@ import usePostMySceneBulk from "../hook/usePostMySceneBulk.ts";
 import useDeleteMyScene from "../hook/useDeleteMyScene.ts";
 import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
+import type { PrivateStory } from "../types.ts";
 
-const selectScenes = (data: any): GraphScene[] =>
-    data.privateScenes.map((scene: any) => ({
+const selectScenes = (data: PrivateStory): GraphScene[] =>
+    data.privateScenes.map((scene) => ({
         sceneId: scene.sceneId,
         speaker: scene.speaker,
         backgroundImage: scene.backgroundImage,
         text: scene.text,
         start: scene.start,
         end: scene.end,
-        choices: scene.texts.map((t: any) => ({ text: t.text, nextSceneId: t.nextPrivateSceneId })),
+        choices: scene.texts.map((t) => ({ text: t.text, nextSceneId: t.nextPrivateSceneId })),
     }));
 
 const PrivateAdminGraph: React.FC = () => {
@@ -24,13 +25,21 @@ const PrivateAdminGraph: React.FC = () => {
     const initial = searchParams.get('storyId');
     const [storyId, setStoryId] = useState<number | undefined>(initial ? Number(initial) : undefined);
 
+    useEffect(() => {
+        if (!storyId && stories && stories.length > 0) setStoryId(stories[0].id);
+    }, [stories, storyId]);
+
     if (stories && stories.length === 0) {
         return <div className="p-4">No stories found. Create one first. <Link className="text-blue-600 underline" to="/my/stories">Go to list</Link></div>;
     }
 
-    useEffect(() => {
-        if (!storyId && stories && stories.length > 0) setStoryId(stories[0].id);
-    }, [stories, storyId]);
+    const storyResult = useMyStory(storyId ?? 0);
+    const saveBulkResult = usePostMySceneBulk(storyId ?? 0);
+    const deleteSceneResult = useDeleteMyScene(storyId ?? 0);
+
+    const useStory = () => storyResult;
+    const useSaveBulk = () => saveBulkResult;
+    const useDeleteScene = () => deleteSceneResult;
 
     if (!storyId) return null;
 
@@ -40,9 +49,9 @@ const PrivateAdminGraph: React.FC = () => {
                 {stories?.map(s => (<option key={s.id} value={s.id}>{s.title}</option>))}
             </select>
             <AdminGraph
-                useStory={() => useMyStory(storyId)}
-                useSaveBulk={() => usePostMySceneBulk(storyId)}
-                useDeleteScene={() => useDeleteMyScene(storyId)}
+                useStory={useStory}
+                useSaveBulk={useSaveBulk}
+                useDeleteScene={useDeleteScene}
                 selectScenes={selectScenes}
                 backPath="/my/stories"
             />
