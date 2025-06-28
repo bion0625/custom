@@ -41,6 +41,14 @@ const GameHeader: React.FC<GameHeaderProps> = ({ title, showLogin, logoutRedirec
             관리자
           </button>
         )}
+        {user && (
+          <button
+            className="text-sm md:text-base text-yellow-300 hover:text-yellow-500"
+            onClick={() => navigate('/my/stories')}
+          >
+            My Stories
+          </button>
+        )}
         {showLogin && !user && (
           <button
             className="text-sm md:text-base text-blue-400 hover:text-blue-600"
