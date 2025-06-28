@@ -75,10 +75,15 @@ const PrivateAdmin: React.FC = () => {
                 backgroundImage: sc.backgroundImage,
                 text: sc.text,
                 choiceRequests: Array.isArray(sc.texts)
-                    ? sc.texts.map(t => ({ nextSceneId: t.nextPrivateSceneId, text: t.text }))
+                    ? sc.texts.map(t => ({
+                        nextSceneId: t.nextPrivateSceneId,
+                        text: t.text,
+                        storyId: storyId ?? 0,
+                    }))
                     : [],
                 start: sc.start,
                 end: sc.end,
+                storyId: storyId ?? 0,
             });
             setUseCustomImg(!backgroundImgs.includes(sc.backgroundImage));
         }
