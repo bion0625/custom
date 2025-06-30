@@ -15,11 +15,5 @@ spec:
       containers:
       - name: frontend
         image: bion0625/ts-frontend:v1
-        env:
-        - name: VITE_API_URL
-          valueFrom:
-            configMapKeyRef:
-              name: frontend-config
-              key: VITE_API_URL
         ports:
         - containerPort: 80

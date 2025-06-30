@@ -1,6 +1,0 @@
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: frontend-config
-data:
-  VITE_API_URL: "http://lietzsche.iptime.org:8000/"
