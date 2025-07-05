@@ -1,8 +1,9 @@
 package perAndPbr;
 
-import naverStockCrawler.CompanyCrawler;
-import naverStockCrawler.StockInfo;
-import naverStockCrawler.StockValuationCrawler;
+import dto.StockPBRAndPER;
+import krx.CompanyCrawler;
+import dto.StockInfo;
+import naverStockCrawler.StockPBRAndPERCrawler;
 
 import java.util.*;
 import java.util.concurrent.*;
@@ -41,7 +42,7 @@ public class ValuationFilter {
 
     private static DealItem judge(StockInfo s) {
         try {
-            StockValuationCrawler.StockValuation v = StockValuationCrawler.fetchForPerAndPbr(s.getCode());
+            StockPBRAndPER v = StockPBRAndPERCrawler.fetchForPerAndPbr(s.getCode());
             if (v.per > 0 && v.pbr > 0 &&
                     v.per <= MAX_PER && v.pbr <= MAX_PBR) {
                 DealItem d = new DealItem();

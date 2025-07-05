@@ -1,8 +1,8 @@
 package operatingProfit;
 
-import naverStockCrawler.CompanyCrawler;
+import krx.CompanyCrawler;
 import naverStockCrawler.QuarterOpCrawler;
-import naverStockCrawler.StockInfo;
+import dto.StockInfo;
 
 import java.util.List;
 

@@ -1,19 +1,16 @@
 package naverStockCrawler;
 
+import dto.StockPBRAndPER;
+
 import java.net.URI;
 import java.net.http.*;
 import java.util.regex.*;
 
-public class StockValuationCrawler {
+public class StockPBRAndPERCrawler {
 
     private static final HttpClient CLIENT = HttpClient.newHttpClient();
 
-    public static class StockValuation {
-        public final double per, pbr;
-        public StockValuation(double per,double pbr){this.per=per;this.pbr=pbr;}
-    }
-
-    public static StockValuation fetchForPerAndPbr(String code) throws Exception {
+    public static StockPBRAndPER fetchForPerAndPbr(String code) throws Exception {
         String html = CLIENT.send(
                 HttpRequest.newBuilder(
                                 URI.create("https://finance.naver.com/item/main.naver?code=" + code))
@@ -22,7 +19,7 @@ public class StockValuationCrawler {
 
         double per = extract(html,"PER");
         double pbr = extract(html,"PBR");
-        return new StockValuation(per,pbr);
+        return new StockPBRAndPER(per,pbr);
     }
 
     /** 라벨( PER/PBR ) 뒤 첫 <td> 숫자 */

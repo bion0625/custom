@@ -1,4 +1,6 @@
-package naverStockCrawler;
+package krx;
+
+import dto.StockInfo;
 
 import java.net.URI;
 import java.net.http.*;
