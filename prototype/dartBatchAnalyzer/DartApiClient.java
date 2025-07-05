@@ -6,6 +6,8 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DartApiClient {
     private static final String BASE_URL = "https://opendart.fss.or.kr/api/fnlttSinglAcntAll.xml";
@@ -61,5 +63,19 @@ public class DartApiClient {
             System.err.println("❌ " + corp.getName() + " (" + corp.getCorpCode() + ") 재무정보 조회 실패");
             return null;
         }
+    }
+
+    public static List<Financials> fetchFinancialsForQuarters(Corp corp, String apiKey) {
+        List<Financials> result = new ArrayList<>();
+
+        // 최근 3개 분기 순차 조회
+        result.add(fetchFinancials(corp, "2024", "11013", apiKey)); // 1분기
+        result.add(fetchFinancials(corp, "2023", "11012", apiKey)); // 연간
+        result.add(fetchFinancials(corp, "2023", "11011", apiKey)); // 3분기
+
+        // null 제거
+        result.removeIf(f -> f == null);
+
+        return result;
     }
 }

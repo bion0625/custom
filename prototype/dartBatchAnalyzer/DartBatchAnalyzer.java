@@ -33,6 +33,16 @@ public class DartBatchAnalyzer {
                 }
             }
 
+            List<Financials> fsList = DartApiClient.fetchFinancialsForQuarters(corp, apiKey);
+            Thread.sleep(300);
+
+            if (fsList.size() >= 3 && FinancialAnalyzer.matchesGrowthCriteria(fsList)) {
+                System.out.println("✅ 성장 종목 추천: " + corp.getName());
+                for (Financials ff : fsList) {
+                    System.out.println("   - " + ff);
+                }
+            }
+
             // 중간 진행 로그
             if (successCount % 100 == 0) {
                 System.out.println("... " + successCount + "개 처리 완료");
@@ -45,6 +55,16 @@ public class DartBatchAnalyzer {
         System.out.println("🎉 조건 만족 종목 수: " + matchCount);
     }
 
+    /**
+     * 기본 재무 기준 필터링 조건
+     *
+     * 다음 세 가지 재무 지표가 모두 0보다 큰 경우에만 true를 반환:
+     * - 매출액: 실제로 영업활동을 통해 매출이 발생했는지 (유령기업 제외)
+     * - 영업이익: 본업에서 수익을 내고 있는지 (적자 기업 제외)
+     * - 영업활동 현금흐름(OCF): 실제 현금이 유입되고 있는지 (건전성 평가)
+     *
+     * 즉, 실적과 현금흐름이 모두 양호한 기업만 추천 대상으로 간주함.
+     */
     static boolean matchesCriteria(Financials f) {
         return f.getRevenue() > 0 &&
                 f.getOperatingProfit() > 0 &&
