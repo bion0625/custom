@@ -1,5 +1,7 @@
 package dartBatchAnalyzer;
 
+import naverStockCrawler.CompanyCrawler;
+
 import java.util.List;
 
 public class DartBatchAnalyzer {
@@ -9,7 +11,8 @@ public class DartBatchAnalyzer {
 
         // 1. 전체 종목 로드
         System.out.println("📥 기업 리스트 불러오는 중...");
-        List<Corp> corps = CorpCodeResolver.loadAllCorps(apiKey);
+        List<Corp> corps = CompanyCrawler.getCompanyInfo().stream()
+                .map(info -> new Corp(info.getCode(), info.getCode())).toList();
         System.out.println("총 기업 수: " + corps.size());
 
         boolean isThree = false;

@@ -1,4 +1,4 @@
-package perAndPbr;
+package naverStockCrawler;
 
 public class StockInfo {
     private String name, code;               // 6자리 코드

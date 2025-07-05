@@ -1,4 +1,4 @@
-package perAndPbr;
+package naverStockCrawler;
 
 import java.net.URI;
 import java.net.http.*;
@@ -13,7 +13,7 @@ public class StockValuationCrawler {
         public StockValuation(double per,double pbr){this.per=per;this.pbr=pbr;}
     }
 
-    public static StockValuation fetch(String code) throws Exception {
+    public static StockValuation fetchForPerAndPbr(String code) throws Exception {
         String html = CLIENT.send(
                 HttpRequest.newBuilder(
                                 URI.create("https://finance.naver.com/item/main.naver?code=" + code))
