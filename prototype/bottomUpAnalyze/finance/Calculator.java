@@ -15,12 +15,12 @@ public class Calculator {
 
                     if (subject.equals(FinanceType.PBR) || subject.equals(FinanceType.PER)) {
                         // PBR과 PER은 낮을수록 좋음
-                        return profits.size() > 3 &&
+                        return profits.size() == 3 &&
                                 profits.get(0) < profits.get(1) &&
                                 profits.get(1) < profits.get(2);
                     }
 
-                    return profits.size() > 3 &&
+                    return profits.size() == 3 &&
                             profits.get(0) > profits.get(1) &&
                             profits.get(1) > profits.get(2);
                 })
