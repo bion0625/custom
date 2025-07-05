@@ -49,7 +49,7 @@ const PrivateGame: React.FC = () => {
         });
 
         try {
-            const nextScene = await getPrivateScene(nextSceneId, Number(storyId), memberId);
+            const nextScene = await getPrivateScene(nextSceneId, Number(storyId), memberId, nextText);
             setScene(nextScene);
             setIsFinished(nextScene.end);
         } catch (err) {

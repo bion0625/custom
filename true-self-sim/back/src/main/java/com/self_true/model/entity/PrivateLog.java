@@ -16,4 +16,5 @@ public class PrivateLog extends BaseEntity {
 
     private Long memberId;
     private String privateSceneId;
+    private String choiceText;
 }

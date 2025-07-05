@@ -7,8 +7,14 @@ export const getPrivateFirstScene = async (storyId: number, memberId?: string): 
     return res.data;
 };
 
-export const getPrivateScene = async (id: string, storyId: number, memberId?: string): Promise<PrivateScene> => {
-    const url = memberId ? `/user/${memberId}/story/${storyId}/scene/${id}` : `/my/story/${storyId}/scene/${id}`;
+export const getPrivateScene = async (
+    id: string,
+    storyId: number,
+    memberId?: string,
+    choice?: string,
+): Promise<PrivateScene> => {
+    const base = memberId ? `/user/${memberId}/story/${storyId}/scene/${id}` : `/my/story/${storyId}/scene/${id}`;
+    const url = choice ? `${base}?choice=${encodeURIComponent(choice)}` : base;
     const res = await api.get<PrivateScene>(url);
     return res.data;
 };

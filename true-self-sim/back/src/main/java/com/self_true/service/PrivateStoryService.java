@@ -47,12 +47,13 @@ public class PrivateStoryService {
         this.memberService = memberService;
     }
 
-    private void saveSceneLog(String memberId, PrivateSceneResponse response) {
+    private void saveSceneLog(String memberId, PrivateSceneResponse response, String choiceText) {
         memberService.findById(memberId)
                 .map(Member::getId)
                 .map(userId -> PrivateLog.builder()
                         .privateSceneId(response.getSceneId())
                         .memberId(userId)
+                        .choiceText(choiceText)
                         .build())
                 .ifPresent(logRepository::save);
     }
@@ -89,21 +90,21 @@ public class PrivateStoryService {
                         .isEnd(false)
                         .build());
         response.setTexts(getChoiceResponsesBySceneId(response.getSceneId(), storyId, userId));
-        if (logMemberId != null) saveSceneLog(logMemberId, response);
+        if (logMemberId != null) saveSceneLog(logMemberId, response, null);
         return response;
     }
 
-    public PrivateSceneResponse getPrivateScene(String id, Long storyId, String memberId) {
-        return getPrivateScene(id, storyId, memberId, memberId);
+    public PrivateSceneResponse getPrivateScene(String id, Long storyId, String memberId, String choiceText) {
+        return getPrivateScene(id, storyId, memberId, memberId, choiceText);
     }
 
-    public PrivateSceneResponse getPrivateScene(String id, Long storyId, String targetMemberId, String logMemberId) {
+    public PrivateSceneResponse getPrivateScene(String id, Long storyId, String targetMemberId, String logMemberId, String choiceText) {
         Long userId = memberService.findById(targetMemberId).map(Member::getId).orElseThrow();
         PrivateSceneResponse response = sceneRepository.findByMemberIdAndStoryIdAndPrivateSceneIdAndDeletedAtIsNull(userId, storyId, id)
                 .map(PrivateSceneResponse::fromEntity)
                 .orElseThrow(() -> new NotFoundSceneException("not found scene id: " + id));
         response.setTexts(getChoiceResponsesBySceneId(response.getSceneId(), storyId, userId));
-        saveSceneLog(logMemberId, response);
+        saveSceneLog(logMemberId, response, choiceText);
         return response;
     }
 

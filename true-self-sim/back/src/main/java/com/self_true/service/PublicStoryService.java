@@ -45,12 +45,13 @@ public class PublicStoryService {
     /**
      * 로그인 한 상태일 때만 저장
      * */
-    private void saveSceneLog(String memberId, PublicSceneResponse response) {
+    private void saveSceneLog(String memberId, PublicSceneResponse response, String choiceText) {
         memberService.findById(memberId)
                 .map(Member::getId)
                 .map(userId -> PublicLog.builder()
                         .publicSceneId(response.getSceneId())
                         .userId(userId)
+                        .choiceText(choiceText)
                         .build())
                 .ifPresent(publicLogRepository::save);
     }
@@ -68,19 +69,19 @@ public class PublicStoryService {
                         .build());
         response.setTexts(getChoiceResponcesBySceneId(response.getSceneId()));
 
-        saveSceneLog(memberId, response);
+        saveSceneLog(memberId, response, null);
 
         return response;
     }
 
-    public PublicSceneResponse getPublicScene(String id, String memberId) {
+    public PublicSceneResponse getPublicScene(String id, String memberId, String choiceText) {
 
         PublicSceneResponse response = publicSceneRepository.findByPublicSceneIdAndDeletedAtIsNull(id)
                 .map(PublicSceneResponse::fromEntity)
                 .orElseThrow(() -> new NotFoundSceneException("not found scene id: " + id));
         response.setTexts(getChoiceResponcesBySceneId(response.getSceneId()));
 
-        saveSceneLog(memberId, response);
+        saveSceneLog(memberId, response, choiceText);
 
         return response;
     }
