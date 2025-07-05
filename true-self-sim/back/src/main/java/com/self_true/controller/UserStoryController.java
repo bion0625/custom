@@ -36,7 +36,8 @@ public class UserStoryController {
     @GetMapping("/{memberId}/story/{storyId}/scene/{id}")
     public ResponseEntity<?> getScene(@PathVariable String memberId, @PathVariable Long storyId,
                                       @PathVariable String id,
-                                      @AuthenticationPrincipal String viewerId) {
-        return ResponseEntity.ok(privateStoryService.getPrivateScene(id, storyId, memberId, viewerId));
+                                      @AuthenticationPrincipal String viewerId,
+                                      @RequestParam(value = "choice", required = false) String choice) {
+        return ResponseEntity.ok(privateStoryService.getPrivateScene(id, storyId, memberId, viewerId, choice));
     }
 }

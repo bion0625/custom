@@ -41,7 +41,7 @@ const PublicGame: React.FC = () => {
         })
 
         try {
-            const nextScene = await getPublicScene(nextSceneId);
+            const nextScene = await getPublicScene(nextSceneId, nextText);
             setScene(nextScene);
             setIsFinished(nextScene.end)
         } catch (err) {
