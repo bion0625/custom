@@ -13,7 +13,7 @@ public class Main {
         FinanceType[] financeTypes = FinanceType.values();
         PeriodType[] periodTypes = PeriodType.values();
 
-        int all = financeTypes.length + periodTypes.length;
+        int all = financeTypes.length * periodTypes.length;
         AtomicInteger counter = new AtomicInteger();
 
         List<StockInfo> companyInfos = CompanyCrawler.getCompanyInfo();
