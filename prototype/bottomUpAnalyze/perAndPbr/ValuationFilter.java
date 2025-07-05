@@ -14,12 +14,6 @@ public class ValuationFilter {
     private static final double MAX_PBR = 1.5;
     private static final int THREADS = 6;
 
-    public static void main(String[] args) throws Exception {
-        List<DealItem> picks = filterUndervalued();
-        picks.forEach(System.out::println);
-        System.out.printf("🎯 추천 종목: %d개%n", picks.size());
-    }
-
     /** PER·PBR 저평가 리스트 */
     public static List<DealItem> filterUndervalued() throws Exception {
 

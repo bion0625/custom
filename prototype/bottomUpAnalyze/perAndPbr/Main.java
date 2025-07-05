@@ -1,4 +1,7 @@
 package bottomUpAnalyze.perAndPbr;
+
+import java.util.List;
+
 /******************************************************************************
  *  📈  VALUE-SCREENER  |  KRX + NAVER + 순수 Java 11
  *
@@ -68,7 +71,9 @@ package bottomUpAnalyze.perAndPbr;
 public class Main {
     public static void main(String[] args) {
         try {
-            ValuationFilter.main(args);
+            List<DealItem> picks = ValuationFilter.filterUndervalued();
+            picks.forEach(System.out::println);
+            System.out.printf("🎯 추천 종목: %d개%n", picks.size());
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
