@@ -37,7 +37,7 @@ public class ValuationFilter {
     private static DealItem judge(StockInfo s) {
         try {
             StockPBRAndPER v = StockPBRAndPERCrawler.fetchForPerAndPbr(s.getCode());
-            System.out.print("+");
+            System.out.print("/");
             if (v.per > 0 && v.pbr > 0 &&
                     v.per <= MAX_PER && v.pbr <= MAX_PBR) {
                 DealItem d = new DealItem();
