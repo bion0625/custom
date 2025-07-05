@@ -12,6 +12,9 @@ public class DartBatchAnalyzer {
         List<Corp> corps = CorpCodeResolver.loadAllCorps(apiKey);
         System.out.println("총 기업 수: " + corps.size());
 
+        boolean isThree = false;
+        System.out.println("3분기 성장률을 조건에 넣는지: " + isThree);
+
         int successCount = 0;
         int matchCount = 0;
 
@@ -29,24 +32,25 @@ public class DartBatchAnalyzer {
             // 예외처리: 금융업 제외 등 (선택사항)
             //if (corp.getName().contains("은행") || corp.getName().contains("금융")) continue;
 
-            List<Financials> fsList = DartApiClient.fetchFinancialsForQuarters(corp, apiKey);
-            Thread.sleep(300);
+            successCount++;
 
-            if (fsList != null) {
-                successCount++;
+            if (isThree) {
+                List<Financials> fsList = DartApiClient.fetchFinancialsForQuarters(corp, apiKey);
+                Thread.sleep(300);
+
+                if (fsList.size() >= 3 && FinancialAnalyzer.matchesGrowthCriteria(fsList)) {
+                    System.out.println("✅ 성장 종목 추천: " + corp.getName());
+                    for (Financials ff : fsList) {
+                        System.out.println("   - " + ff);
+                    }
+                } else continue;
             }
 
-            if (fsList.size() >= 3 && FinancialAnalyzer.matchesGrowthCriteria(fsList)) {
-                System.out.println("✅ 성장 종목 추천: " + corp.getName());
-                for (Financials ff : fsList) {
-                    System.out.println("   - " + ff);
-                }
-            } else continue;
 
             Financials f = DartApiClient.fetchFinancials(corp, "2024", "11013", apiKey); // 1분기
             Thread.sleep(300); // 과도한 호출 방지 (DART 요청 제한 고려)
 
-            if (matchesCriteria(f)) {
+            if (f != null && matchesCriteria(f)) {
                 matchCount++;
                 System.out.println("✅ 추천 종목: " + f);
             }
