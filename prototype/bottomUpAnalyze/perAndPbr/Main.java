@@ -66,7 +66,11 @@ package bottomUpAnalyze.perAndPbr;
  ******************************************************************************/
 
 public class Main {
-    public static void main(String[] args) throws Exception {
-        ValuationFilter.main(args);
+    public static void main(String[] args) {
+        try {
+            ValuationFilter.main(args);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
     }
 }
