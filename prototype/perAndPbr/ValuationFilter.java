@@ -3,7 +3,7 @@ package perAndPbr;
 import dto.StockPBRAndPER;
 import krx.CompanyCrawler;
 import dto.StockInfo;
-import naverStockCrawler.StockPBRAndPERCrawler;
+import naverCrawler.StockPBRAndPERCrawler;
 
 import java.util.*;
 import java.util.concurrent.*;

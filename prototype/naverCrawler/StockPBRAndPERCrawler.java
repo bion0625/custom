@@ -1,4 +1,4 @@
-package naverStockCrawler;
+package naverCrawler;
 
 import dto.StockPBRAndPER;
 
