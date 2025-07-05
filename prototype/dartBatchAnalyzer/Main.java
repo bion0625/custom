@@ -31,3 +31,43 @@ public class Main {
         DartBatchAnalyzer.main(args);
     }
 }
+
+
+/**
+ * ---------------------------------------------
+ * 💡 DART 종목 추천기 - JAR 파일 빌드 및 실행 방법
+ * ---------------------------------------------
+ *
+ * 이 프로젝트는 prototype/dartBatchAnalyzer 패키지 아래에 있는
+ * Java 소스들을 컴파일하여 단일 JAR 파일로 빌드할 수 있습니다.
+ *
+ * ✅ [1] 컴파일
+ * - Java 17 기준
+ * - out/ 디렉터리에 클래스 파일 생성
+ *
+ * > javac -d out prototype/dartBatchAnalyzer/*.java
+ *
+ *
+ * ✅ [2] JAR 파일 생성
+ * - 메인 클래스는 `dartBatchAnalyzer.Main` 으로 지정
+ * - app.jar 이름으로 단일 실행 파일 생성
+ *
+ * > jar --create --file app.jar --main-class dartBatchAnalyzer.Main -C out .
+ *
+ *
+ * ✅ [3] JAR 실행
+ * - 실행 시 인자로 DART API Key를 전달해야 함
+ *
+ * > java -jar app.jar <YOUR_API_KEY>
+ *
+ *
+ * 🔍 실행 구조 요약:
+ * - Main.main(args) → DartBatchAnalyzer.main(args)
+ * - args[0] = API Key
+ *
+ * 🔒 주의: 네트워크 접근 필요 (DART Open API 호출)
+ *
+ * 🔍 JAR 메타데이터 확인 (선택):
+ * > jar --describe-module --file app.jar
+ *
+ */
