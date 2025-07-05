@@ -3,8 +3,10 @@ package bottomUpAnalyze.finance;
 import dto.StockInfo;
 import krx.CompanyCrawler;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class Main {
     public static void main(String[] args) {
@@ -12,7 +14,7 @@ public class Main {
         PeriodType[] periodTypes = PeriodType.values();
 
         int all = financeTypes.length + periodTypes.length;
-        int counter = 0;
+        AtomicInteger counter = new AtomicInteger();
 
         List<StockInfo> companyInfos = CompanyCrawler.getCompanyInfo();
         Arrays.stream(financeTypes)
@@ -24,7 +26,16 @@ public class Main {
 
                             System.out.println(subject + ": 최근 3" + periodText + " 지속 "+subjectText+" 종목은 아래와 같다.");
                             System.out.println(infos);
-                            System.out.println(counter + "/" + all);
+                            System.out.println(counter.incrementAndGet() + "/" + all);
                         }));
+
+        final List[] allSuccessInfos = new List[]{new ArrayList<>(companyInfos)};
+
+        Arrays.stream(financeTypes)
+                .forEach(subject -> Arrays.stream(periodTypes)
+                        .forEach(period -> allSuccessInfos[0] = Calculator.execute(subject, period, allSuccessInfos[0])));
+
+        System.out.println("모든 필터를 거친 종목은 아래와 같다.");
+        System.out.println(allSuccessInfos[0]);
     }
 }
