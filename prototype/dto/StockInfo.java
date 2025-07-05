@@ -6,6 +6,6 @@ public class StockInfo {
     public void   setName(String n){name=n;}
     public String getCode() {return code;}
     public void   setCode(String c){code=c;}
-    @Override public String toString(){return code+" "+name;}
+    @Override public String toString(){return code+" "+name+"\n";}
 }
 
