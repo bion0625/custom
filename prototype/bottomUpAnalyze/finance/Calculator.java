@@ -1,14 +1,13 @@
 package bottomUpAnalyze.finance;
 
 import dto.StockInfo;
-import krx.CompanyCrawler;
 import naverCrawler.QuarterOpCrawler;
 
 import java.util.List;
 
 public class Calculator {
-    public static List<StockInfo> execute(FinanceType subject, PeriodType period) {
-        return CompanyCrawler.getCompanyInfo().parallelStream()
+    public static List<StockInfo> execute(FinanceType subject, PeriodType period, List<StockInfo> companyInfos) {
+        return companyInfos.parallelStream()
                 .filter(info -> {
                     List<Long> profits =
                             QuarterOpCrawler.fetchRecent3Op(info.getCode(), subject, period);
