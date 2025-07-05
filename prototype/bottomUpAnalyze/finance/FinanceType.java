@@ -1,4 +1,4 @@
-package finance;
+package bottomUpAnalyze.finance;
 
 public enum FinanceType {
     영업이익,

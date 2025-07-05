@@ -1,6 +1,7 @@
 package naverCrawler;
 
-import finance.FinanceType;
+import bottomUpAnalyze.finance.FinanceType;
+import bottomUpAnalyze.finance.PeriodType;
 
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -21,7 +22,7 @@ public class QuarterOpCrawler {
      * @return [가장 최근 분기, 직전 분기, 2분기 전] 억원 단위 영업이익.
      *         파싱 실패 시 빈 리스트 반환.
      */
-    public static List<Long> fetchRecent3Op(String stockCode, FinanceType subject) {
+    public static List<Long> fetchRecent3Op(String stockCode, FinanceType subject, PeriodType period) {
         try {
             // 1) 페이지 HTML 로드
             String url = "https://finance.naver.com/item/main.naver?code=" + stockCode;
@@ -59,7 +60,7 @@ public class QuarterOpCrawler {
 
             // 4) 그룹별 숫자 파싱
             List<Long> profits = new ArrayList<>(3);
-            for (int i = 10; i >= 8; i--) {
+            for (int i = period.equals(PeriodType.YEAR) ? 4 : 10; i >= (period.equals(PeriodType.YEAR) ? 2 : 8); i--) {
                 String raw = m.group(i).replace(",", "").trim();
                 if (!raw.equals("-") && !raw.isEmpty()) {
                     profits.add(Long.parseLong(raw));
@@ -76,11 +77,13 @@ public class QuarterOpCrawler {
     // 테스트 진입점
     public static void main(String[] args) {
         String code = args.length > 0 ? args[0] : "005930";
-        List<Long> last3 = fetchRecent3Op(code, FinanceType.매출액);
+        PeriodType period = PeriodType.YEAR;
+        List<Long> last3 = fetchRecent3Op(code, FinanceType.매출액, period);
         if (last3.isEmpty()) {
             System.out.println(FinanceType.매출액 + " 데이터 없음 또는 파싱 실패");
         } else {
-            System.out.printf("최근 3분기 " + FinanceType.매출액 + " (억 원): %s%n", last3);
+
+            System.out.printf("최근 3" + (period.equals(PeriodType.YEAR) ? "년 " : "분기 ") + FinanceType.매출액 + " (억 원): %s%n", last3);
         }
     }
 }

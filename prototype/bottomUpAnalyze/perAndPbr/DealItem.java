@@ -1,4 +1,4 @@
-package perAndPbr;
+package bottomUpAnalyze.perAndPbr;
 
 public class DealItem {
     private String code, name;  private double per, pbr;

@@ -1,0 +1,20 @@
+package bottomUpAnalyze.finance;
+
+import dto.StockInfo;
+
+import java.util.Arrays;
+import java.util.List;
+
+public class Main {
+    public static void main(String[] args) {
+        Arrays.stream(FinanceType.values())
+                .forEach(subject -> Arrays.stream(PeriodType.values())
+                        .forEach(period -> {
+                            List<StockInfo> infos = Calculator.execute(subject, period);
+                            String subjectText = subject.equals(FinanceType.PBR) || subject.equals(FinanceType.PER) ? "축소된" : "성장한";
+                            String periodText = period.equals(PeriodType.YEAR) ? "년" : "분기";
+                            System.out.println(subject + "이 최근 3" + periodText + " 지속 "+subjectText+" 종목은 아래와 같다.");
+                            System.out.println(infos);
+                        }));
+    }
+}

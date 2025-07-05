@@ -1,4 +1,4 @@
-package finance;
+package bottomUpAnalyze.finance;
 
 import dto.StockInfo;
 import krx.CompanyCrawler;
@@ -7,11 +7,11 @@ import naverCrawler.QuarterOpCrawler;
 import java.util.List;
 
 public class Calculator {
-    public static List<StockInfo> execute(FinanceType subject) {
+    public static List<StockInfo> execute(FinanceType subject, PeriodType period) {
         return CompanyCrawler.getCompanyInfo().parallelStream()
                 .filter(info -> {
                     List<Long> profits =
-                            QuarterOpCrawler.fetchRecent3Op(info.getCode(), subject);
+                            QuarterOpCrawler.fetchRecent3Op(info.getCode(), subject, period);
 
                     if (subject.equals(FinanceType.PBR) || subject.equals(FinanceType.PER)) {
                         // PBR과 PER은 낮을수록 좋음

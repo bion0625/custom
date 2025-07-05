@@ -1,4 +1,4 @@
-package perAndPbr;
+package bottomUpAnalyze.perAndPbr;
 /******************************************************************************
  *  📈  VALUE-SCREENER  |  KRX + NAVER + 순수 Java 11
  *

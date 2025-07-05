@@ -1,4 +1,4 @@
-package perAndPbr;
+package bottomUpAnalyze.perAndPbr;
 
 import dto.StockPBRAndPER;
 import krx.CompanyCrawler;
