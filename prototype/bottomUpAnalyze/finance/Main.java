@@ -35,7 +35,7 @@ public class Main {
                 .forEach(subject -> Arrays.stream(periodTypes)
                         .forEach(period -> allSuccessInfos[0] = Calculator.execute(subject, period, allSuccessInfos[0])));
 
-        System.out.println("모든 필터를 거친 종목은 아래와 같다.");
+        System.out.println("모든 재무 필터를 거친 종목은 아래와 같다.");
         System.out.println(allSuccessInfos[0]);
     }
 }
