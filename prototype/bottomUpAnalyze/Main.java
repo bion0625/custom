@@ -3,10 +3,11 @@ package bottomUpAnalyze;
 import bottomUpAnalyze.finance.Calculator;
 import bottomUpAnalyze.finance.FinanceType;
 import bottomUpAnalyze.finance.PeriodType;
+import bottomUpAnalyze.perAndPbr.DealItem;
 import bottomUpAnalyze.perAndPbr.ValuationFilter;
+import dto.StockInfo;
 import krx.CompanyCrawler;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 /******************************************************************************
@@ -32,17 +33,19 @@ public class Main {
         FinanceType[] financeTypes = FinanceType.values();
         PeriodType[] periodTypes = PeriodType.values();
 
-        final List[] allSuccessInfos = new List[]{new ArrayList<>(CompanyCrawler.getCompanyInfo())};
+        List<StockInfo> successInfos = CompanyCrawler.getCompanyInfo();
 
-        Arrays.stream(financeTypes)
-                .forEach(subject -> Arrays.stream(periodTypes)
-                        .forEach(period -> allSuccessInfos[0] = Calculator.execute(subject, period, allSuccessInfos[0])));
+        for (FinanceType subject : financeTypes) {
+            for (PeriodType period : periodTypes) {
+                successInfos = Calculator.execute(subject, period, successInfos);
+            }
+        }
 
         Arrays.stream(financeTypes).forEach(System.out::println);
         Arrays.stream(periodTypes).forEach(System.out::println);
 
         try {
-            List picks = ValuationFilter.filterUndervalued(allSuccessInfos[0]);
+            List<DealItem> picks = ValuationFilter.filterUndervalued(successInfos);
             System.out.println("모든 재무 필터"+
                     Arrays.toString(FinanceType.values())
                     +"가 성장중이면서 " +

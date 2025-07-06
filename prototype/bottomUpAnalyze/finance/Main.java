@@ -3,7 +3,6 @@ package bottomUpAnalyze.finance;
 import dto.StockInfo;
 import krx.CompanyCrawler;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -25,26 +24,29 @@ public class Main {
         AtomicInteger counter = new AtomicInteger();
 
         List<StockInfo> companyInfos = CompanyCrawler.getCompanyInfo();
-        Arrays.stream(financeTypes)
-                .forEach(subject -> Arrays.stream(periodTypes)
-                        .forEach(period -> {
-                            List<StockInfo> infos = Calculator.execute(subject, period, companyInfos);
-                            String periodText = period.equals(PeriodType.YEAR) ? "년" : "분기";
 
-                            System.out.println(subject + ": 최근 3" + periodText + " 지속 성장한 종목은 아래와 같다.");
-                            System.out.println(infos);
-                            System.out.println(counter.incrementAndGet() + "/" + all);
-                        }));
+        for (PeriodType period : periodTypes) {
+            for (FinanceType subject : financeTypes) {
+                List<StockInfo> infos = Calculator.execute(subject, period, companyInfos);
+                String periodText = period.equals(PeriodType.YEAR) ? "년" : "분기";
 
-        final List[] allSuccessInfos = new List[]{new ArrayList<>(companyInfos)};
+                System.out.println(subject + ": 최근 3" + periodText + " 지속 성장한 종목은 아래와 같다.");
+                System.out.println(infos);
+                System.out.println(counter.incrementAndGet() + "/" + all);
+            }
+        }
 
-        Arrays.stream(financeTypes)
-                .forEach(subject -> Arrays.stream(periodTypes)
-                        .forEach(period -> allSuccessInfos[0] = Calculator.execute(subject, period, allSuccessInfos[0])));
+        for (PeriodType period : periodTypes) {
+            for (FinanceType subject : financeTypes) {
+                companyInfos = Calculator.execute(subject, period, companyInfos);
+            }
+        }
 
         Arrays.stream(financeTypes).forEach(System.out::println);
         Arrays.stream(periodTypes).forEach(System.out::println);
-        System.out.println("모든 재무 필터를 거친 종목은 아래와 같다.");
-        System.out.println(allSuccessInfos[0]);
+        System.out.println("모든 재무 필터"+
+                Arrays.toString(FinanceType.values())
+                +"가 성장중인 종목은 아래와 같다.");
+        System.out.println(companyInfos);
     }
 }
