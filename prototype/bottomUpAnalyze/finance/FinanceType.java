@@ -5,7 +5,4 @@ public enum FinanceType {
     매출액,
     순이익률,
     당기순이익,
-    PER,
-    PBR,
-    BPS
 }
