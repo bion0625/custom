@@ -8,6 +8,14 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
+/******************************************************************************
+ * 영업이익
+ * 매출액
+ * 순이익률
+ * 당기순이익
+ * 위 리스트가 3분기 혹은 3년 동안 꾸준히 올랐는지 (PER과 PBR의 경우는 내렸는지) 확인된 종목 추출
+ ******************************************************************************/
+
 public class Main {
     public static void main(String[] args) {
         FinanceType[] financeTypes = FinanceType.values();
@@ -21,10 +29,9 @@ public class Main {
                 .forEach(subject -> Arrays.stream(periodTypes)
                         .forEach(period -> {
                             List<StockInfo> infos = Calculator.execute(subject, period, companyInfos);
-                            String subjectText = subject.equals(FinanceType.PBR) || subject.equals(FinanceType.PER) ? "축소된" : "성장한";
                             String periodText = period.equals(PeriodType.YEAR) ? "년" : "분기";
 
-                            System.out.println(subject + ": 최근 3" + periodText + " 지속 "+subjectText+" 종목은 아래와 같다.");
+                            System.out.println(subject + ": 최근 3" + periodText + " 지속 성장한 종목은 아래와 같다.");
                             System.out.println(infos);
                             System.out.println(counter.incrementAndGet() + "/" + all);
                         }));

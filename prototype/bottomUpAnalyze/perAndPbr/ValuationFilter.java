@@ -1,12 +1,14 @@
 package bottomUpAnalyze.perAndPbr;
 
-import dto.StockPBRAndPER;
-import krx.CompanyCrawler;
 import dto.StockInfo;
+import dto.StockPBRAndPER;
 import naverCrawler.StockPBRAndPERCrawler;
 
-import java.util.*;
-import java.util.concurrent.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 public class ValuationFilter {
 
@@ -15,9 +17,7 @@ public class ValuationFilter {
     private static final int THREADS = 6;
 
     /** PER·PBR 저평가 리스트 */
-    public static List<DealItem> filterUndervalued() throws Exception {
-
-        List<StockInfo> targets = CompanyCrawler.getCompanyInfo();
+    public static List<DealItem> filterUndervalued(List<StockInfo> targets) throws Exception {
         ExecutorService pool = Executors.newFixedThreadPool(THREADS);
         List<Future<DealItem>> futures = new ArrayList<>();
 

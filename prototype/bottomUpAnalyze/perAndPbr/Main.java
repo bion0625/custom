@@ -1,5 +1,8 @@
 package bottomUpAnalyze.perAndPbr;
 
+import dto.StockInfo;
+import krx.CompanyCrawler;
+
 import java.util.List;
 
 /******************************************************************************
@@ -68,10 +71,19 @@ import java.util.List;
  *  © 2025  value-screener  (MIT Licence)   —  Pure-Java example for learning
  ******************************************************************************/
 
+/******************************************************************************
+ * PER 및 PBR  분석: 낮을수록 좋음
+ *      MAX_PER   = 15.0        // 그레이엄 PER 한계
+ *      MAX_PBR   = 1.5         // 그레이엄 PBR 한계
+ *
+ * 위 조건보다 낮은 종목 추출
+ ******************************************************************************/
+
 public class Main {
     public static void main(String[] args) {
         try {
-            List<DealItem> picks = ValuationFilter.filterUndervalued();
+            List<StockInfo> targets = CompanyCrawler.getCompanyInfo();
+            List<DealItem> picks = ValuationFilter.filterUndervalued(targets);
             picks.forEach(System.out::println);
             System.out.printf("🎯 추천 종목: %d개%n", picks.size());
         } catch (Exception e) {
