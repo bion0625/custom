@@ -49,8 +49,8 @@ public class Main {
                     "PER이 15.0(그레이엄 PER 한계), " +
                     "PBR이 1.5(그레이엄 PBR 한계) " +
                     "미만인 종목은 아래와 같다.");
+            System.out.printf("🎯 추천 종목: %d개\n", picks.size());
             picks.forEach(System.out::println);
-            System.out.printf("🎯 추천 종목: %d개%n", picks.size());
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
