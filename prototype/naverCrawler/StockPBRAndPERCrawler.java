@@ -2,20 +2,14 @@ package naverCrawler;
 
 import dto.StockPBRAndPER;
 
-import java.net.URI;
-import java.net.http.*;
+import util.HttpUtil;
 import java.util.regex.*;
 
 public class StockPBRAndPERCrawler {
 
-    private static final HttpClient CLIENT = HttpClient.newHttpClient();
-
     public static StockPBRAndPER fetchForPerAndPbr(String code) throws Exception {
-        String html = CLIENT.send(
-                HttpRequest.newBuilder(
-                                URI.create("https://finance.naver.com/item/main.naver?code=" + code))
-                        .header("User-Agent","Mozilla/5.0").build(),
-                HttpResponse.BodyHandlers.ofString()).body();
+        String url = "https://finance.naver.com/item/main.naver?code=" + code;
+        String html = HttpUtil.fetchString(url);
 
         double per = extract(html,"PER");
         double pbr = extract(html,"PBR");

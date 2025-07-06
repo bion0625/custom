@@ -3,10 +3,7 @@ package naverCrawler;
 import bottomUpAnalyze.finance.FinanceType;
 import bottomUpAnalyze.finance.PeriodType;
 
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
+import util.HttpUtil;
 import java.util.*;
 import java.util.regex.*;
 
@@ -15,7 +12,6 @@ import java.util.regex.*;
  * “재무제표(IFRS 연결)” 테이블에서 영업이익 최근 3분기를 추출합니다.
  */
 public class QuarterOpCrawler {
-    private static final HttpClient CLIENT = HttpClient.newHttpClient();
 
     /**
      * @param stockCode 6자리 종목코드 (예: "005930")
@@ -26,12 +22,7 @@ public class QuarterOpCrawler {
         try {
             // 1) 페이지 HTML 로드
             String url = "https://finance.naver.com/item/main.naver?code=" + stockCode;
-            String html = CLIENT.send(
-                    HttpRequest.newBuilder(URI.create(url))
-                            .header("User-Agent", "Mozilla/5.0")
-                            .build(),
-                    HttpResponse.BodyHandlers.ofString()
-            ).body();
+            String html = HttpUtil.fetchString(url);
 
             // 2) IFRS 재무제표 테이블 위치 찾기
             int tableIdx = html.indexOf("tb_type1_ifrs");  // class="tb_type1 tb_num tb_type1_ifrs"

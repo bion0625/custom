@@ -2,8 +2,7 @@ package krx;
 
 import dto.StockInfo;
 
-import java.net.URI;
-import java.net.http.*;
+import util.HttpUtil;
 import java.util.*;
 import java.util.regex.*;
 import java.util.stream.Collectors;
@@ -11,25 +10,15 @@ import java.util.stream.Collectors;
 public class CompanyCrawler {
     private static final String KIND_URL =
             "https://kind.krx.co.kr/corpgeneral/corpList.do?method=download&searchType=13";
-    private static final HttpClient CLIENT = HttpClient.newBuilder()
-            .followRedirects(HttpClient.Redirect.NORMAL)   // 302 대응  :contentReference[oaicite:4]{index=4}
-            .build();
 
     /** 코스피·코스닥 법인 목록 반환 */
     public static List<StockInfo> getCompanyInfo() {
         try {
-            HttpRequest req = HttpRequest.newBuilder(URI.create(KIND_URL))
-                    .header("User-Agent","Mozilla/5.0")
-                    .build();
-            HttpResponse<byte[]> resp = CLIENT.send(req, HttpResponse.BodyHandlers.ofByteArray());
-
-            String body = new String(resp.body(), "EUC-KR").trim();   // HTML 또는 CSV 모두 EUC-KR  :contentReference[oaicite:5]{index=5}
+            byte[] raw = HttpUtil.fetchBytes(KIND_URL);
+            String body = new String(raw, "EUC-KR").trim();
 
             // --- HTML/CSV 판단 로직 개선
-            boolean isHtml =
-                    body.startsWith("<")                                         // ① 태그 유무
-                            || resp.headers().firstValue("Content-Type")
-                            .orElse("").toLowerCase().contains("html");              // ② 헤더 확인
+            boolean isHtml = body.startsWith("<");
 
             List<StockInfo> parsed = isHtml ? parseHtml(body) : parseCsv(body);
 
@@ -82,11 +71,8 @@ public class CompanyCrawler {
 
     private static boolean isKospiOrKosdaq(StockInfo s) {
         try {
-            String html = CLIENT.send(
-                    HttpRequest.newBuilder(URI.create(
-                                    "https://finance.naver.com/item/main.naver?code=" + s.getCode()))
-                            .header("User-Agent","Mozilla/5.0").build(),
-                    HttpResponse.BodyHandlers.ofString()).body().toLowerCase();
+            String url = "https://finance.naver.com/item/main.naver?code=" + s.getCode();
+            String html = HttpUtil.fetchString(url).toLowerCase();
 
             return html.contains("btn_kospi.gif") || html.contains("btn_kosdaq.gif");
         } catch (Exception e) { return false; }
