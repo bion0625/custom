@@ -48,7 +48,7 @@ public class Main {
             List<DealItem> picks = ValuationFilter.filterUndervalued(successInfos);
             System.out.println("모든 재무 필터"+
                     Arrays.toString(FinanceType.values())
-                    +"가 성장중이면서 " +
+                    +"가 최근 3년 및 최근 3분기 성장중이면서 " +
                     "PER이 15.0(그레이엄 PER 한계), " +
                     "PBR이 1.5(그레이엄 PBR 한계) " +
                     "미만인 종목은 아래와 같다.");
