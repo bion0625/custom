@@ -1,29 +1,14 @@
 package naverCrawler;
+import util.HttpUtil;
 import java.io.IOException;
-import java.net.URI;
-import java.net.http.*;
-import java.time.Duration;
 import java.util.*;
 import java.util.regex.*;
 
 public class UsdKrwCrawler {
 
     /* ---------- 1. HTML 내려받기 ---------- */
-    private static final HttpClient CLIENT = HttpClient.newBuilder()
-            .connectTimeout(Duration.ofSeconds(5))
-            .build();
-
     private static String fetch(String url) throws IOException, InterruptedException {
-        HttpRequest req = HttpRequest.newBuilder()
-                .uri(URI.create(url))
-                .header("User-Agent", "Mozilla/5.0")   // UA 없으면 빈 페이지가 내려올 때가 있음
-                .timeout(Duration.ofSeconds(5))
-                .GET()
-                .build();
-        HttpResponse<String> res = CLIENT.send(req, HttpResponse.BodyHandlers.ofString());
-        if (res.statusCode() != 200)
-            throw new IOException("HTTP " + res.statusCode());
-        return res.body();
+        return HttpUtil.fetchString(url);
     }
 
     /* ---------- 2. 모델 ---------- */
