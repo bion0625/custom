@@ -1,8 +1,7 @@
 package bottomUpAnalyze.perAndPbr;
 
 import dto.StockInfo;
-import dto.StockPBRAndPER;
-import naverCrawler.StockPBRAndPERCrawler;
+import naverCrawler.CurrentOpCrawler;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,15 +35,24 @@ public class ValuationFilter {
 
     private static DealItem judge(StockInfo s) {
         try {
-            StockPBRAndPER v = StockPBRAndPERCrawler.fetchForPerAndPbr(s.getCode());
-            if (v.per > 0 && v.pbr > 0 &&
-                    v.per <= MAX_PER && v.pbr <= MAX_PBR) {
+            double per = CurrentOpCrawler.fetchForOne(s.getCode(), "PER");
+            double pbr = CurrentOpCrawler.fetchForOne(s.getCode(), "PBR");
+            if (per > 0 && pbr > 0 &&
+                    per <= MAX_PER && pbr <= MAX_PBR) {
                 DealItem d = new DealItem();
                 d.setCode(s.getCode()); d.setName(s.getName());
-                d.setPer(v.per);        d.setPbr(v.pbr);
+                d.setPer(per);        d.setPbr(pbr);
                 return d;
             }
         } catch (Exception ignore) {}
         return null;
+    }
+
+    public static void main(String[] args) throws Exception {
+        StockInfo target = new StockInfo();
+        target.setCode("123410");
+        target.setName("코리아에프티");
+        List<DealItem> dealItems = filterUndervalued(List.of(target));
+        System.out.println(dealItems);
     }
 }
