@@ -12,6 +12,7 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -75,10 +76,22 @@ public class Main {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss");
         String filename = formatter.format(now) + ".txt";
 
-        // 파일에 쓰기
-        try (BufferedWriter writer =  Files.newBufferedWriter(Paths.get(filename), StandardCharsets.UTF_8)) {
-            writer.write(resultMsg.toString());
-            System.out.println("결과를 파일로 저장했습니다: " + filename);
+        // 1) 출력 폴더 경로 지정
+        Path outputDir = Paths.get("bottomUpAnalyze_out");
+
+        try {
+            // 2) 폴더가 없으면 생성
+            Files.createDirectories(outputDir);
+
+            // 3) 폴더와 파일명을 합쳐서 최종 Path 생성
+            Path outputFile = outputDir.resolve(filename);
+
+            // 4) UTF-8 로 파일 쓰기
+            try (BufferedWriter writer = Files.newBufferedWriter(outputFile, StandardCharsets.UTF_8)) {
+                writer.write(resultMsg.toString());
+            }
+
+            System.out.println("결과를 파일로 저장했습니다: " + outputFile.toString());
         } catch (IOException ioe) {
             System.err.println("파일 쓰기 오류: " + ioe.getMessage());
         }
