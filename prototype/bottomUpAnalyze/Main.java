@@ -8,6 +8,11 @@ import bottomUpAnalyze.perAndPbr.ValuationFilter;
 import dto.StockInfo;
 import krx.CompanyCrawler;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.List;
 /******************************************************************************
@@ -44,18 +49,35 @@ public class Main {
         Arrays.stream(financeTypes).forEach(System.out::println);
         Arrays.stream(periodTypes).forEach(System.out::println);
 
+        StringBuilder resultMsg = new StringBuilder("모든 재무 필터" +
+                Arrays.toString(FinanceType.values())
+                + "가 최근 3년 및 최근 3분기 성장중이면서 " +
+                "PER이 15.0(그레이엄 PER 한계), " +
+                "PBR이 1.5(그레이엄 PBR 한계) " +
+                "미만인 종목은 아래와 같다.\n");
         try {
             List<DealItem> picks = ValuationFilter.filterUndervalued(successInfos);
-            System.out.println("모든 재무 필터"+
-                    Arrays.toString(FinanceType.values())
-                    +"가 최근 3년 및 최근 3분기 성장중이면서 " +
-                    "PER이 15.0(그레이엄 PER 한계), " +
-                    "PBR이 1.5(그레이엄 PBR 한계) " +
-                    "미만인 종목은 아래와 같다.");
-            System.out.printf("🎯 추천 종목: %d개\n", picks.size());
-            picks.forEach(System.out::println);
+            resultMsg.append(String.format("🎯 추천 종목: %d개\n", picks.size()));
+            for (DealItem pick : picks) {
+                resultMsg.append(pick).append("\n");
+            }
+
+            System.out.println(resultMsg);
         } catch (Exception e) {
             System.out.println(e.getMessage());
+        }
+
+        // 파일명에 현재 날짜·시간을 포함
+        LocalDateTime now = LocalDateTime.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss");
+        String filename = formatter.format(now) + ".txt";
+
+        // 파일에 쓰기
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filename))) {
+            writer.write(resultMsg.toString());
+            System.out.println("결과를 파일로 저장했습니다: " + filename);
+        } catch (IOException ioe) {
+            System.err.println("파일 쓰기 오류: " + ioe.getMessage());
         }
     }
 }
