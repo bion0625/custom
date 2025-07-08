@@ -7,7 +7,7 @@ public class DealItem {
     public void setPer(double v){per=v;}
     public void setPbr(double v){pbr=v;}
     @Override public String toString(){
-        return String.format("\n[%s] %s  PER:%.2f  PBR:%.2f", code, name, per, pbr);
+        return String.format("[%s] %s  PER:%.2f  PBR:%.2f", code, name, per, pbr);
     }
 }
 

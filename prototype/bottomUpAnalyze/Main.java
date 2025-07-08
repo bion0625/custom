@@ -9,8 +9,10 @@ import dto.StockInfo;
 import krx.CompanyCrawler;
 
 import java.io.BufferedWriter;
-import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
@@ -52,7 +54,8 @@ public class Main {
         StringBuilder resultMsg = new StringBuilder("모든 재무 필터" +
                 Arrays.toString(FinanceType.values())
                 + "가 최근 3년 및\n" +
-                "최근 3분기 성장중이면서 PER이 15.0(그레이엄 PER 한계),\n" +
+                "최근 3분기 성장중이면서\n" +
+                "PER이 15.0(그레이엄 PER 한계),\n" +
                 "PBR이 1.5(그레이엄 PBR 한계) " +
                 "미만인 종목은 아래와 같다.\n");
         try {
@@ -73,7 +76,7 @@ public class Main {
         String filename = formatter.format(now) + ".txt";
 
         // 파일에 쓰기
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filename))) {
+        try (BufferedWriter writer =  Files.newBufferedWriter(Paths.get(filename), StandardCharsets.UTF_8)) {
             writer.write(resultMsg.toString());
             System.out.println("결과를 파일로 저장했습니다: " + filename);
         } catch (IOException ioe) {
