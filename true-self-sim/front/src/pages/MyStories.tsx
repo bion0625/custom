@@ -1,5 +1,6 @@
 import { useState, useContext } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
+import { useQueryClient } from "@tanstack/react-query";
 import AuthContext from "../context/AuthContext.tsx";
 import useMyStories from "../hook/useMyStories.ts";
 import usePostMyStory from "../hook/usePostMyStory.ts";
@@ -7,14 +8,17 @@ import usePostMyStory from "../hook/usePostMyStory.ts";
 const MyStories: React.FC = () => {
     const { data: stories } = useMyStories();
     const { user } = useContext(AuthContext);
+    const queryClient = useQueryClient();
     const { mutate: createStory } = usePostMyStory();
     const [title, setTitle] = useState("");
-    const navigate = useNavigate();
 
     const handleCreate = () => {
         if (!title.trim()) return;
         createStory(title, {
-            onSuccess: (story) => navigate(`/my?storyId=${story.id}`)
+            onSuccess: () => {
+                queryClient.invalidateQueries({ queryKey: ['myStories'] });
+                setTitle('');
+            }
         });
     };
 
@@ -33,11 +37,26 @@ const MyStories: React.FC = () => {
                 {stories?.map(s => (
                     <li key={s.id} className="border p-2 flex justify-between">
                         <span>{s.title}</span>
-                        <span className="space-x-2">
-                            <Link className="text-blue-600" to={`/my?storyId=${s.id}`}>Scenes</Link>
-                            <Link className="text-blue-600" to={`/my/graph?storyId=${s.id}`}>Graph</Link>
+                        <span className="flex flex-wrap gap-2">
+                            <Link
+                                className="px-2 py-1 bg-blue-600 text-white rounded hover:bg-blue-700"
+                                to={`/my?storyId=${s.id}`}
+                            >
+                                Scenes
+                            </Link>
+                            <Link
+                                className="px-2 py-1 bg-purple-600 text-white rounded hover:bg-purple-700"
+                                to={`/my/graph?storyId=${s.id}`}
+                            >
+                                Graph
+                            </Link>
                             {user && (
-                                <Link className="text-blue-600" to={`/game/${user.memberId}/${s.id}`}>My Game</Link>
+                                <Link
+                                    className="px-2 py-1 bg-indigo-600 text-white rounded hover:bg-indigo-700"
+                                    to={`/game/${user.memberId}/${s.id}`}
+                                >
+                                    My Game
+                                </Link>
                             )}
                         </span>
                     </li>
