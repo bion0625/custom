@@ -38,6 +38,14 @@ public class MyController {
         return ResponseEntity.ok(privateStoryService.createStory(request.getTitle(), memberId));
     }
 
+    @Operation(summary = "내 스토리 삭제")
+    @DeleteMapping("/stories/{storyId}")
+    public ResponseEntity<Response> deleteStory(@PathVariable Long storyId,
+                                                @AuthenticationPrincipal String memberId) {
+        privateStoryService.deleteStory(storyId, memberId);
+        return ResponseEntity.ok(new Response(true, "스토리 삭제 완료"));
+    }
+
     @Operation(summary = "내 장면 저장")
     @PostMapping("/story/{storyId}/scene/{id}")
     public ResponseEntity<Response> createOrUpdate(@PathVariable String id,
