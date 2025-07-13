@@ -4,6 +4,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import AuthContext from "../context/AuthContext.tsx";
 import useMyStories from "../hook/useMyStories.ts";
 import usePostMyStory from "../hook/usePostMyStory.ts";
+import useDeleteMyStory from "../hook/useDeleteMyStory.ts";
 
 const MyStories: React.FC = () => {
     const { data: stories } = useMyStories();
@@ -11,6 +12,7 @@ const MyStories: React.FC = () => {
     const navigate = useNavigate();
     const queryClient = useQueryClient();
     const { mutate: createStory } = usePostMyStory();
+    const { mutate: deleteStory } = useDeleteMyStory();
     const [title, setTitle] = useState("");
 
     const handleCreate = () => {
@@ -65,6 +67,12 @@ const MyStories: React.FC = () => {
                                     My Game
                                 </Link>
                             )}
+                            <button
+                                className="px-2 py-1 bg-red-600 text-white rounded hover:bg-red-700"
+                                onClick={() => deleteStory(s.id, { onSuccess: () => queryClient.invalidateQueries({ queryKey: ['myStories'] }) })}
+                            >
+                                Delete
+                            </button>
                         </span>
                     </li>
                 ))}

@@ -72,6 +72,24 @@ public class PrivateStoryService {
         return storyRepository.save(story);
     }
 
+    public void deleteStory(Long storyId, String memberId) {
+        Long userId = memberService.findById(memberId).map(Member::getId).orElseThrow();
+        storyRepository.findByIdAndMemberIdAndDeletedAtIsNull(storyId, userId)
+                .ifPresent(story -> {
+                    story.setDeletedAt(LocalDateTime.now());
+                    storyRepository.save(story);
+                    List<PrivateScene> scenes = sceneRepository
+                            .findAllByMemberIdAndStoryIdAndDeletedAtIsNullOrderByCreatedAtDesc(userId, storyId);
+                    scenes.forEach(scene -> {
+                        choiceRepository
+                                .findByMemberIdAndStoryIdAndPrivateSceneIdAndDeletedAtIsNull(userId, storyId,
+                                        scene.getPrivateSceneId())
+                                .forEach(c -> c.setDeletedAt(LocalDateTime.now()));
+                        scene.setDeletedAt(LocalDateTime.now());
+                    });
+                });
+    }
+
     public PrivateSceneResponse getFirstScene(Long storyId, String memberId) {
         return getFirstScene(storyId, memberId, memberId);
     }

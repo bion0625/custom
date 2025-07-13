@@ -31,3 +31,8 @@ export const postMyStory = async (title: string): Promise<PrivateStoryInfo> => {
     return res.data;
 };
 
+export const deleteMyStory = async (id: number) => {
+    const res = await api.delete(`/my/stories/${id}`);
+    return res.data;
+};
+
