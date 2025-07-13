@@ -1,10 +1,12 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import AuthContext from "../context/AuthContext.tsx";
 import useMyStories from "../hook/useMyStories.ts";
 import usePostMyStory from "../hook/usePostMyStory.ts";
 
 const MyStories: React.FC = () => {
     const { data: stories } = useMyStories();
+    const { user } = useContext(AuthContext);
     const { mutate: createStory } = usePostMyStory();
     const [title, setTitle] = useState("");
     const navigate = useNavigate();
@@ -34,6 +36,9 @@ const MyStories: React.FC = () => {
                         <span className="space-x-2">
                             <Link className="text-blue-600" to={`/my?storyId=${s.id}`}>Scenes</Link>
                             <Link className="text-blue-600" to={`/my/graph?storyId=${s.id}`}>Graph</Link>
+                            {user && (
+                                <Link className="text-blue-600" to={`/game/${user.memberId}/${s.id}`}>My Game</Link>
+                            )}
                         </span>
                     </li>
                 ))}
