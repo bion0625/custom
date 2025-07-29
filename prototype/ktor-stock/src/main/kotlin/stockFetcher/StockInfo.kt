@@ -59,7 +59,7 @@ data class StockInfo(
             val html = response.bodyAsText()
             val doc = Jsoup.parse(html)
 
-            val stocks = doc.select("tr")
+            return doc.select("tr")
                 .drop(1)
                 .mapNotNull { row ->
                     val cols = row.select("td")
@@ -68,29 +68,29 @@ data class StockInfo(
                     } else null
                 }
 
-            return coroutineScope {
-                stocks.map { stock ->
-                    async {
-                        if (isIdentifier(stock.code)) stock else null
-                    }
-                }.awaitAll().filterNotNull()
-            }
+//            return coroutineScope {
+//                stocks.map { stock ->
+//                    async {
+//                        if (isIdentifier(stock.code)) stock else null
+//                    }
+//                }.awaitAll().filterNotNull()
+//            }
         }
 
-        private suspend fun isIdentifier(code: String): Boolean {
-            val url = "https://finance.naver.com/item/main.naver?code=$code"
-            return try {
-                val response: HttpResponse = client.get(url)
-                val html = response.bodyAsText()
-                val doc = Jsoup.parse(html)
-
-                val kospi = doc.select("img.kospi[alt=코스피]").isNotEmpty()
-                val kosdaq = doc.select("img.kosdaq[alt=코스닥]").isNotEmpty()
-                kospi || kosdaq
-            } catch (e: Exception) {
-                false
-            }
-        }
+//        private suspend fun isIdentifier(code: String): Boolean {
+//            val url = "https://finance.naver.com/item/main.naver?code=$code"
+//            return try {
+//                val response: HttpResponse = client.get(url)
+//                val html = response.bodyAsText()
+//                val doc = Jsoup.parse(html)
+//
+//                val kospi = doc.select("img.kospi[alt=코스피]").isNotEmpty()
+//                val kosdaq = doc.select("img.kosdaq[alt=코스닥]").isNotEmpty()
+//                kospi || kosdaq
+//            } catch (e: Exception) {
+//                false
+//            }
+//        }
 
         suspend fun getPriceInfoByPage(code: String, from: Int, to: Int): List<StockPriceInfo> {
             return (from..to).map { page -> getPriceInfo(code, page) }.flatten()

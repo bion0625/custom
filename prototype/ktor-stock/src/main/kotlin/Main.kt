@@ -5,6 +5,11 @@ import kotlinx.coroutines.runBlocking
 
 fun main() = runBlocking {
     val companies = StockInfo.getCompanyInfo()
-    println("종목 수: ${companies.size}")
-    println(companies.take(10))
+    val filtered = companies.filter {
+        val priceInfo = StockInfo.getPriceInfoByPage(it.code, 1, 13)
+        if (priceInfo.isEmpty()) return@filter false;
+        val todayHigh = priceInfo.first().high
+        priceInfo.all { it.high < todayHigh }
+    }
+    filtered.forEach { println("금일 신고가 종목: ${it.name}") }
 }
