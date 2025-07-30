@@ -99,7 +99,9 @@ data class StockInfo(
         suspend fun getPriceInfo(code: String, page: Int): List<StockPriceInfo> {
             val url = "https://finance.naver.com/item/sise_day.nhn?code=$code&page=$page"
             return try {
-                val response = client.get(url)
+                val response = client.get(url) {
+                    headers.append("User-Agent", "Mozilla/5.0")
+                }
                 val html = response.bodyAsText()
                 val doc = Jsoup.parse(html)
                 val rows = doc.select("tr")
