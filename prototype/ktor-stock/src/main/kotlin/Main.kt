@@ -28,5 +28,5 @@ fun main() = runBlocking {
     val end = System.currentTimeMillis()
 
     println()
-    println("전체 걸린 시간: ${end-start}ms")
+    println("전체 걸린 시간: ${(end-start)/1000.0}s")
 }
