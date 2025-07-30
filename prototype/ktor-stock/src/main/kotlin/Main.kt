@@ -23,7 +23,7 @@ fun main() = runBlocking {
     }.awaitAll()
         .filterNotNull()
     println("${page*10}일 기준 신고가 종목")
-    filtered.forEach { println(": ${it.name}") }
+    filtered.forEach { println(":- ${it.name}") }
 
     val end = System.currentTimeMillis()
 
