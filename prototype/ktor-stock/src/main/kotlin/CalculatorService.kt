@@ -31,9 +31,6 @@ suspend fun all(companies: List<StockInfo>, page: Int) = coroutineScope {
         async {
             val priceInfo = StockInfo.getPriceInfoByPage(it.code, 1, page)
 
-            val isNewHighPrice = calculateNewHighPrice(priceInfo)
-            if (!isNewHighPrice) return@async null
-
             val isAmplitude = calculateAmplitudePrice(priceInfo, 2)
             if (!isAmplitude) return@async null
 
@@ -42,6 +39,9 @@ suspend fun all(companies: List<StockInfo>, page: Int) = coroutineScope {
 
             val consecutiveRise = consecutiveRise(priceInfo)
             if (!consecutiveRise) return@async null
+
+            val isNewHighPrice = calculateNewHighPrice(priceInfo)
+            if (!isNewHighPrice) return@async null
 
             it
         }
