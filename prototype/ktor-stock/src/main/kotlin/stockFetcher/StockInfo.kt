@@ -7,45 +7,19 @@ import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.serialization.jackson.*
-import io.ktor.utils.io.toByteArray
 import kotlinx.coroutines.*
 import org.jsoup.Jsoup
-import java.time.LocalDateTime
 
 suspend fun main() {
-    val companyInfo = StockInfo.getCompanyInfo()
-    println(companyInfo.size)
+    println(StockInfo.getCompanyInfo().size)
+    println(StockInfo.getCompanyInfo().size)
+    println(StockInfo.getCompanyInfo().size)
 }
 
 data class StockInfo(
     var name: String = "",
-    var code: String = "",
-    var totalPage: Int = 0,
-    var prices: List<StockPriceInfo> = emptyList(),
-    var originMinimumSellingPrice: Double = 0.0,
-    var originExpectedSellingPrice: Double = 0.0,
-    var minimumSellingPrice: Double = 0.0,
-    var expectedSellingPrice: Double = 0.0,
-    var tempPrice: Double = 0.0,
-    var settingPrice: Double = 0.0,
-    var updatedAt: LocalDateTime? = null,
-    var pricingReferenceDate: LocalDateTime? = null,
-    var renewalCnt: Int = 0
+    var code: String = ""
 ) {
-    fun toEntity(highPer: Double, lowPer: Double): Stock {
-        val temp = prices.firstOrNull()?.close ?: 0.0
-        val setting = temp
-        val minimum = setting * lowPer
-        val expected = setting * highPer
-        return Stock(code, name, minimum, expected, minimum, expected, temp, setting)
-    }
-
-    fun sellingPriceUpdate(highPer: Double, lowPer: Double) {
-        this.minimumSellingPrice = this.expectedSellingPrice * lowPer
-        this.expectedSellingPrice = this.expectedSellingPrice * highPer
-        this.renewalCnt++
-        this.pricingReferenceDate = LocalDateTime.now()
-    }
 
     companion object {
         private val client = HttpClient(CIO) {
@@ -77,38 +51,22 @@ data class StockInfo(
             return coroutineScope {
                 stocks.map { stock ->
                     async {
-                        delay(100L)
                         if (isIdentifier(stock.code)) stock else null
                     }
                 }.awaitAll().filterNotNull()
             }
         }
 
-        private fun isIdentifier(code: String): Boolean {
+        private suspend fun isIdentifier(code: String): Boolean {
+            val url = "https://finance.naver.com/item/main.naver?code=$code"
             return try {
-                val doc = Jsoup.connect("https://finance.naver.com/item/main.naver?code=$code")
-                    .userAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64)")
-                    .referrer("https://finance.naver.com/")
-                    .timeout(10_000)
-                    .ignoreHttpErrors(true)
-                    .ignoreContentType(true)
-                    .get()
+                val response: HttpResponse = client.get(url)
+                val html = response.bodyAsText()
+                val doc = Jsoup.parse(html)
 
-                // 1) KOSPI 확인
-                val kospiList = doc.select("img.kospi")
-                for (img in kospiList) {
-                    val alt = img.attr("alt")
-                    if (alt == "코스피" || alt.equals("KOSPI", ignoreCase = true)) return true
-                }
-
-                // 2) KOSDAQ 확인
-                val kosdaqList = doc.select("img.kosdaq")
-                for (img in kosdaqList) {
-                    val alt = img.attr("alt")
-                    if (alt == "코스닥" || alt.equals("KOSDAQ", ignoreCase = true)) return true
-                }
-
-                false
+                val kospi = doc.select("img.kospi[alt=코스피]").isNotEmpty()
+                val kosdaq = doc.select("img.kosdaq[alt=코스닥]").isNotEmpty()
+                kospi || kosdaq
             } catch (e: Exception) {
                 false
             }
