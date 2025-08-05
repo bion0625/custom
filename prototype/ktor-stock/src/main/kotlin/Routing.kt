@@ -6,12 +6,9 @@ import io.ktor.server.routing.*
 
 fun Application.configureRouting() {
     routing {
-        get("/new-high-price") {
-            val result = getNewHighPriceStock()
-            call.respondText(result)
-        }
+        get("/new-high-price") { call.respondText(getNewHighPriceStock()) }
     }
     routing {
-        get("/amplitude") {  }
+        get("/amplitude") { call.respondText(getAmplitudePriceStock()) }
     }
 }
