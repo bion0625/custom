@@ -7,9 +7,15 @@ import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.serialization.jackson.*
+import io.ktor.utils.io.toByteArray
 import kotlinx.coroutines.*
 import org.jsoup.Jsoup
 import java.time.LocalDateTime
+
+suspend fun main() {
+    val companyInfo = StockInfo.getCompanyInfo()
+    println(companyInfo.size)
+}
 
 data class StockInfo(
     var name: String = "",
@@ -59,7 +65,7 @@ data class StockInfo(
             val html = response.bodyAsText()
             val doc = Jsoup.parse(html)
 
-            return doc.select("tr")
+            val stocks = doc.select("tr")
                 .drop(1)
                 .mapNotNull { row ->
                     val cols = row.select("td")
@@ -68,29 +74,45 @@ data class StockInfo(
                     } else null
                 }
 
-//            return coroutineScope {
-//                stocks.map { stock ->
-//                    async {
-//                        if (isIdentifier(stock.code)) stock else null
-//                    }
-//                }.awaitAll().filterNotNull()
-//            }
+            return coroutineScope {
+                stocks.map { stock ->
+                    async {
+                        delay(100L)
+                        if (isIdentifier(stock.code)) stock else null
+                    }
+                }.awaitAll().filterNotNull()
+            }
         }
 
-//        private suspend fun isIdentifier(code: String): Boolean {
-//            val url = "https://finance.naver.com/item/main.naver?code=$code"
-//            return try {
-//                val response: HttpResponse = client.get(url)
-//                val html = response.bodyAsText()
-//                val doc = Jsoup.parse(html)
-//
-//                val kospi = doc.select("img.kospi[alt=코스피]").isNotEmpty()
-//                val kosdaq = doc.select("img.kosdaq[alt=코스닥]").isNotEmpty()
-//                kospi || kosdaq
-//            } catch (e: Exception) {
-//                false
-//            }
-//        }
+        private fun isIdentifier(code: String): Boolean {
+            return try {
+                val doc = Jsoup.connect("https://finance.naver.com/item/main.naver?code=$code")
+                    .userAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64)")
+                    .referrer("https://finance.naver.com/")
+                    .timeout(10_000)
+                    .ignoreHttpErrors(true)
+                    .ignoreContentType(true)
+                    .get()
+
+                // 1) KOSPI 확인
+                val kospiList = doc.select("img.kospi")
+                for (img in kospiList) {
+                    val alt = img.attr("alt")
+                    if (alt == "코스피" || alt.equals("KOSPI", ignoreCase = true)) return true
+                }
+
+                // 2) KOSDAQ 확인
+                val kosdaqList = doc.select("img.kosdaq")
+                for (img in kosdaqList) {
+                    val alt = img.attr("alt")
+                    if (alt == "코스닥" || alt.equals("KOSDAQ", ignoreCase = true)) return true
+                }
+
+                false
+            } catch (e: Exception) {
+                false
+            }
+        }
 
         suspend fun getPriceInfoByPage(code: String, from: Int, to: Int): List<StockPriceInfo> {
             return (from..to).map { page -> getPriceInfo(code, page) }.flatten()
