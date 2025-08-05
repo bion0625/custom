@@ -32,14 +32,20 @@ data class StockInfo(
         }
 
         suspend fun getCompanyInfo(): List<StockInfo> {
-            val url = "http://kind.krx.co.kr/corpgeneral/corpList.do?method=download&searchType=13"
+            return listOf("stockMkt", "kosdaqMkt")
+                .map {getCompanyInfo(it)}
+                .flatten()
+        }
+
+        suspend fun getCompanyInfo(marketType: String): List<StockInfo> {
+            val url = "http://kind.krx.co.kr/corpgeneral/corpList.do?method=download&searchType=13&marketType=$marketType"
             val response: HttpResponse = client.get(url) {
                 headers.append("User-Agent", "Mozilla/5.0")
             }
             val html = response.bodyAsText()
             val doc = Jsoup.parse(html)
 
-            val stocks = doc.select("tr")
+            return doc.select("tr")
                 .drop(1)
                 .mapNotNull { row ->
                     val cols = row.select("td")
@@ -47,29 +53,6 @@ data class StockInfo(
                         StockInfo(name = cols[0].text(), code = cols[1].text())
                     } else null
                 }
-
-            return coroutineScope {
-                stocks.map { stock ->
-                    async {
-                        if (isIdentifier(stock.code)) stock else null
-                    }
-                }.awaitAll().filterNotNull()
-            }
-        }
-
-        private suspend fun isIdentifier(code: String): Boolean {
-            val url = "https://finance.naver.com/item/main.naver?code=$code"
-            return try {
-                val response: HttpResponse = client.get(url)
-                val html = response.bodyAsText()
-                val doc = Jsoup.parse(html)
-
-                val kospi = doc.select("img.kospi[alt=코스피]").isNotEmpty()
-                val kosdaq = doc.select("img.kosdaq[alt=코스닥]").isNotEmpty()
-                kospi || kosdaq
-            } catch (e: Exception) {
-                false
-            }
         }
 
         suspend fun getPriceInfoByPage(code: String, from: Int, to: Int): List<StockPriceInfo> {
