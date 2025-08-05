@@ -30,15 +30,42 @@ suspend fun all(companies: List<StockInfo>, page: Int) = coroutineScope {
     companies.map {
         async {
             val priceInfo = StockInfo.getPriceInfoByPage(it.code, 1, page)
-            val isNewHighPrice = calculateNewHighPrice(priceInfo)
-            val isAmplitude = calculateAmplitudePrice(priceInfo, 2)
-            val volumeForThreeDay = todayIsNotMaxVolumeForThreeDay(priceInfo)
-            val consecutiveRise = consecutiveRise(priceInfo)
 
-            if (isNewHighPrice && isAmplitude && volumeForThreeDay && consecutiveRise) it else null
+            val isNewHighPrice = calculateNewHighPrice(priceInfo)
+            if (!isNewHighPrice) return@async null
+
+            val isAmplitude = calculateAmplitudePrice(priceInfo, 2)
+            if (!isAmplitude) return@async null
+
+            val volumeForThreeDay = todayIsNotMaxVolumeForThreeDay(priceInfo)
+            if (!volumeForThreeDay) return@async null
+
+            val consecutiveRise = consecutiveRise(priceInfo)
+            if (!consecutiveRise) return@async null
+
+            it
         }
     }.awaitAll()
         .filterNotNull()
+}
+
+suspend fun main() {
+    val echoAndDream = "101360"
+    val priceInfo = StockInfo.getPriceInfoByPage(echoAndDream, 1, 25)
+
+    val isNewHighPrice = calculateNewHighPrice(priceInfo)
+    if (!isNewHighPrice) println("${echoAndDream}: !isNewHighPrice")
+
+    val isAmplitude = calculateAmplitudePrice(priceInfo, 2)
+    if (!isAmplitude) println("${echoAndDream}: !isAmplitude")
+
+    val volumeForThreeDay = todayIsNotMaxVolumeForThreeDay(priceInfo)
+    if (!volumeForThreeDay) println("${echoAndDream}: !volumeForThreeDay")
+
+    val consecutiveRise = consecutiveRise(priceInfo)
+    if (!consecutiveRise) println("${echoAndDream}: !consecutiveRise")
+
+    println("${echoAndDream}: Success!")
 }
 
 // 신고가
