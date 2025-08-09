@@ -37,7 +37,7 @@ suspend fun getAmplitudePriceStock() = coroutineScope {
 
 suspend fun getNewHighAndAmplitudePriceStock() = coroutineScope {
     val start = System.currentTimeMillis()
-    val page = 25 // 20일 기준
+    val page = 25 // 250일 기준 신고가, 20일 기준 진폭
     val companies = StockInfo.getCompanyInfo()
     val filtered = all(companies, page)
     val end = System.currentTimeMillis()

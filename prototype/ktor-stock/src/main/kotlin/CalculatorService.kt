@@ -2,6 +2,7 @@ package com.stock
 
 import com.stock.stockFetcher.StockInfo
 import com.stock.stockFetcher.StockPriceInfo
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
@@ -28,8 +29,9 @@ suspend fun calculateAmplitudePriceStock(companies: List<StockInfo>, page: Int) 
 
 suspend fun all(companies: List<StockInfo>, page: Int) = coroutineScope {
     companies.map {
-        async {
+        async(Dispatchers.IO.limitedParallelism(30)) {
             val priceInfo = StockInfo.getPriceInfoByPage(it.code, 1, page)
+            println("size: ${priceInfo.size}")
 
             val isAmplitude = calculateAmplitudePrice(priceInfo, 2)
             if (!isAmplitude) return@async null
