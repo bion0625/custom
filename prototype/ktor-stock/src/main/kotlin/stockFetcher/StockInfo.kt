@@ -95,6 +95,7 @@ data class StockInfo(
                     }
 
             } catch (e: Exception) {
+                println(e)
                 emptyList()
             }
         }
