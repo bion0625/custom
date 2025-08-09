@@ -31,7 +31,6 @@ suspend fun all(companies: List<StockInfo>, page: Int) = coroutineScope {
     companies.map {
         async(Dispatchers.IO.limitedParallelism(30)) {
             val priceInfo = StockInfo.getPriceInfoByPage(it.code, 1, page)
-            println("size: ${priceInfo.size}")
 
             val isAmplitude = calculateAmplitudePrice(priceInfo, 2)
             if (!isAmplitude) return@async null
