@@ -7,6 +7,7 @@ import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.serialization.jackson.*
+import io.ktor.util.*
 import org.jsoup.Jsoup
 
 suspend fun main() {
@@ -26,7 +27,31 @@ data class StockInfo(
                 jackson()
             }
             install(HttpTimeout) {
-                requestTimeoutMillis = 10000
+                connectTimeoutMillis = 12_000
+                socketTimeoutMillis  = 20_000
+                requestTimeoutMillis = 25_000
+            }
+            install(HttpRequestRetry) {
+                retryOnExceptionIf(maxRetries = 3) { request, cause ->
+                    // 읽기/요청 타임아웃, 네트워크 IO 오류는 재시도
+                    cause is HttpRequestTimeoutException || cause is java.io.IOException
+                }
+                retryIf(maxRetries = 3) { request, response ->
+                    val s = response.status.value
+                    // 5xx, 429 재시도
+                    s == 429 || s in 500..599
+                }
+                delayMillis { retry -> 300L shl (retry - 1) } // 300, 600, 1200
+                modifyRequest { // 429 등에서 헤더 보존
+                    it.headers.appendIfNameAbsent("User-Agent", "Mozilla/5.0")
+                }
+            }
+            defaultRequest {
+                headers.append("User-Agent", "Mozilla/5.0")
+                // 선택: 네이버는 referer 있으면 더 관대할 때가 있음
+                // url.queryParameters["code"]?.let { code ->
+                //     headers.append("Referer", "https://finance.naver.com/item/sise.nhn?code=$code")
+                // }
             }
             engine{
                 maxConnectionsCount = 500
@@ -48,9 +73,7 @@ data class StockInfo(
 
         suspend fun getCompanyInfo(marketType: String): List<StockInfo> {
             val url = "http://kind.krx.co.kr/corpgeneral/corpList.do?method=download&searchType=13&marketType=$marketType"
-            val response: HttpResponse = client.get(url) {
-                headers.append("User-Agent", "Mozilla/5.0")
-            }
+            val response: HttpResponse = client.get(url)
             val html = response.bodyAsText()
             val doc = Jsoup.parse(html)
 
@@ -71,9 +94,7 @@ data class StockInfo(
         suspend fun getPriceInfo(code: String, page: Int): List<StockPriceInfo> {
             val url = "https://finance.naver.com/item/sise_day.nhn?code=$code&page=$page"
             return try {
-                val response = client.get(url) {
-                    headers.append("User-Agent", "Mozilla/5.0")
-                }
+                val response = client.get(url)
                 val html = response.bodyAsText()
                 val doc = Jsoup.parse(html)
                 val rows = doc.select("tr")
