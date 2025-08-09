@@ -7,7 +7,6 @@ import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.serialization.jackson.*
-import kotlinx.coroutines.*
 import org.jsoup.Jsoup
 
 suspend fun main() {
@@ -28,6 +27,16 @@ data class StockInfo(
             }
             install(HttpTimeout) {
                 requestTimeoutMillis = 10000
+            }
+            engine{
+                maxConnectionsCount = 500
+                endpoint {
+                    maxConnectionsPerRoute = 100
+                    keepAliveTime = 5_000
+                    connectAttempts = 3
+                    connectTimeout = 15_000
+                    pipelineMaxSize = 20
+                }
             }
         }
 
