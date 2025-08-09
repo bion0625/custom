@@ -9,7 +9,7 @@ import kotlinx.coroutines.coroutineScope
 
 suspend fun calculateNewHighPriceStock(companies: List<StockInfo>, page: Int) = coroutineScope {
     companies.map {
-        async {
+        async(Dispatchers.IO.limitedParallelism(30)) {
             val priceInfo = StockInfo.getPriceInfoByPage(it.code, 1, page)
             if (calculateNewHighPrice(priceInfo)) it else null
         }
@@ -19,7 +19,7 @@ suspend fun calculateNewHighPriceStock(companies: List<StockInfo>, page: Int) = 
 
 suspend fun calculateAmplitudePriceStock(companies: List<StockInfo>, page: Int) = coroutineScope {
     companies.map {
-        async {
+        async(Dispatchers.IO.limitedParallelism(30)) {
             val priceInfo = StockInfo.getPriceInfoByPage(it.code, 1, page)
             if (calculateAmplitudePrice(priceInfo, 2)) it else null
         }
