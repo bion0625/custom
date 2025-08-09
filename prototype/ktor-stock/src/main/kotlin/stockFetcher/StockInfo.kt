@@ -31,7 +31,7 @@ data class StockInfo(
             engine{
                 maxConnectionsCount = 500
                 endpoint {
-                    maxConnectionsPerRoute = 100
+                    maxConnectionsPerRoute = 300
                     keepAliveTime = 5_000
                     connectAttempts = 3
                     connectTimeout = 15_000
