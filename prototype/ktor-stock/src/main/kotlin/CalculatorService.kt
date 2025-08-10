@@ -23,7 +23,7 @@ suspend fun calculateAmplitudePriceStock(companies: List<StockInfo>, page: Int) 
     companies.map {
         async(Dispatchers.IO.limitedParallelism(30)) {
             val priceInfo = StockInfo.getPriceInfoByPage(it.code, 1, page)
-            if (calculateAmplitudePrice(priceInfo, 2)) it else null
+            if (calculateAmplitudePrice(priceInfo, 20)) it else null
         }
     }.awaitAll()
         .filterNotNull()
@@ -37,7 +37,7 @@ suspend fun allFlow(companies: List<StockInfo>, page: Int) = coroutineScope {
 
                 val priceInfos = priceInfoFlow.take(20).toList()
 
-                val isAmplitude = calculateAmplitudePrice(priceInfos, 2)
+                val isAmplitude = calculateAmplitudePrice(priceInfos, 20)
                 if (!isAmplitude) return@async null
 
                 val volumeForThreeDay = todayIsNotMaxVolumeForThreeDay(priceInfos.subList(0, 3))
@@ -69,7 +69,7 @@ suspend fun all(companies: List<StockInfo>, page: Int) = coroutineScope {
         async(Dispatchers.IO.limitedParallelism(30)) {
             val priceInfo = StockInfo.getPriceInfoByPage(it.code, 1, page)
 
-            val isAmplitude = calculateAmplitudePrice(priceInfo, 2)
+            val isAmplitude = calculateAmplitudePrice(priceInfo, 20)
             if (!isAmplitude) return@async null
 
             val volumeForThreeDay = todayIsNotMaxVolumeForThreeDay(priceInfo)
@@ -94,7 +94,7 @@ suspend fun main() {
     val isNewHighPrice = calculateNewHighPrice(priceInfo)
     if (!isNewHighPrice) println("${echoAndDream}: !isNewHighPrice")
 
-    val isAmplitude = calculateAmplitudePrice(priceInfo, 2)
+    val isAmplitude = calculateAmplitudePrice(priceInfo, 20)
     if (!isAmplitude) println("${echoAndDream}: !isAmplitude")
 
     val volumeForThreeDay = todayIsNotMaxVolumeForThreeDay(priceInfo)
