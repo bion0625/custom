@@ -67,7 +67,7 @@ suspend fun allFlow(companies: List<StockInfo>, page: Int) = coroutineScope {
 suspend fun all(companies: List<StockInfo>, page: Int) = coroutineScope {
     companies.map {
         async(Dispatchers.IO.limitedParallelism(30)) {
-            val priceInfo = StockInfo.getPriceInfoByPage(it.code, 1, page)
+            val priceInfo = StockInfo.getPriceInfoByPage(it.code, 1, 2)
 
             val isAmplitude = calculateAmplitudePrice(priceInfo, 20)
             if (!isAmplitude) return@async null
@@ -78,9 +78,15 @@ suspend fun all(companies: List<StockInfo>, page: Int) = coroutineScope {
             val consecutiveRise = consecutiveRise(priceInfo)
             if (!consecutiveRise) return@async null
 
+            it
+        }
+    }.awaitAll()
+        .filterNotNull()
+    .map {
+        async {
+            val priceInfo = StockInfo.getPriceInfoByPage(it.code, 1, page)
             val isNewHighPrice = calculateNewHighPrice(priceInfo)
             if (!isNewHighPrice) return@async null
-
             it
         }
     }.awaitAll()
