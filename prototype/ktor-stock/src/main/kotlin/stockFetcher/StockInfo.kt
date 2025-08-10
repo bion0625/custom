@@ -8,6 +8,8 @@ import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.serialization.jackson.*
 import io.ktor.util.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import org.jsoup.Jsoup
 
 suspend fun main() {
@@ -85,6 +87,16 @@ data class StockInfo(
                         StockInfo(name = cols[0].text(), code = cols[1].text())
                     } else null
                 }
+        }
+
+        suspend fun getPriceFlowInfoByPage(code: String, from: Int, to: Int): Flow<StockPriceInfo> {
+            return flow {
+                (from .. to).map { page ->
+                    getPriceInfo(code, page).forEach {
+                        emit(it)
+                    }
+                }
+            }
         }
 
         suspend fun getPriceInfoByPage(code: String, from: Int, to: Int): List<StockPriceInfo> {

@@ -14,4 +14,7 @@ fun Application.configureRouting() {
     routing {
         get("/all") { call.respondText(getNewHighAndAmplitudePriceStock()) }
     }
+    routing {
+        get("/flow/all") { call.respondText(getNewHighAndAmplitudePriceStockWithFlow()) }
+    }
 }

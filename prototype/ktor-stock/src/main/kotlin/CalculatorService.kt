@@ -6,6 +6,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.flow.take
+import kotlinx.coroutines.flow.toList
 
 suspend fun calculateNewHighPriceStock(companies: List<StockInfo>, page: Int) = coroutineScope {
     companies.map {
@@ -25,6 +27,41 @@ suspend fun calculateAmplitudePriceStock(companies: List<StockInfo>, page: Int) 
         }
     }.awaitAll()
         .filterNotNull()
+}
+
+suspend fun allFlow(companies: List<StockInfo>, page: Int) = coroutineScope {
+    companies
+        .map {
+            async(Dispatchers.IO.limitedParallelism(30)) {
+                val priceInfoFlow = StockInfo.getPriceFlowInfoByPage(it.code, 1, 1)
+
+                val priceInfos = priceInfoFlow.take(3).toList()
+
+                val isAmplitude = calculateAmplitudePrice(priceInfos, 2)
+                if (!isAmplitude) return@async null
+
+                val volumeForThreeDay = todayIsNotMaxVolumeForThreeDay(priceInfos)
+                if (!volumeForThreeDay) return@async null
+
+                val consecutiveRise = consecutiveRise(priceInfos)
+                if (!consecutiveRise) return@async null
+
+                it
+            }
+        }
+        .awaitAll().filterNotNull()
+        .map {
+            async(Dispatchers.IO.limitedParallelism(30)) {
+                val priceInfoFlow = StockInfo.getPriceFlowInfoByPage(it.code, 1, page)
+
+                val priceInfos = priceInfoFlow.take(page * 10).toList()
+
+                val isNewHighPrice = calculateNewHighPrice(priceInfos)
+                if (!isNewHighPrice) return@async null
+
+                it
+            }
+        }.awaitAll().filterNotNull()
 }
 
 suspend fun all(companies: List<StockInfo>, page: Int) = coroutineScope {
