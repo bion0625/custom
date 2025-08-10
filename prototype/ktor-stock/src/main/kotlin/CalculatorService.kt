@@ -33,17 +33,17 @@ suspend fun allFlow(companies: List<StockInfo>, page: Int) = coroutineScope {
     companies
         .map {
             async(Dispatchers.IO.limitedParallelism(30)) {
-                val priceInfoFlow = StockInfo.getPriceFlowInfoByPage(it.code, 1, 1)
+                val priceInfoFlow = StockInfo.getPriceFlowInfoByPage(it.code, 1, 2)
 
-                val priceInfos = priceInfoFlow.take(3).toList()
+                val priceInfos = priceInfoFlow.take(20).toList()
 
                 val isAmplitude = calculateAmplitudePrice(priceInfos, 2)
                 if (!isAmplitude) return@async null
 
-                val volumeForThreeDay = todayIsNotMaxVolumeForThreeDay(priceInfos)
+                val volumeForThreeDay = todayIsNotMaxVolumeForThreeDay(priceInfos.subList(0, 3))
                 if (!volumeForThreeDay) return@async null
 
-                val consecutiveRise = consecutiveRise(priceInfos)
+                val consecutiveRise = consecutiveRise(priceInfos.subList(0, 3))
                 if (!consecutiveRise) return@async null
 
                 it
