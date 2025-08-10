@@ -40,10 +40,10 @@ suspend fun allFlow(companies: List<StockInfo>, page: Int) = coroutineScope {
                 val isAmplitude = calculateAmplitudePrice(priceInfos, 20)
                 if (!isAmplitude) return@async null
 
-                val volumeForThreeDay = todayIsNotMaxVolumeForThreeDay(priceInfos.subList(0, 3))
+                val volumeForThreeDay = todayIsNotMaxVolumeForThreeDay(priceInfos)
                 if (!volumeForThreeDay) return@async null
 
-                val consecutiveRise = consecutiveRise(priceInfos.subList(0, 3))
+                val consecutiveRise = consecutiveRise(priceInfos)
                 if (!consecutiveRise) return@async null
 
                 it
@@ -65,7 +65,8 @@ suspend fun allFlow(companies: List<StockInfo>, page: Int) = coroutineScope {
 }
 
 suspend fun all(companies: List<StockInfo>, page: Int) = coroutineScope {
-    companies.map {
+    companies
+        .map {
         async(Dispatchers.IO.limitedParallelism(30)) {
             val priceInfo = StockInfo.getPriceInfoByPage(it.code, 1, 2)
 
@@ -120,8 +121,8 @@ fun calculateNewHighPrice(priceInfo: List<StockPriceInfo>): Boolean {
 // 진폭
 fun calculateAmplitudePrice(priceInfo: List<StockPriceInfo>, day: Int): Boolean {
     if (priceInfo.isEmpty() || priceInfo.size < day) return false
-    val high = priceInfo.subList(0, day).maxOf { it.high }
-    val low = priceInfo.subList(0, day).minOf { it.low }
+    val high = priceInfo.take(day).maxOf { it.high }
+    val low = priceInfo.take(day).minOf { it.low }
     val amplitudePercent = (high - low) / low * 100
     return amplitudePercent in 10.0..30.0
 }
@@ -129,7 +130,7 @@ fun calculateAmplitudePrice(priceInfo: List<StockPriceInfo>, day: Int): Boolean 
 // 거래량 3일 최대가 X
 fun todayIsNotMaxVolumeForThreeDay(priceInfo: List<StockPriceInfo>): Boolean {
     if (priceInfo.isEmpty() || priceInfo.size < 3) return false
-    return priceInfo[0].volume != priceInfo.maxOf { it.volume }
+    return priceInfo[0].volume != priceInfo.take(3).maxOf { it.volume }
 }
 
 // 고가, 저가 3일 연달아 상승
