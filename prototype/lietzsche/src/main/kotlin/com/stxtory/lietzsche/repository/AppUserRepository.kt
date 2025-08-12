@@ -1,10 +1,9 @@
 package com.stxtory.lietzsche.repository
 
 import com.stxtory.lietzsche.domain.AppUser
-import org.springframework.data.repository.reactive.ReactiveCrudRepository
-import reactor.core.publisher.Mono
+import org.springframework.data.repository.kotlin.CoroutineCrudRepository
 
-interface AppUserRepository : ReactiveCrudRepository<AppUser, Long> {
-    fun findByUsername(username: String): Mono<AppUser>
-    fun existsByUsername(username: String): Mono<Boolean>
+interface AppUserRepository : CoroutineCrudRepository<AppUser, Long> {
+    suspend fun findByUsername(username: String): AppUser?
+    suspend fun existsByUsername(username: String): Boolean
 }

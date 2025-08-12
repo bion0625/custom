@@ -4,6 +4,7 @@ import com.stxtory.lietzsche.dto.LoginRequest
 import com.stxtory.lietzsche.dto.SignUpRequest
 import com.stxtory.lietzsche.dto.TokenResponse
 import com.stxtory.lietzsche.repository.AppUserRepository
+import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.*
 import org.springframework.beans.factory.annotation.Autowired
@@ -22,9 +23,9 @@ class AuthFlowIntegrationTest(
 ) {
 
     @BeforeEach
-    fun clean() {
+    fun clean() = runTest {
         // 필요 시 DB 초기화
-        userRepo.deleteAll().block()
+        userRepo.deleteAll()
     }
 
     @Test
