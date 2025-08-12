@@ -9,12 +9,12 @@ import org.springframework.http.HttpHeaders
 
 @EnableAdminServer
 @SpringBootApplication
-class AdminApplication
-
-@Bean
-fun actuatorAuthHeaders(): HttpHeadersProvider = HttpHeadersProvider { _ ->
-	HttpHeaders().apply {
-		setBasicAuth("actuator", "actuator-pass")
+class AdminApplication {
+	@Bean
+	fun actuatorAuthHeaders(): HttpHeadersProvider = HttpHeadersProvider { _ ->
+		HttpHeaders().apply {
+			setBasicAuth("actuator", "actuator-pass")
+		}
 	}
 }
 
