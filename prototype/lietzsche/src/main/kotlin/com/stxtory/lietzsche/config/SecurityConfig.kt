@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpHeaders
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity
+import org.springframework.security.config.web.server.SecurityWebFiltersOrder
 import org.springframework.security.config.web.server.ServerHttpSecurity
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.context.ReactiveSecurityContextHolder
@@ -31,9 +32,10 @@ class SecurityConfig(private val jwtService: JwtService) {
             .authorizeExchange {
                 it.pathMatchers("/actuator/health", "/actuator/info").permitAll()
                 it.pathMatchers("/actuator/**").hasRole("ADMIN")
-                it.pathMatchers("/api/**").permitAll()
+                it.pathMatchers("/api/auth/**").permitAll()
                 it.anyExchange().authenticated()
             }
+            .addFilterAt(jwtWebFilter(), SecurityWebFiltersOrder.AUTHENTICATION)
             .httpBasic { }              // ✅ Actuator용 Basic 활성화
             .build()
 
