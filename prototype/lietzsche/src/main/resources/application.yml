@@ -1,11 +1,6 @@
 spring:
   application:
     name: lietzsche
-  security:
-    user:
-      name: actuator
-      password: actuator-pass
-      roles: ADMIN
   boot:
     admin:
       client:
@@ -23,6 +18,22 @@ spring:
   sql:
     init:
       mode: always
+
+server:
+  netty:
+    access-log:
+      enabled: true
+
+logging:
+  level:
+    reactor:
+      netty:
+        http:
+          server:
+            AccessLog: INFO
+    org:
+      springframework:
+        security: DEBUG
 
 jwt:
   issuer: stxtory
