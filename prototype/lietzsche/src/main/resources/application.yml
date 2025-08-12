@@ -13,6 +13,21 @@ spring:
         instance:
           management-base-url: http://localhost:8080  # 이 앱의 매니지먼트 베이스
           service-url: http://localhost:8080
+  r2dbc:
+    url: r2dbc:h2:mem:///demo;MODE=MYSQL
+    username: sa
+    password:
+  h2:
+    console:
+      enabled: true
+  sql:
+    init:
+      mode: always
+
+jwt:
+  issuer: stxtory
+  secret: "replace-with-256bit-secret-at-least-32-characters-long"
+  access-token-ttl-seconds: 3600
 
 management:
   endpoints:

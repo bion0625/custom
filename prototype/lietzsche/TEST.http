@@ -1,0 +1,21 @@
+###
+POST http://localhost:8080/api/auth/signup
+Content-Type: application/json
+
+{
+  "username": "stxtory",
+  "password": "qwer135!"
+}
+
+###
+POST http://localhost:8080/api/auth/login
+Content-Type: application/json
+
+{
+  "username": "stxtory",
+  "password": "qwer135!"
+}
+
+###
+GET http://localhost:8080/api/me
+Authorization: Bearer eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJzdHh0b3J5IiwiaXNzIjoic3R4dG9yeSIsImlhdCI6MTc1NDk3NjAwMCwiZXhwIjoxNzU0OTc5NjAwLCJyb2xlcyI6WyJST0xFX1VTRVIiXX0.ZTgaBZtx5ktotxk-H4leCwNkmfxLrHLvtk9Kal2t7X2kGgGFTgosPjBhxyKT_TsD
