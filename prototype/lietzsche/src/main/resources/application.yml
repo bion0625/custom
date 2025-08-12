@@ -1,0 +1,24 @@
+spring.application.name: lietzsche
+spring:
+  security:
+    user:
+      name: actuator
+      password: actuator-pass
+      roles: ADMIN
+  boot:
+    admin:
+      client:
+        url: http://localhost:8081        # Admin 서버 주소
+        instance:
+          management-base-url: http://localhost:8080  # 이 앱의 매니지먼트 베이스
+          service-url: http://localhost:8080
+
+  management:
+    endpoints:
+      web:
+        exposure:
+          include: health,info,metrics,loggers,threaddump,httpexchanges   # 필요 엔드포인트
+    endpoint:
+      health:
+        probes:
+          enabled: true
