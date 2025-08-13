@@ -9,113 +9,50 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.flow.toList
 
-suspend fun calculateNewHighPriceStock(companies: List<StockInfo>, page: Int) = coroutineScope {
-    companies.map {
-        async(Dispatchers.IO.limitedParallelism(30)) {
-            val priceInfo = StockInfo.getPriceInfoByPage(it.code, 1, page)
-            if (calculateNewHighPrice(priceInfo)) it else null
-        }
-    }.awaitAll()
-        .filterNotNull()
-}
-
-suspend fun calculateAmplitudePriceStock(companies: List<StockInfo>, page: Int) = coroutineScope {
-    companies.map {
-        async(Dispatchers.IO.limitedParallelism(30)) {
-            val priceInfo = StockInfo.getPriceInfoByPage(it.code, 1, page)
-            if (calculateAmplitudePrice(priceInfo, 20)) it else null
-        }
-    }.awaitAll()
-        .filterNotNull()
-}
-
-suspend fun allFlow(companies: List<StockInfo>, page: Int) = coroutineScope {
+suspend fun custom(companies: List<StockInfo>, page: Int, amplitude: Int) = coroutineScope {
     companies
         .map {
             async(Dispatchers.IO.limitedParallelism(30)) {
-                val priceInfoFlow = StockInfo.getPriceFlowInfoByPage(it.code, 1, 2)
-
-                val priceInfos = priceInfoFlow.take(20).toList()
-
-                val isAmplitude = calculateAmplitudePrice(priceInfos, 20)
-                if (!isAmplitude) return@async null
-
-                val volumeForThreeDay = todayIsNotMaxVolumeForThreeDay(priceInfos)
-                if (!volumeForThreeDay) return@async null
-
-                val consecutiveRise = consecutiveRise(priceInfos)
-                if (!consecutiveRise) return@async null
-
-                it
+                lightCheck(it, amplitude)
             }
         }
         .awaitAll().filterNotNull()
         .map {
             async(Dispatchers.IO.limitedParallelism(30)) {
-                val priceInfoFlow = StockInfo.getPriceFlowInfoByPage(it.code, 1, page)
-
-                val priceInfos = priceInfoFlow.take(page * 10).toList()
-
-                val isNewHighPrice = calculateNewHighPrice(priceInfos)
-                if (!isNewHighPrice) return@async null
-
-                it
+                weightCheck(it,page)
             }
         }.awaitAll().filterNotNull()
 }
 
-suspend fun all(companies: List<StockInfo>, page: Int) = coroutineScope {
-    companies
-        .map {
-        async(Dispatchers.IO.limitedParallelism(30)) {
-            val priceInfo = StockInfo.getPriceInfoByPage(it.code, 1, 2)
+// 가벼운 검증은 앞에서
+suspend fun lightCheck(info: StockInfo, amplitude: Int): StockInfo? {
+    val page = getPageByDays(amplitude)
+    val priceInfoFlow = StockInfo.getPriceFlowInfoByPage(info.code, 1, page)
 
-            val isAmplitude = calculateAmplitudePrice(priceInfo, 20)
-            if (!isAmplitude) return@async null
+    val priceInfos = priceInfoFlow.take(amplitude).toList()
 
-            val volumeForThreeDay = todayIsNotMaxVolumeForThreeDay(priceInfo)
-            if (!volumeForThreeDay) return@async null
+    val isAmplitude = calculateAmplitudePrice(priceInfos, 20)
+    if (!isAmplitude) return null
 
-            val consecutiveRise = consecutiveRise(priceInfo)
-            if (!consecutiveRise) return@async null
+    val volumeForThreeDay = todayIsNotMaxVolumeForThreeDay(priceInfos)
+    if (!volumeForThreeDay) return null
 
-            it
-        }
-    }.awaitAll()
-        .filterNotNull()
-    .map {
-        async {
-            val priceInfo = StockInfo.getPriceInfoByPage(it.code, 1, page)
-            val isNewHighPrice = calculateNewHighPrice(priceInfo)
-            if (!isNewHighPrice) return@async null
-            it
-        }
-    }.awaitAll()
-        .filterNotNull()
+    val consecutiveRise = consecutiveRise(priceInfos)
+    if (!consecutiveRise) return null
+
+    return info
 }
 
-suspend fun main() {
-    val echoAndDream = "101360"
-    val priceInfo = StockInfo.getPriceInfoByPage(echoAndDream, 1, 25)
+// 무거운 검증은 뒤에서
+suspend fun weightCheck(info: StockInfo, page: Int): StockInfo? {
+    val priceInfoFlow = StockInfo.getPriceFlowInfoByPage(info.code, 1, page)
 
-    val isNewHighPrice = calculateNewHighPrice(priceInfo)
-    if (!isNewHighPrice) println("${echoAndDream}: !isNewHighPrice")
+    val priceInfos = priceInfoFlow.take(page * 10).toList()
 
-    val isAmplitude = calculateAmplitudePrice(priceInfo, 20)
-    if (!isAmplitude) println("${echoAndDream}: !isAmplitude")
+    val isNewHighPrice = calculateNewHighPrice(priceInfos)
+    if (!isNewHighPrice) return null
 
-    val volumeForThreeDay = todayIsNotMaxVolumeForThreeDay(priceInfo)
-    if (!volumeForThreeDay) println("${echoAndDream}: !volumeForThreeDay")
-
-    val consecutiveRise = consecutiveRise(priceInfo)
-    if (!consecutiveRise) println("${echoAndDream}: !consecutiveRise")
-
-    println("${echoAndDream}: Success!")
-}
-
-// 신고가
-fun calculateNewHighPrice(priceInfo: List<StockPriceInfo>): Boolean {
-    return !priceInfo.isEmpty() && priceInfo.all { it.high <= priceInfo.first().high }
+    return info
 }
 
 // 진폭
@@ -141,4 +78,13 @@ fun consecutiveRise(priceInfo: List<StockPriceInfo>): Boolean {
         return true
     }
     return false
+}
+
+// 신고가
+fun calculateNewHighPrice(priceInfo: List<StockPriceInfo>): Boolean {
+    return !priceInfo.isEmpty() && priceInfo.all { it.high <= priceInfo.first().high }
+}
+
+fun getPageByDays(days: Int): Int {
+    return if (days % 10 == 0) days / 10 else days / 10 + 1
 }
