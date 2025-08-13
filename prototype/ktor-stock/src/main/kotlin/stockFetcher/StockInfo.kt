@@ -1,5 +1,8 @@
 package com.stock.stockFetcher
 
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.stock.custom
+import com.stock.getPageByDays
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
 import io.ktor.client.plugins.*
@@ -13,9 +16,27 @@ import kotlinx.coroutines.flow.flow
 import org.jsoup.Jsoup
 
 suspend fun main() {
-    println(StockInfo.getCompanyInfo().size)
-    println(StockInfo.getCompanyInfo().size)
-    println(StockInfo.getCompanyInfo().size)
+    val start = System.currentTimeMillis()
+    val page = getPageByDays(20)
+    val companies = StockInfo.getUSCompanyInfo()
+    val filtered = custom(companies, page, 20)
+    val end = System.currentTimeMillis()
+
+    // todo 미국 종목 현재 네이버에서 가격 정보 못가져오고 있음
+
+    val result = """
+        size: ${companies.size}
+                ${page * 10}일 기준 신고가
+                ${20}일 기준 진폭 10~30%
+                오늘이 거래량 최대가 X
+                최근 3일 연달아 상승
+                
+                ${"\n" + filtered.joinToString("\n") { "- - - - - - -> ${it.name}" }}
+                
+                전체 걸린 시간: ${(end - start) / 1000.0}s
+    """.trimIndent()
+
+    println(result)
 }
 
 data class StockInfo(
@@ -65,6 +86,46 @@ data class StockInfo(
                     pipelineMaxSize = 20
                 }
             }
+        }
+
+        suspend fun getUSCompanyInfo(): List<StockInfo> {
+            val exchanges = listOf("NYSE", "NASDAQ", "AMEX")
+            return exchanges.flatMap { exchange ->
+                getUSCompanyInfoByExchange(exchange)
+            }
+        }
+
+        private suspend fun getUSCompanyInfoByExchange(exchange: String): List<StockInfo> {
+            val mapper = jacksonObjectMapper()
+            val result = mutableListOf<StockInfo>()
+
+            // 먼저 1페이지를 조회하여 전체 건수와 페이지 크기를 확인
+            val firstUrl = "https://api.stock.naver.com/stock/exchange/$exchange/marketValue?page=1"
+            val firstResp = client.get(firstUrl)
+            val firstJson = mapper.readTree(firstResp.bodyAsText())
+            val totalCount = firstJson["totalCount"]?.asInt() ?: 0
+            val pageSize = firstJson["pageSize"]?.asInt() ?: 20
+            val totalPages = (totalCount + pageSize - 1) / pageSize
+
+            // page=1의 종목 목록 파싱
+            firstJson["stocks"]?.forEach { node ->
+                val name = node["stockName"]?.asText() ?: ""
+                val code = node["symbolCode"]?.asText() ?: ""
+                result.add(StockInfo(name = name, code = code))
+            }
+
+            // 나머지 페이지 반복 호출
+            for (page in 2..totalPages) {
+                val url = "https://api.stock.naver.com/stock/exchange/$exchange/marketValue?page=$page"
+                val resp = client.get(url)
+                val json = mapper.readTree(resp.bodyAsText())
+                json["stocks"]?.forEach { node ->
+                    val name = node["stockName"]?.asText() ?: ""
+                    val code = node["symbolCode"]?.asText() ?: ""
+                    result.add(StockInfo(name = name, code = code))
+                }
+            }
+            return result
         }
 
         suspend fun getCompanyInfo(): List<StockInfo> {
