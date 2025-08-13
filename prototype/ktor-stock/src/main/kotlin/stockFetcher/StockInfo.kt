@@ -99,10 +99,6 @@ data class StockInfo(
             }
         }
 
-        suspend fun getPriceInfoByPage(code: String, from: Int, to: Int): List<StockPriceInfo> {
-            return (from..to).map { page -> getPriceInfo(code, page) }.flatten()
-        }
-
         suspend fun getPriceInfo(code: String, page: Int): List<StockPriceInfo> {
             val url = "https://finance.naver.com/item/sise_day.nhn?code=$code&page=$page"
             return try {
