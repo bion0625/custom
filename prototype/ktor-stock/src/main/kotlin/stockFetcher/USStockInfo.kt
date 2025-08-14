@@ -21,6 +21,7 @@ suspend fun main() {
     val filtered = usCustom(companies, days, amplitude)
     val end = System.currentTimeMillis()
 
+    val result =
     """
         size: ${companies.size}
                 ${days}일 기준 신고가
@@ -32,6 +33,8 @@ suspend fun main() {
                 
                 전체 걸린 시간: ${(end - start) / 1000.0}s
     """.trimIndent()
+
+    println(result)
 
 }
 
