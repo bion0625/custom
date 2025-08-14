@@ -6,29 +6,33 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.flow.toList
 
+
+// KR
 suspend fun custom(companies: List<StockInfo>, page: Int, amplitude: Int) = coroutineScope {
     companies
         .map {
             async(Dispatchers.IO.limitedParallelism(30)) {
-                lightCheck(it, amplitude)
+                val priceInfoFlow = StockInfo
+                    .getPriceFlowInfoByPage(it.code, 1, getPageByDays(amplitude))
+                lightCheck(it, amplitude, priceInfoFlow)
             }
         }
         .awaitAll().filterNotNull()
         .map {
             async(Dispatchers.IO.limitedParallelism(30)) {
-                weightCheck(it,page)
+                val priceInfoFlow = StockInfo
+                    .getPriceFlowInfoByPage(it.code, 1, page)
+                weightCheck(it,page, priceInfoFlow)
             }
         }.awaitAll().filterNotNull()
 }
 
 // 가벼운 검증은 앞에서
-suspend fun lightCheck(info: StockInfo, amplitude: Int): StockInfo? {
-    val page = getPageByDays(amplitude)
-    val priceInfoFlow = StockInfo.getPriceFlowInfoByPage(info.code, 1, page)
-
+suspend fun lightCheck(info: StockInfo, amplitude: Int, priceInfoFlow: Flow<StockPriceInfo>): StockInfo? {
     val priceInfos = priceInfoFlow.take(amplitude).toList()
 
     val isAmplitude = calculateAmplitudePrice(priceInfos, 20)
@@ -44,9 +48,7 @@ suspend fun lightCheck(info: StockInfo, amplitude: Int): StockInfo? {
 }
 
 // 무거운 검증은 뒤에서
-suspend fun weightCheck(info: StockInfo, page: Int): StockInfo? {
-    val priceInfoFlow = StockInfo.getPriceFlowInfoByPage(info.code, 1, page)
-
+suspend fun weightCheck(info: StockInfo, page: Int, priceInfoFlow: Flow<StockPriceInfo>): StockInfo? {
     val priceInfos = priceInfoFlow.take(page * 10).toList()
 
     val isNewHighPrice = calculateNewHighPrice(priceInfos)

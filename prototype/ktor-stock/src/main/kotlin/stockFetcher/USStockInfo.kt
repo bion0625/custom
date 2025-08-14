@@ -11,12 +11,10 @@ import java.time.format.DateTimeFormatter
 import java.util.*
 
 suspend fun main() {
-    USStockInfo.getUSCompanyInfo().subList(0,100)
+    USStockInfo.getUSCompanyInfo()
         .forEach { company ->
             val usPriceInfo = USStockInfo.getUSPriceInfo(company.code)
-            println(company)
-            println(usPriceInfo)
-            println()
+
         }
 }
 
