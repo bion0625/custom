@@ -6,14 +6,13 @@ import kotlinx.coroutines.coroutineScope
 // 20일 기준 진폭
 suspend fun custom(days: Int, amplitude: Int) = coroutineScope {
     val start = System.currentTimeMillis()
-    val page = getPageByDays(days)
     val companies = StockInfo.getCompanyInfo()
-    val filtered = custom(companies, page, amplitude)
+    val filtered = custom(companies, days, amplitude)
     val end = System.currentTimeMillis()
 
     """
         size: ${companies.size}
-                ${page * 10}일 기준 신고가
+                ${days}일 기준 신고가
                 ${amplitude}일 기준 진폭 10~30%
                 오늘이 거래량 최대가 X
                 최근 3일 연달아 상승

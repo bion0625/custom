@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.toList
 
 
 // KR
-suspend fun custom(companies: List<StockInfo>, page: Int, amplitude: Int) = coroutineScope {
+suspend fun custom(companies: List<StockInfo>, days: Int, amplitude: Int) = coroutineScope {
     companies
         .map {
             async(Dispatchers.IO.limitedParallelism(30)) {
@@ -26,8 +26,8 @@ suspend fun custom(companies: List<StockInfo>, page: Int, amplitude: Int) = coro
         .map {
             async(Dispatchers.IO.limitedParallelism(30)) {
                 val priceInfoFlow = StockInfo
-                    .getPriceFlowInfoByPage(it.code, 1, page)
-                weightCheck(it, page * 10, priceInfoFlow)
+                    .getPriceFlowInfoByPage(it.code, 1, getPageByDays(days))
+                weightCheck(it, days, priceInfoFlow)
             }
         }.awaitAll().filterNotNull()
 }
