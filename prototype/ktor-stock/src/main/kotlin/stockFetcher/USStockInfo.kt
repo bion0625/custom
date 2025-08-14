@@ -1,9 +1,12 @@
 package com.stock.stockFetcher
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.stock.usCustom
 import com.stock.util.HttpClientFactory
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import org.jsoup.Jsoup
 import java.time.LocalDate
 import java.time.ZoneId
@@ -11,11 +14,25 @@ import java.time.format.DateTimeFormatter
 import java.util.*
 
 suspend fun main() {
-    USStockInfo.getUSCompanyInfo()
-        .forEach { company ->
-            val usPriceInfo = USStockInfo.getUSPriceInfo(company.code)
+    val start = System.currentTimeMillis()
+    val days = 20
+    val amplitude = 20
+    val companies = USStockInfo.getUSCompanyInfo()
+    val filtered = usCustom(companies, days, amplitude)
+    val end = System.currentTimeMillis()
 
-        }
+    """
+        size: ${companies.size}
+                ${days}일 기준 신고가
+                ${amplitude}일 기준 진폭 10~30%
+                오늘이 거래량 최대가 X
+                최근 3일 연달아 상승
+                
+                ${"\n" + filtered.joinToString("\n") { "- - - - - - -> ${it.name}" }}
+                
+                전체 걸린 시간: ${(end - start) / 1000.0}s
+    """.trimIndent()
+
 }
 
 data class USStockInfo(
@@ -64,6 +81,14 @@ data class USStockInfo(
                 }
             }
             return result
+        }
+
+        suspend fun getUSPriceFlowInfo(ticker: String): Flow<StockPriceInfo> {
+            return flow {
+                getUSPriceInfo(ticker).forEach {
+                    emit(it)
+                }
+            }
         }
 
         // 미국 종목의 일별 시세 조회 (최근 6개월)

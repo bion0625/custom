@@ -2,6 +2,7 @@ package com.stock
 
 import com.stock.stockFetcher.StockInfo
 import com.stock.stockFetcher.StockPriceInfo
+import com.stock.stockFetcher.USStockInfo
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -26,7 +27,26 @@ suspend fun custom(companies: List<StockInfo>, page: Int, amplitude: Int) = coro
             async(Dispatchers.IO.limitedParallelism(30)) {
                 val priceInfoFlow = StockInfo
                     .getPriceFlowInfoByPage(it.code, 1, page)
-                weightCheck(it,page, priceInfoFlow)
+                weightCheck(it, page * 10, priceInfoFlow)
+            }
+        }.awaitAll().filterNotNull()
+}
+
+// US, 50일 이상은 계산 안됨
+suspend fun usCustom(companies: List<USStockInfo>, days: Int, amplitude: Int) = coroutineScope {
+    companies
+        .map { StockInfo(it.name, it.code) } // 변경
+        .map {
+            async(Dispatchers.IO.limitedParallelism(30)) {
+                val priceInfoFlow = USStockInfo.getUSPriceFlowInfo(it.code)
+                lightCheck(it, amplitude, priceInfoFlow)
+            }
+        }
+        .awaitAll().filterNotNull()
+        .map {
+            async(Dispatchers.IO.limitedParallelism(30)) {
+                val priceInfoFlow = USStockInfo.getUSPriceFlowInfo(it.code)
+                weightCheck(it, days, priceInfoFlow)
             }
         }.awaitAll().filterNotNull()
 }
@@ -48,8 +68,8 @@ suspend fun lightCheck(info: StockInfo, amplitude: Int, priceInfoFlow: Flow<Stoc
 }
 
 // 무거운 검증은 뒤에서
-suspend fun weightCheck(info: StockInfo, page: Int, priceInfoFlow: Flow<StockPriceInfo>): StockInfo? {
-    val priceInfos = priceInfoFlow.take(page * 10).toList()
+suspend fun weightCheck(info: StockInfo, days: Int, priceInfoFlow: Flow<StockPriceInfo>): StockInfo? {
+    val priceInfos = priceInfoFlow.take(days).toList()
 
     val isNewHighPrice = calculateNewHighPrice(priceInfos)
     if (!isNewHighPrice) return null

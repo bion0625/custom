@@ -39,7 +39,7 @@ data class StockInfo(
 
         suspend fun getPriceFlowInfoByPage(code: String, from: Int, to: Int): Flow<StockPriceInfo> {
             return flow {
-                (from .. to).map { page ->
+                (from .. to).forEach { page ->
                     getPriceInfo(code, page).forEach {
                         emit(it)
                     }
