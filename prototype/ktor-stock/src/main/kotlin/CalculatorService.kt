@@ -36,19 +36,14 @@ suspend fun custom(companies: List<StockInfo>, days: Int, amplitude: Int) = coro
 suspend fun usCustom(companies: List<USStockInfo>, days: Int, amplitude: Int) = coroutineScope {
     companies
         .map { StockInfo(it.name, it.code) } // 변경
-        .map {
-            async(Dispatchers.IO.limitedParallelism(30)) {
+        .filter {
                 val priceInfoFlow = USStockInfo.getUSPriceFlowInfo(it.code)
-                lightCheck(it, amplitude, priceInfoFlow)
-            }
+                lightCheck(it, amplitude, priceInfoFlow) != null
         }
-        .awaitAll().filterNotNull()
-        .map {
-            async(Dispatchers.IO.limitedParallelism(30)) {
+        .filter {
                 val priceInfoFlow = USStockInfo.getUSPriceFlowInfo(it.code)
-                weightCheck(it, days, priceInfoFlow)
-            }
-        }.awaitAll().filterNotNull()
+                weightCheck(it, days, priceInfoFlow) != null
+        }
 }
 
 // 가벼운 검증은 앞에서
