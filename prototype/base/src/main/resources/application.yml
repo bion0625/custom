@@ -36,6 +36,11 @@ jwt:
   secret: "replace-with-256bit-secret-at-least-32-characters-long"
   access-token-ttl-seconds: 3600
 
+dev:
+  h2:
+    web-console:
+      enabled: true
+
 management:
   endpoints:
     web:

@@ -11,3 +11,8 @@ jwt:
   issuer: base-test
   secret: "this-is-at-least-32-chars-long-secret-for-tests!!"
   access-token-ttl-seconds: 3600
+
+dev:
+  h2:
+    web-console:
+      enabled: false

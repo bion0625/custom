@@ -1,10 +1,12 @@
 package com.project.base.config;
 
 import org.h2.tools.Server;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-@Configuration
+@Configuration(proxyBeanMethods = false)
+@ConditionalOnProperty(name = "dev.h2.web-console.enabled", havingValue = "true")
 public class H2WebConsoleConfig {
 
     // http://localhost:8082 로 접속 → JDBC URL은 애플리케이션과 동일한 H2 URL 입력
