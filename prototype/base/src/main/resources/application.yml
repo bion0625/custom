@@ -1,0 +1,51 @@
+spring:
+  application:
+    name: base
+  boot:
+    admin:
+      client:
+        url: http://localhost:8081        # Admin 서버 주소
+        instance:
+          management-base-url: http://localhost:8080  # 이 앱의 매니지먼트 베이스
+          service-url: http://localhost:8080
+  r2dbc:
+    url: r2dbc:h2:mem:///demo;MODE=MYSQL
+    username: sa
+    password:
+  h2:
+    console:
+      enabled: true
+  sql:
+    init:
+      mode: always
+
+server:
+  netty:
+    access-log:
+      enabled: true
+
+logging:
+  level:
+    reactor:
+      netty:
+        http:
+          server:
+            AccessLog: INFO
+    org:
+      springframework:
+        security: DEBUG
+
+jwt:
+  issuer: base
+  secret: "replace-with-256bit-secret-at-least-32-characters-long"
+  access-token-ttl-seconds: 3600
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,loggers,threaddump,httpexchanges   # 필요 엔드포인트
+  endpoint:
+    health:
+      probes:
+        enabled: true
