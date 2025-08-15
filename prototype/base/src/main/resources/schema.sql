@@ -5,7 +5,7 @@ CREATE TABLE IF NOT EXISTS app_user (
     password VARCHAR(255) NOT NULL,
     email VARCHAR(255),
     phone_number VARCHAR(50),
-    roles VARCHAR(255) NOT NULL DEFAULT 'ROLE_USER'
+    roles VARCHAR(255) NOT NULL DEFAULT 'USER'
     );
 
 -- 조회 속도/중복 방지용 인덱스/제약 (선택)

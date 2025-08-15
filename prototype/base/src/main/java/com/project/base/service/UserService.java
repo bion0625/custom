@@ -31,7 +31,7 @@ public class UserService {
      * 회원가입
      * - username 중복 검사
      * - password 인코딩 (CPU 바운드 → boundedElastic)
-     * - 기본 ROLE_USER 부여
+     * - 기본 USER 부여
      */
     public Mono<Void> signUp(SignUpRequest req) {
         return repo.existsByUsername(req.username())
@@ -50,7 +50,7 @@ public class UserService {
                     user.setPassword(encodedPw);
                     user.setEmail(req.email());
                     user.setPhoneNumber(req.phoneNumber());
-                    user.setRoles("ROLE_USER"); // 문자열 CSV 형태 가정
+                    user.setRoles("USER"); // 문자열 CSV 형태 가정
                     return repo.save(user);
                 })
                 .then();

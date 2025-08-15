@@ -21,7 +21,7 @@ class AppUserRepositoryTest {
         AppUser user = new AppUser();
         user.setUsername("repoUser");
         user.setPassword("encPw");
-        user.setRoles("ROLE_USER");
+        user.setRoles("USER");
 
         StepVerifier.create(repo.deleteAll()
                         .then(repo.save(user))
