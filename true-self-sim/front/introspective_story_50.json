@@ -1,0 +1,1147 @@
+[
+  {
+    "sceneId": "s1",
+    "speaker": "상담자",
+    "backgroundImage": "loading-background1.png",
+    "text": "지금 마음속에서 가장 편안하게 느껴지는 공간을 떠올려보세요. 구체적인 가구 배치, 빛의 방향, 냄새와 온도까지 떠올릴 수 있나요?",
+    "start": true,
+    "end": false,
+    "choiceRequests": [
+      {
+        "text": "세밀하게 묘사한다",
+        "nextSceneId": "s2"
+      },
+      {
+        "text": "대략적인 분위기만 떠올린다",
+        "nextSceneId": "s3"
+      }
+    ]
+  },
+  {
+    "sceneId": "s2",
+    "speaker": "상담자",
+    "backgroundImage": "mountain.jpg",
+    "text": "세밀한 묘사를 하며 어떤 감정이 떠오르나요? 평온함, 설렘, 혹은 긴장감?",
+    "start": false,
+    "end": false,
+    "choiceRequests": [
+      {
+        "text": "평온함",
+        "nextSceneId": "s4"
+      },
+      {
+        "text": "설렘이나 긴장감",
+        "nextSceneId": "s4"
+      }
+    ]
+  },
+  {
+    "sceneId": "s3",
+    "speaker": "상담자",
+    "backgroundImage": "loading-background2.png",
+    "text": "대략적인 분위기만 떠올렸다면, 그 속에서 가장 선명하게 남은 대상이나 사람이 있나요?",
+    "start": false,
+    "end": false,
+    "choiceRequests": [
+      {
+        "text": "특정 인물이나 장면이 떠오른다",
+        "nextSceneId": "s4"
+      },
+      {
+        "text": "아무것도 선명하지 않다",
+        "nextSceneId": "s4"
+      }
+    ]
+  },
+  {
+    "sceneId": "s4",
+    "speaker": "상담자",
+    "backgroundImage": "loading-background3.png",
+    "text": "이제 현재 삶에서 당신을 가장 힘들게 하는 문제나 고민을 하나 떠올려보세요. 그것을 어떻게 표현하고 싶나요?",
+    "start": false,
+    "end": false,
+    "choiceRequests": [
+      {
+        "text": "구체적인 이름과 형태로 표현한다",
+        "nextSceneId": "s5"
+      },
+      {
+        "text": "막연한 느낌으로만 남겨둔다",
+        "nextSceneId": "s5"
+      }
+    ]
+  },
+  {
+    "sceneId": "s5",
+    "speaker": "상담자",
+    "backgroundImage": "loading-background4.png",
+    "text": "그 문제를 하나의 캐릭터나 물체로 비유해보세요. 어떤 모양과 색을 가지고 있나요?",
+    "start": false,
+    "end": false,
+    "choiceRequests": [
+      {
+        "text": "무겁고 어두운 존재",
+        "nextSceneId": "s6"
+      },
+      {
+        "text": "가벼우나 날카로운 존재",
+        "nextSceneId": "s6"
+      },
+      {
+        "text": "형태가 없는 안개처럼",
+        "nextSceneId": "s6"
+      }
+    ]
+  },
+  {
+    "sceneId": "s6",
+    "speaker": "상담자",
+    "backgroundImage": "mountain.jpg",
+    "text": "이 문제(혹은 캐릭터)가 당신의 일상에 미치는 가장 큰 영향은 무엇인가요?",
+    "start": false,
+    "end": false,
+    "choiceRequests": [
+      {
+        "text": "에너지와 의욕을 떨어뜨린다",
+        "nextSceneId": "s7"
+      },
+      {
+        "text": "인간관계를 어렵게 한다",
+        "nextSceneId": "s7"
+      },
+      {
+        "text": "선택을 망설이게 한다",
+        "nextSceneId": "s7"
+      }
+    ]
+  },
+  {
+    "sceneId": "s7",
+    "speaker": "상담자",
+    "backgroundImage": "loading-background1.png",
+    "text": "당신은 이 영향들을 받아들이고 있나요? 혹은 변화시키고 싶다는 마음이 더 큰가요?",
+    "start": false,
+    "end": false,
+    "choiceRequests": [
+      {
+        "text": "어느 정도 받아들이고 있다",
+        "nextSceneId": "s8"
+      },
+      {
+        "text": "변화시키고 싶다",
+        "nextSceneId": "s8"
+      }
+    ]
+  },
+  {
+    "sceneId": "s8",
+    "speaker": "상담자",
+    "backgroundImage": "loading-background2.png",
+    "text": "과거에 이 문제의 영향에서 벗어났던 순간이 있다면, 그때 무엇이 달랐나요? 없다면 미래에서 그런 순간을 상상해보세요.",
+    "start": false,
+    "end": false,
+    "choiceRequests": [
+      {
+        "text": "과거에 벗어난 경험이 있다",
+        "nextSceneId": "s9"
+      },
+      {
+        "text": "미래의 모습을 상상한다",
+        "nextSceneId": "s9"
+      }
+    ]
+  },
+  {
+    "sceneId": "s9",
+    "speaker": "상담자",
+    "backgroundImage": "loading-background3.png",
+    "text": "그 순간(또는 상상 속 장면)에서 당신이 발휘했던 힘이나 중요하게 여겼던 가치는 무엇이었나요?",
+    "start": false,
+    "end": false,
+    "choiceRequests": [
+      {
+        "text": "용기",
+        "nextSceneId": "s10"
+      },
+      {
+        "text": "인내",
+        "nextSceneId": "s10"
+      },
+      {
+        "text": "연결과 사랑",
+        "nextSceneId": "s10"
+      },
+      {
+        "text": "창의성과 호기심",
+        "nextSceneId": "s10"
+      }
+    ]
+  },
+  {
+    "sceneId": "s10",
+    "speaker": "상담자",
+    "backgroundImage": "loading-background4.png",
+    "text": "현재의 문제와 갈등하는 당신의 가치가 있다면, 그 가치는 무엇인가요?",
+    "start": false,
+    "end": false,
+    "choiceRequests": [
+      {
+        "text": "자율성과 자유",
+        "nextSceneId": "s11"
+      },
+      {
+        "text": "안정과 안전",
+        "nextSceneId": "s11"
+      },
+      {
+        "text": "도전과 성장",
+        "nextSceneId": "s11"
+      },
+      {
+        "text": "관계와 소속",
+        "nextSceneId": "s11"
+      }
+    ]
+  },
+  {
+    "sceneId": "s11",
+    "speaker": "상담자",
+    "backgroundImage": "mountain.jpg",
+    "text": "이 대화를 마친 후 당신이 스스로에게 해보고 싶은 작은 행동은 무엇인가요?",
+    "start": false,
+    "end": false,
+    "choiceRequests": [
+      {
+        "text": "자신에게 편지를 써본다",
+        "nextSceneId": "s12"
+      },
+      {
+        "text": "오늘 하루를 돌아보며 일기를 쓴다",
+        "nextSceneId": "s12"
+      },
+      {
+        "text": "신뢰하는 사람과 솔직한 대화를 나눈다",
+        "nextSceneId": "s12"
+      },
+      {
+        "text": "자신을 위한 작은 휴식을 계획한다",
+        "nextSceneId": "s12"
+      }
+    ]
+  },
+  {
+    "sceneId": "s12",
+    "speaker": "상담자",
+    "backgroundImage": "loading-background1.png",
+    "text": "당신이 선택한 행동은 앞으로의 이야기에서 중요한 첫 걸음입니다. 다음으로 깊은 기억을 더 탐색해 볼까요?",
+    "start": false,
+    "end": false,
+    "choiceRequests": [
+      {
+        "text": "어린 시절 경험을 떠올려 본다",
+        "nextSceneId": "s13"
+      },
+      {
+        "text": "최근의 기억을 탐색한다",
+        "nextSceneId": "s14"
+      }
+    ]
+  },
+  {
+    "sceneId": "s13",
+    "speaker": "상담자",
+    "backgroundImage": "loading-background2.png",
+    "text": "어린 시절 기억에서 현재 문제와 비슷한 느낌을 받았던 순간이 있나요? 그때 당신은 어디에 있었고 누구와 있었나요?",
+    "start": false,
+    "end": false,
+    "choiceRequests": [
+      {
+        "text": "가족과 함께였다",
+        "nextSceneId": "s15"
+      },
+      {
+        "text": "혼자였다",
+        "nextSceneId": "s15"
+      },
+      {
+        "text": "친구와 함께였다",
+        "nextSceneId": "s15"
+      }
+    ]
+  },
+  {
+    "sceneId": "s14",
+    "speaker": "상담자",
+    "backgroundImage": "loading-background3.png",
+    "text": "최근의 기억 속에서 당신을 괴롭혔던 순간을 떠올려보세요. 그 상황의 장소와 사람들을 묘사할 수 있나요?",
+    "start": false,
+    "end": false,
+    "choiceRequests": [
+      {
+        "text": "명확하게 묘사한다",
+        "nextSceneId": "s15"
+      },
+      {
+        "text": "모호하게 느껴진다",
+        "nextSceneId": "s15"
+      }
+    ]
+  },
+  {
+    "sceneId": "s15",
+    "speaker": "상담자",
+    "backgroundImage": "loading-background4.png",
+    "text": "그 기억에서 당신을 가장 강하게 사로잡은 감정은 무엇이었나요?",
+    "start": false,
+    "end": false,
+    "choiceRequests": [
+      {
+        "text": "두려움",
+        "nextSceneId": "s16"
+      },
+      {
+        "text": "분노",
+        "nextSceneId": "s16"
+      },
+      {
+        "text": "슬픔",
+        "nextSceneId": "s16"
+      },
+      {
+        "text": "희망",
+        "nextSceneId": "s16"
+      }
+    ]
+  },
+  {
+    "sceneId": "s16",
+    "speaker": "상담자",
+    "backgroundImage": "mountain.jpg",
+    "text": "과거의 비슷한 상황에서, 당신은 어떤 방식으로 반응하거나 대처하는 경향이 있었나요?",
+    "start": false,
+    "end": false,
+    "choiceRequests": [
+      {
+        "text": "즉시 대응한다",
+        "nextSceneId": "s17"
+      },
+      {
+        "text": "회피한다",
+        "nextSceneId": "s17"
+      },
+      {
+        "text": "조용히 내면화한다",
+        "nextSceneId": "s17"
+      }
+    ]
+  },
+  {
+    "sceneId": "s17",
+    "speaker": "상담자",
+    "backgroundImage": "loading-background1.png",
+    "text": "이러한 패턴은 현재에도 반복되고 있나요? 그렇다면 어떤 상황에서 반복되는지 생각해보세요.",
+    "start": false,
+    "end": false,
+    "choiceRequests": [
+      {
+        "text": "자주 반복된다",
+        "nextSceneId": "s18"
+      },
+      {
+        "text": "가끔 반복된다",
+        "nextSceneId": "s18"
+      },
+      {
+        "text": "거의 반복되지 않는다",
+        "nextSceneId": "s18"
+      }
+    ]
+  },
+  {
+    "sceneId": "s18",
+    "speaker": "상담자",
+    "backgroundImage": "loading-background2.png",
+    "text": "당신의 반응 패턴이 삶에서 긍정적이거나 부정적인 영향을 준 예를 각각 떠올려보세요.",
+    "start": false,
+    "end": false,
+    "choiceRequests": [
+      {
+        "text": "긍정적 영향이 컸다",
+        "nextSceneId": "s19"
+      },
+      {
+        "text": "부정적 영향이 컸다",
+        "nextSceneId": "s19"
+      },
+      {
+        "text": "둘 다 있었다",
+        "nextSceneId": "s19"
+      }
+    ]
+  },
+  {
+    "sceneId": "s19",
+    "speaker": "상담자",
+    "backgroundImage": "loading-background3.png",
+    "text": "이 패턴을 바꾸고 싶다면, 처음으로 떠오르는 대안적인 대처 방식은 무엇인가요?",
+    "start": false,
+    "end": false,
+    "choiceRequests": [
+      {
+        "text": "감정을 표현한다",
+        "nextSceneId": "s20"
+      },
+      {
+        "text": "잠시 물러서서 관찰한다",
+        "nextSceneId": "s20"
+      },
+      {
+        "text": "누군가에게 도움을 청한다",
+        "nextSceneId": "s20"
+      },
+      {
+        "text": "혼자서 해결하려 한다",
+        "nextSceneId": "s20"
+      }
+    ]
+  },
+  {
+    "sceneId": "s20",
+    "speaker": "상담자",
+    "backgroundImage": "loading-background4.png",
+    "text": "당신에게 지금 가장 큰 힘이 되어주는 사람이나 존재는 누구인가요?",
+    "start": false,
+    "end": false,
+    "choiceRequests": [
+      {
+        "text": "가족",
+        "nextSceneId": "s21"
+      },
+      {
+        "text": "친구",
+        "nextSceneId": "s21"
+      },
+      {
+        "text": "스승 또는 멘토",
+        "nextSceneId": "s21"
+      },
+      {
+        "text": "나 자신",
+        "nextSceneId": "s21"
+      }
+    ]
+  },
+  {
+    "sceneId": "s21",
+    "speaker": "상담자",
+    "backgroundImage": "mountain.jpg",
+    "text": "그 사람과의 관계에서 특히 고마웠던 순간을 떠올려본다면, 어떤 장면이 떠오르나요?",
+    "start": false,
+    "end": false,
+    "choiceRequests": [
+      {
+        "text": "함께 웃었던 순간",
+        "nextSceneId": "s22"
+      },
+      {
+        "text": "어려움을 나눴던 순간",
+        "nextSceneId": "s22"
+      },
+      {
+        "text": "도움을 받았던 순간",
+        "nextSceneId": "s22"
+      }
+    ]
+  },
+  {
+    "sceneId": "s22",
+    "speaker": "상담자",
+    "backgroundImage": "loading-background1.png",
+    "text": "이 문제를 해결하는 데 도움이 될 수 있는 사람이 더 있다면, 누구를 떠올릴 수 있나요?",
+    "start": false,
+    "end": false,
+    "choiceRequests": [
+      {
+        "text": "새로운 관계를 찾는다",
+        "nextSceneId": "s23"
+      },
+      {
+        "text": "기존 관계를 다시 바라본다",
+        "nextSceneId": "s23"
+      },
+      {
+        "text": "지금은 스스로 해결한다",
+        "nextSceneId": "s23"
+      }
+    ]
+  },
+  {
+    "sceneId": "s23",
+    "speaker": "상담자",
+    "backgroundImage": "loading-background2.png",
+    "text": "마지막으로, 현재 관계에서 당신이 지켜야 할 경계(boundaries)나 한계는 무엇이라고 느끼나요?",
+    "start": false,
+    "end": false,
+    "choiceRequests": [
+      {
+        "text": "시간적인 경계",
+        "nextSceneId": "s24"
+      },
+      {
+        "text": "감정적인 경계",
+        "nextSceneId": "s24"
+      },
+      {
+        "text": "물질적인 경계",
+        "nextSceneId": "s24"
+      },
+      {
+        "text": "경계를 세우지 않는다",
+        "nextSceneId": "s24"
+      }
+    ]
+  },
+  {
+    "sceneId": "s24",
+    "speaker": "상담자",
+    "backgroundImage": "loading-background3.png",
+    "text": "삶에서 소중한 가치를 포기해야 했던 순간을 떠올려볼까요? 그때 무엇을 얻었고 무엇을 잃었다고 느끼나요?",
+    "start": false,
+    "end": false,
+    "choiceRequests": [
+      {
+        "text": "얻은 것이 크다고 느꼈다",
+        "nextSceneId": "s25"
+      },
+      {
+        "text": "잃은 것이 컸다",
+        "nextSceneId": "s25"
+      },
+      {
+        "text": "잘 모르겠다",
+        "nextSceneId": "s25"
+      }
+    ]
+  },
+  {
+    "sceneId": "s25",
+    "speaker": "상담자",
+    "backgroundImage": "loading-background4.png",
+    "text": "반대로, 어떤 가치를 끝까지 지켜냈던 경험이 있나요? 그 경험이 당신에게 어떤 의미였나요?",
+    "start": false,
+    "end": false,
+    "choiceRequests": [
+      {
+        "text": "자부심",
+        "nextSceneId": "s26"
+      },
+      {
+        "text": "안도감",
+        "nextSceneId": "s26"
+      },
+      {
+        "text": "후회",
+        "nextSceneId": "s26"
+      },
+      {
+        "text": "성장",
+        "nextSceneId": "s26"
+      }
+    ]
+  },
+  {
+    "sceneId": "s26",
+    "speaker": "상담자",
+    "backgroundImage": "mountain.jpg",
+    "text": "가끔은 후회가 남기도 합니다. 최근에 당신이 후회하는 선택이 있다면, 그 선택을 다른 방식으로 바꿨을 때 어떤 일이 달랐을 것 같나요?",
+    "start": false,
+    "end": false,
+    "choiceRequests": [
+      {
+        "text": "관계가 달라졌을 것이다",
+        "nextSceneId": "s27"
+      },
+      {
+        "text": "감정 상태가 달랐을 것이다",
+        "nextSceneId": "s27"
+      },
+      {
+        "text": "삶의 방향이 달라졌을 것이다",
+        "nextSceneId": "s27"
+      },
+      {
+        "text": "아마 크게 달라지지 않았을 것이다",
+        "nextSceneId": "s27"
+      }
+    ]
+  },
+  {
+    "sceneId": "s27",
+    "speaker": "상담자",
+    "backgroundImage": "loading-background1.png",
+    "text": "이런 선택과 후회를 통해, 앞으로 무엇을 더 중요하게 생각하고 싶나요?",
+    "start": false,
+    "end": false,
+    "choiceRequests": [
+      {
+        "text": "진정성",
+        "nextSceneId": "s28"
+      },
+      {
+        "text": "안정성",
+        "nextSceneId": "s28"
+      },
+      {
+        "text": "모험과 탐험",
+        "nextSceneId": "s28"
+      },
+      {
+        "text": "연결과 사랑",
+        "nextSceneId": "s28"
+      }
+    ]
+  },
+  {
+    "sceneId": "s28",
+    "speaker": "상담자",
+    "backgroundImage": "loading-background2.png",
+    "text": "지금의 문제를 상징하는 상징이나 심볼을 하나 만들 수 있다면, 어떤 모양과 색을 선택하고 싶나요?",
+    "start": false,
+    "end": false,
+    "choiceRequests": [
+      {
+        "text": "둥근 모양과 따뜻한 색",
+        "nextSceneId": "s29"
+      },
+      {
+        "text": "뾰족한 모양과 차가운 색",
+        "nextSceneId": "s29"
+      },
+      {
+        "text": "복잡한 패턴과 다채로운 색",
+        "nextSceneId": "s29"
+      },
+      {
+        "text": "단순한 선과 무채색",
+        "nextSceneId": "s29"
+      }
+    ]
+  },
+  {
+    "sceneId": "s29",
+    "speaker": "상담자",
+    "backgroundImage": "loading-background3.png",
+    "text": "그 상징을 음악이나 소리로 표현한다면, 어떤 느낌의 멜로디가 어울릴까요?",
+    "start": false,
+    "end": false,
+    "choiceRequests": [
+      {
+        "text": "잔잔하고 반복적인 선율",
+        "nextSceneId": "s30"
+      },
+      {
+        "text": "격정적이고 빠른 리듬",
+        "nextSceneId": "s30"
+      },
+      {
+        "text": "서정적이고 슬픈 멜로디",
+        "nextSceneId": "s30"
+      },
+      {
+        "text": "새로운 형태의 실험적인 소리",
+        "nextSceneId": "s30"
+      }
+    ]
+  },
+  {
+    "sceneId": "s30",
+    "speaker": "상담자",
+    "backgroundImage": "loading-background4.png",
+    "text": "이 문제를 글이나 그림으로 표현해본다면, 어떤 방식으로 접근하고 싶나요?",
+    "start": false,
+    "end": false,
+    "choiceRequests": [
+      {
+        "text": "에세이 또는 일기",
+        "nextSceneId": "s31"
+      },
+      {
+        "text": "시 또는 노래 가사",
+        "nextSceneId": "s31"
+      },
+      {
+        "text": "추상화나 드로잉",
+        "nextSceneId": "s31"
+      },
+      {
+        "text": "만화나 스토리보드",
+        "nextSceneId": "s31"
+      }
+    ]
+  },
+  {
+    "sceneId": "s31",
+    "speaker": "상담자",
+    "backgroundImage": "mountain.jpg",
+    "text": "문제를 중심으로 한 당신의 이야기를 새롭게 쓴다면, 어떤 장르가 어울릴까요?",
+    "start": false,
+    "end": false,
+    "choiceRequests": [
+      {
+        "text": "영웅 서사",
+        "nextSceneId": "s32"
+      },
+      {
+        "text": "치유의 여정",
+        "nextSceneId": "s32"
+      },
+      {
+        "text": "미스터리 탐정",
+        "nextSceneId": "s32"
+      },
+      {
+        "text": "판타지 모험",
+        "nextSceneId": "s32"
+      }
+    ]
+  },
+  {
+    "sceneId": "s32",
+    "speaker": "상담자",
+    "backgroundImage": "loading-background1.png",
+    "text": "그 이야기 속에서 당신은 어떤 역할을 맡고 싶나요?",
+    "start": false,
+    "end": false,
+    "choiceRequests": [
+      {
+        "text": "주인공",
+        "nextSceneId": "s33"
+      },
+      {
+        "text": "이야기를 이끄는 안내자",
+        "nextSceneId": "s33"
+      },
+      {
+        "text": "숨겨진 조력자",
+        "nextSceneId": "s33"
+      },
+      {
+        "text": "관찰자",
+        "nextSceneId": "s33"
+      }
+    ]
+  },
+  {
+    "sceneId": "s33",
+    "speaker": "상담자",
+    "backgroundImage": "loading-background2.png",
+    "text": "지금의 문제를 외부화하여 이야기를 만들어보면, 그 문제는 어떤 캐릭터나 존재로 등장하나요, 그리고 당신은 그에게 무엇을 전하고 싶나요?",
+    "start": false,
+    "end": false,
+    "choiceRequests": [
+      {
+        "text": "내 안의 그림자에게 말한다",
+        "nextSceneId": "s34"
+      },
+      {
+        "text": "불안의 괴물에게 말한다",
+        "nextSceneId": "s34"
+      },
+      {
+        "text": "비판적 목소리에게 말한다",
+        "nextSceneId": "s34"
+      },
+      {
+        "text": "모호한 안개에게 말한다",
+        "nextSceneId": "s34"
+      }
+    ]
+  },
+  {
+    "sceneId": "s34",
+    "speaker": "상담자",
+    "backgroundImage": "loading-background3.png",
+    "text": "일상을 살아가며 당신의 감정을 크게 흔드는 촉발 요인은 무엇인가요?",
+    "start": false,
+    "end": false,
+    "choiceRequests": [
+      {
+        "text": "특정 사람이나 말",
+        "nextSceneId": "s35"
+      },
+      {
+        "text": "환경 변화",
+        "nextSceneId": "s35"
+      },
+      {
+        "text": "과거의 기억",
+        "nextSceneId": "s35"
+      },
+      {
+        "text": "내면의 생각",
+        "nextSceneId": "s35"
+      }
+    ]
+  },
+  {
+    "sceneId": "s35",
+    "speaker": "상담자",
+    "backgroundImage": "loading-background4.png",
+    "text": "이 문제와 관련해 자신이 자주 빠지는 부정적 사고 패턴이 있다면, 그것을 어떻게 표현할 수 있나요?",
+    "start": false,
+    "end": false,
+    "choiceRequests": [
+      {
+        "text": "무조건적인 비관",
+        "nextSceneId": "s36"
+      },
+      {
+        "text": "과도한 일반화",
+        "nextSceneId": "s36"
+      },
+      {
+        "text": "이분법적 사고",
+        "nextSceneId": "s36"
+      },
+      {
+        "text": "자책과 죄책감",
+        "nextSceneId": "s36"
+      }
+    ]
+  },
+  {
+    "sceneId": "s36",
+    "speaker": "상담자",
+    "backgroundImage": "mountain.jpg",
+    "text": "그 사고 패턴을 다른 시각으로 바라보거나 바꾸어 생각해본다면, 어떤 관점이 도움이 될까요?",
+    "start": false,
+    "end": false,
+    "choiceRequests": [
+      {
+        "text": "객관적인 사실에 기반한 관점",
+        "nextSceneId": "s37"
+      },
+      {
+        "text": "감정과 생각을 분리하는 관점",
+        "nextSceneId": "s37"
+      },
+      {
+        "text": "감사와 긍정의 관점",
+        "nextSceneId": "s37"
+      },
+      {
+        "text": "호기심과 실험의 관점",
+        "nextSceneId": "s37"
+      }
+    ]
+  },
+  {
+    "sceneId": "s37",
+    "speaker": "상담자",
+    "backgroundImage": "loading-background1.png",
+    "text": "비슷한 문제를 겪고 극복한 사람이나 인물에서 떠오르는 이가 있나요? 그들에게서 당신이 배우고 싶은 점은 무엇인가요?",
+    "start": false,
+    "end": false,
+    "choiceRequests": [
+      {
+        "text": "끈기와 인내",
+        "nextSceneId": "s38"
+      },
+      {
+        "text": "창의적 해결 능력",
+        "nextSceneId": "s38"
+      },
+      {
+        "text": "강한 연대감과 협동",
+        "nextSceneId": "s38"
+      },
+      {
+        "text": "유연한 사고",
+        "nextSceneId": "s38"
+      }
+    ]
+  },
+  {
+    "sceneId": "s38",
+    "speaker": "상담자",
+    "backgroundImage": "loading-background2.png",
+    "text": "지금 당신이 고마움을 느끼는 것들 세 가지를 떠올려본다면, 그것은 무엇인가요?",
+    "start": false,
+    "end": false,
+    "choiceRequests": [
+      {
+        "text": "사랑하는 사람들",
+        "nextSceneId": "s39"
+      },
+      {
+        "text": "배움과 성장의 기회",
+        "nextSceneId": "s39"
+      },
+      {
+        "text": "몸과 마음의 건강",
+        "nextSceneId": "s39"
+      },
+      {
+        "text": "작은 일상의 기쁨",
+        "nextSceneId": "s39"
+      }
+    ]
+  },
+  {
+    "sceneId": "s39",
+    "speaker": "상담자",
+    "backgroundImage": "loading-background3.png",
+    "text": "어떤 사람에게 감사의 마음을 전하고 싶나요? 그 이유는 무엇인가요?",
+    "start": false,
+    "end": false,
+    "choiceRequests": [
+      {
+        "text": "가족",
+        "nextSceneId": "s40"
+      },
+      {
+        "text": "친구",
+        "nextSceneId": "s40"
+      },
+      {
+        "text": "선생님이나 멘토",
+        "nextSceneId": "s40"
+      },
+      {
+        "text": "자신",
+        "nextSceneId": "s40"
+      }
+    ]
+  },
+  {
+    "sceneId": "s40",
+    "speaker": "상담자",
+    "backgroundImage": "loading-background4.png",
+    "text": "당신의 삶에서 건강한 경계를 세우는 것이 필요한 영역은 어디라고 느끼나요?",
+    "start": false,
+    "end": false,
+    "choiceRequests": [
+      {
+        "text": "시간 관리",
+        "nextSceneId": "s41"
+      },
+      {
+        "text": "인간관계",
+        "nextSceneId": "s41"
+      },
+      {
+        "text": "자기 돌봄",
+        "nextSceneId": "s41"
+      },
+      {
+        "text": "일과 휴식의 균형",
+        "nextSceneId": "s41"
+      }
+    ]
+  },
+  {
+    "sceneId": "s41",
+    "speaker": "상담자",
+    "backgroundImage": "mountain.jpg",
+    "text": "현재 끌어안고 있지만 사실은 놓아도 되는 것들이 있다면, 그것은 무엇인가요?",
+    "start": false,
+    "end": false,
+    "choiceRequests": [
+      {
+        "text": "지난 실패에 대한 미련",
+        "nextSceneId": "s42"
+      },
+      {
+        "text": "타인의 기대",
+        "nextSceneId": "s42"
+      },
+      {
+        "text": "완벽해야 한다는 압박",
+        "nextSceneId": "s42"
+      },
+      {
+        "text": "끝나지 않은 감정",
+        "nextSceneId": "s42"
+      }
+    ]
+  },
+  {
+    "sceneId": "s42",
+    "speaker": "상담자",
+    "backgroundImage": "loading-background1.png",
+    "text": "그것을 놓아주는 모습을 상상해본다면, 어떤 장면이 떠오르나요?",
+    "start": false,
+    "end": false,
+    "choiceRequests": [
+      {
+        "text": "풍선이 하늘로 떠오르는 모습",
+        "nextSceneId": "s43"
+      },
+      {
+        "text": "물가에 띄운 배를 보내는 모습",
+        "nextSceneId": "s43"
+      },
+      {
+        "text": "낙엽이 흩날리는 모습",
+        "nextSceneId": "s43"
+      },
+      {
+        "text": "촉촉한 비가 씻겨주는 모습",
+        "nextSceneId": "s43"
+      }
+    ]
+  },
+  {
+    "sceneId": "s43",
+    "speaker": "상담자",
+    "backgroundImage": "loading-background2.png",
+    "text": "미래의 당신이 현재의 당신에게 전하고 싶은 메시지는 무엇일까요?",
+    "start": false,
+    "end": false,
+    "choiceRequests": [
+      {
+        "text": "걱정보다 희망이 크다는 것",
+        "nextSceneId": "s44"
+      },
+      {
+        "text": "지금의 길을 계속 가도 좋다는 것",
+        "nextSceneId": "s44"
+      },
+      {
+        "text": "새로운 길을 두려워하지 말라는 것",
+        "nextSceneId": "s44"
+      },
+      {
+        "text": "지금도 충분히 잘하고 있다는 것",
+        "nextSceneId": "s44"
+      }
+    ]
+  },
+  {
+    "sceneId": "s44",
+    "speaker": "상담자",
+    "backgroundImage": "loading-background3.png",
+    "text": "앞으로 당신이 가지고 싶은 삶의 태도나 자세는 무엇이라고 생각하나요?",
+    "start": false,
+    "end": false,
+    "choiceRequests": [
+      {
+        "text": "유연함과 적응력",
+        "nextSceneId": "s45"
+      },
+      {
+        "text": "계획과 준비성",
+        "nextSceneId": "s45"
+      },
+      {
+        "text": "모험심과 개방성",
+        "nextSceneId": "s45"
+      },
+      {
+        "text": "균형과 조화",
+        "nextSceneId": "s45"
+      }
+    ]
+  },
+  {
+    "sceneId": "s45",
+    "speaker": "상담자",
+    "backgroundImage": "loading-background4.png",
+    "text": "이 이야기를 마치며, 당신이 당장 실천할 수 있는 작은 행동이나 변화는 무엇인가요?",
+    "start": false,
+    "end": false,
+    "choiceRequests": [
+      {
+        "text": "하루에 10분 명상하기",
+        "nextSceneId": "s46"
+      },
+      {
+        "text": "주변 사람에게 감사 표현하기",
+        "nextSceneId": "s46"
+      },
+      {
+        "text": "새로운 활동을 시도하기",
+        "nextSceneId": "s46"
+      },
+      {
+        "text": "마음속 생각을 글로 기록하기",
+        "nextSceneId": "s46"
+      }
+    ]
+  },
+  {
+    "sceneId": "s46",
+    "speaker": "상담자",
+    "backgroundImage": "mountain.jpg",
+    "text": "마지막으로, 당신이 편지를 쓰고 싶은 대상은 누구인가요?",
+    "start": false,
+    "end": false,
+    "choiceRequests": [
+      {
+        "text": "과거의 나",
+        "nextSceneId": "s47"
+      },
+      {
+        "text": "미래의 나",
+        "nextSceneId": "s47"
+      },
+      {
+        "text": "사랑하는 사람",
+        "nextSceneId": "s47"
+      }
+    ]
+  },
+  {
+    "sceneId": "s47",
+    "speaker": "상담자",
+    "backgroundImage": "loading-background1.png",
+    "text": "편지에 담고 싶은 가장 중요한 메시지는 무엇인가요?",
+    "start": false,
+    "end": false,
+    "choiceRequests": [
+      {
+        "text": "용서와 치유",
+        "nextSceneId": "s48"
+      },
+      {
+        "text": "감사와 사랑",
+        "nextSceneId": "s49"
+      },
+      {
+        "text": "결심과 다짐",
+        "nextSceneId": "s50"
+      },
+      {
+        "text": "희망과 격려",
+        "nextSceneId": "s50"
+      }
+    ]
+  },
+  {
+    "sceneId": "s48",
+    "speaker": "상담자",
+    "backgroundImage": "loading-background2.png",
+    "text": "당신은 용서와 치유의 편지를 선택했습니다. 과거와 현재의 상처를 어루만지며 스스로에게 따뜻한 위로를 건네는 시간을 가져보세요. 이 편지는 당신을 자유롭게 하고 새롭게 시작할 힘을 줄 것입니다.",
+    "start": false,
+    "end": true,
+    "choiceRequests": []
+  },
+  {
+    "sceneId": "s49",
+    "speaker": "상담자",
+    "backgroundImage": "loading-background3.png",
+    "text": "당신은 감사와 사랑의 편지를 선택했습니다. 삶 속에서 받은 사랑과 배려를 돌아보며, 당신 또한 누군가에게 따뜻한 마음을 전해보세요. 서로의 연결이 당신을 더 풍요롭게 할 것입니다.",
+    "start": false,
+    "end": true,
+    "choiceRequests": []
+  },
+  {
+    "sceneId": "s50",
+    "speaker": "상담자",
+    "backgroundImage": "loading-background4.png",
+    "text": "당신은 결심과 다짐, 혹은 희망과 격려의 편지를 선택했습니다. 앞으로의 길을 향한 당신의 결단과 꿈을 글로 새기며, 용기와 희망으로 스스로를 응원해보세요. 이는 당신의 여정에 큰 동력이 될 것입니다.",
+    "start": false,
+    "end": true,
+    "choiceRequests": []
+  }
+]
