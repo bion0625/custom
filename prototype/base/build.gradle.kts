@@ -45,7 +45,7 @@ dependencies {
 	runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.11.5") // jackson serializer
 
 	// H2 R2DBC 드라이버
-	runtimeOnly("io.r2dbc:r2dbc-h2")
+	implementation("io.r2dbc:r2dbc-h2")
 	// H2 콘솔(JDBC 모드)도 같이 쓰고 싶으면:
 	runtimeOnly("com.h2database:h2")
 
