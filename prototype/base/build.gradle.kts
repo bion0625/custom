@@ -24,6 +24,8 @@ repositories {
 	mavenCentral()
 }
 
+extra["springBootAdminVersion"] = "3.5.0"
+
 dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-actuator")
 	implementation("org.springframework.boot:spring-boot-starter-data-r2dbc")
@@ -46,6 +48,15 @@ dependencies {
 	runtimeOnly("io.r2dbc:r2dbc-h2")
 	// H2 콘솔(JDBC 모드)도 같이 쓰고 싶으면:
 	runtimeOnly("com.h2database:h2")
+
+	// ADMIN 프로젝트 연동 세팅
+	implementation("de.codecentric:spring-boot-admin-starter-client")
+}
+
+dependencyManagement {
+	imports {
+		mavenBom("de.codecentric:spring-boot-admin-dependencies:${property("springBootAdminVersion")}")
+	}
 }
 
 tasks.withType<Test> {
