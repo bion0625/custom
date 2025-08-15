@@ -23,6 +23,7 @@ import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.WebFilter;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @EnableConfigurationProperties(JwtProperties.class)
@@ -81,28 +82,22 @@ public class SecurityConfig {
 
     @Bean
     public WebFilter jwtWebFilter() {
-        return (ServerWebExchange exchange, org.springframework.web.server.WebFilterChain chain) -> {
-            String authHeader = exchange.getRequest().getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
+        return (ServerWebExchange exchange, org.springframework.web.server.WebFilterChain chain) ->
+                Optional.ofNullable(exchange.getRequest().getHeaders().getFirst(HttpHeaders.AUTHORIZATION))
+                        .filter(authHeader -> authHeader.startsWith("Bearer "))
+                        .map(authHeader -> authHeader.substring("Bearer ".length()).trim())
+                        .map(token -> {
+                            String username = jwtService.parseUsername(token);
+                            List<String> roles = jwtService.parseRoles(token);
 
-            if (authHeader != null && authHeader.startsWith("Bearer ")) {
-                String token = authHeader.substring("Bearer ".length()).trim();
-                try {
-                    String username = jwtService.parseUsername(token);
-                    List<String> roles = jwtService.parseRoles(token);
-                    var authorities = roles.stream()
-                            .map(SimpleGrantedAuthority::new)
-                            .collect(Collectors.toList());
+                            var authorities = roles.stream()
+                                    .map(SimpleGrantedAuthority::new)
+                                    .collect(Collectors.toList());
 
-                    var auth = new UsernamePasswordAuthenticationToken(username, null, authorities);
-
-                    // 인증 컨텍스트를 주입한 상태로 체인 진행
-                    return chain.filter(exchange)
-                            .contextWrite(ReactiveSecurityContextHolder.withAuthentication(auth));
-                } catch (Exception ignored) {
-                    // 토큰 문제 시 비인증 상태로 통과 -> 이후 401 처리
-                }
-            }
-            return chain.filter(exchange);
-        };
+                            return new UsernamePasswordAuthenticationToken(username, null, authorities);
+                        })
+                        .map(auth -> chain.filter(exchange)
+                                .contextWrite(ReactiveSecurityContextHolder.withAuthentication(auth)))
+                        .orElseGet(() -> chain.filter(exchange));
     }
 }
