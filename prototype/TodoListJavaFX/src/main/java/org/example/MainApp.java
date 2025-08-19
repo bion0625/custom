@@ -4,12 +4,11 @@ import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 public class MainApp extends Application {
@@ -24,13 +23,49 @@ public class MainApp extends Application {
 
         deleteButton.setId("delete-button");
 
-        ObservableList<String> items = FXCollections.observableArrayList();
-        ListView<String> listView = new ListView<>(items);
+        ObservableList<ToDoItem> items = FXCollections.observableArrayList();
+        ListView<ToDoItem> listView = new ListView<>(items);
+
+        listView.setCellFactory(lv -> new ListCell<>() {
+            private final CheckBox checkBox = new CheckBox();
+            private final Text text = new Text();
+
+            {
+                checkBox.setOnAction(e -> {
+                    ToDoItem item = getItem();
+                    if (item.getText() != null) {
+                        item.setDone(checkBox.isSelected());
+                        updateItem(item, false);
+                    }
+                });
+            }
+
+            @Override
+            protected void updateItem(ToDoItem item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) setGraphic(null);
+                else {
+                    checkBox.setSelected(item.isDone());
+                    text.setText(item.getText());
+
+                    if (item.isDone()) {
+                        text.setStrikethrough(true);
+                        text.setFill(Color.GRAY);
+                    } else {
+                        text.setStrikethrough(false);
+                        text.setFill(Color.BLACK);
+                    }
+
+                    HBox cellBox = new HBox(10, checkBox, text);
+                    setGraphic(cellBox);
+                }
+            }
+        });
 
         addButton.setOnAction(e -> {
             String text = inputField.getText().trim();
             if (!text.isEmpty()) {
-                items.add(text);
+                items.add(new ToDoItem(text));
                 inputField.clear();
             }
         });
@@ -38,9 +73,9 @@ public class MainApp extends Application {
         inputField.setOnAction(e -> addButton.fire());
 
         deleteButton.setOnAction(e -> {
-            String selected = listView.getSelectionModel().getSelectedItem();
-            if (selected != null) {
-                items.remove(selected);
+            ToDoItem selectedItem = listView.getSelectionModel().getSelectedItem();
+            if (selectedItem != null) {
+                items.remove(selectedItem);
             } else {
                 Alert alert = new Alert(Alert.AlertType.WARNING);
                 alert.setTitle("경고");
@@ -51,7 +86,7 @@ public class MainApp extends Application {
         });
 
         HBox inputBox = new HBox(10, inputField, addButton, deleteButton);
-        inputBox.setStyle("-fx-padding: 20; -fx-alignment: conter;");
+        inputBox.setStyle("-fx-padding: 20; -fx-alignment: center;");
 
         VBox root = new VBox(10, inputBox, listView);
         root.setStyle("-fx-padding: 20; -fx-background-color: #fafafa;");
@@ -59,7 +94,7 @@ public class MainApp extends Application {
         Scene scene = new Scene(root, 450, 400);
         scene.getStylesheets().add(getClass().getResource("/style.css").toExternalForm());
 
-        primaryStage.setTitle("JAVAFX ToDoList - Step 2 (응용: 삭제)");
+        primaryStage.setTitle("JAVAFX ToDoList - Step 3");
         primaryStage.setScene(scene);
         primaryStage.show();
     }

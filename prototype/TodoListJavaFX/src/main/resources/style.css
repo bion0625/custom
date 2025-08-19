@@ -27,3 +27,8 @@
 #delete-button:hover {
     -fx-background-color: #d32f2f;
 }
+
+.done {
+    -fx-strikethrough: true;
+    -fx-text-fill: gray;
+}
