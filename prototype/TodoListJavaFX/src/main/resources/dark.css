@@ -40,3 +40,16 @@
 #delete-button:hover {
     -fx-background-color: #d32f2f;
 }
+
+.table-row-cell:filled:selected {
+    -fx-background-color: #cce5ff;
+}
+
+.table-cell {
+    -fx-padding: 6;
+    -fx-font-size: 14px;
+}
+
+.table-row-cell:filled .table-cell {
+    -fx-border-color: #eee;
+}
