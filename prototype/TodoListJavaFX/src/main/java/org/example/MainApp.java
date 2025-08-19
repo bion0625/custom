@@ -1,5 +1,6 @@
 package org.example;
 
+import javafx.animation.FadeTransition;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -10,6 +11,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 import java.io.IOException;
 import java.util.List;
@@ -17,6 +19,7 @@ import java.util.List;
 public class MainApp extends Application {
 
     private final ObservableList<ToDoItem> items = FXCollections.observableArrayList();
+    private boolean darkMode = false;
 
     @Override
     public void start(Stage primaryStage) {
@@ -33,6 +36,7 @@ public class MainApp extends Application {
         Button addButton = new Button("추가");
         Button saveButton = new Button("저장");
         Button deleteButton = new Button("삭제");
+        Button themeButton = new Button("\uD83C\uDF19 모드 전환");
 
         deleteButton.setId("delete-button");
 
@@ -48,6 +52,18 @@ public class MainApp extends Application {
                     if (item.getText() != null) {
                         item.setDone(checkBox.isSelected());
                         updateItem(item, false);
+
+                        if (item.isDone()) {
+                            FadeTransition ft = new FadeTransition(Duration.millis(500), text);
+                            ft.setFromValue(1.0);
+                            ft.setToValue(0.5);
+                            ft.play();
+                        } else {
+                            FadeTransition ft = new FadeTransition(Duration.millis(300), text);
+                            ft.setFromValue(text.getOpacity());
+                            ft.setToValue(1.0);
+                            ft.play();
+                        }
                     }
                 });
             }
@@ -106,16 +122,29 @@ public class MainApp extends Application {
             }
         });
 
-        HBox inputBox = new HBox(10, inputField, addButton, saveButton, deleteButton);
+        themeButton.setOnAction(e -> {
+            darkMode = !darkMode;
+            if (darkMode) {
+                primaryStage.getScene().getStylesheets()
+                        .setAll(getClass().getResource("/dark.css").toExternalForm());
+                themeButton.setText("☀ 라이트 모드");
+            } else {
+                primaryStage.getScene().getStylesheets()
+                        .setAll(getClass().getResource("/light.css").toExternalForm());
+                themeButton.setText("\uD83C\uDF19 다크 모드");
+            }
+        });
+
+        HBox inputBox = new HBox(10, inputField, addButton, deleteButton, themeButton, saveButton);
         inputBox.setStyle("-fx-padding: 20; -fx-alignment: center;");
 
         VBox root = new VBox(10, inputBox, listView);
         root.setStyle("-fx-padding: 20; -fx-background-color: #fafafa;");
 
-        Scene scene = new Scene(root, 450, 400);
-        scene.getStylesheets().add(getClass().getResource("/style.css").toExternalForm());
+        Scene scene = new Scene(root, 600, 400);
+        scene.getStylesheets().add(getClass().getResource("/light.css").toExternalForm());
 
-        primaryStage.setTitle("JAVAFX ToDoList - Step 4");
+        primaryStage.setTitle("JAVAFX ToDoList - Step 5 (스타일링 & UX)");
         primaryStage.setScene(scene);
         primaryStage.show();
     }

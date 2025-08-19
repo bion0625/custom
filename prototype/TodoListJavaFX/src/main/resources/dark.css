@@ -1,0 +1,42 @@
+.root {
+    -fx-background-color: #2b2b2b;
+    -fx-font-family: "Segoe UI", "Nanum Gothic", sans-serif;
+}
+
+.button {
+    -fx-background-color: #6c63ff;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 8;
+    -fx-cursor: hand;
+    -fx-padding: 6 12;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.4), 5,0,0,2);
+}
+
+.button:hover {
+    -fx-background-color: #5750d6;
+}
+
+.text-field {
+    -fx-font-size: 14px;
+    -fx-pref-width: 220px;
+    -fx-background-radius: 5;
+    -fx-border-color: #444;
+    -fx-border-radius: 5;
+    -fx-background-color: #3c3c3c;
+    -fx-text-fill: white;
+}
+
+.list-view {
+    -fx-background-color: #3a3a3a;
+    -fx-border-color: #555;
+    -fx-border-radius: 8;
+}
+
+/* 삭제 버튼은 빨간색 */
+#delete-button {
+    -fx-background-color: #e53935;
+}
+#delete-button:hover {
+    -fx-background-color: #d32f2f;
+}
