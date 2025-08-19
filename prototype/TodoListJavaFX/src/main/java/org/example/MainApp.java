@@ -11,19 +11,31 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
+import java.io.IOException;
+import java.util.List;
+
 public class MainApp extends Application {
+
+    private final ObservableList<ToDoItem> items = FXCollections.observableArrayList();
+
     @Override
     public void start(Stage primaryStage) {
+        try {
+            List<ToDoItem> loaded = TodoStorage.load();
+            items.addAll(loaded);
+        } catch (IOException e) {
+            showAlert("불러오기 오류", "데이터를 불러올 수 없습니다", Alert.AlertType.WARNING);
+        }
 
         TextField inputField = new TextField();
         inputField.setPromptText("할 일을 입력하세요...");
 
         Button addButton = new Button("추가");
+        Button saveButton = new Button("저장");
         Button deleteButton = new Button("삭제");
 
         deleteButton.setId("delete-button");
 
-        ObservableList<ToDoItem> items = FXCollections.observableArrayList();
         ListView<ToDoItem> listView = new ListView<>(items);
 
         listView.setCellFactory(lv -> new ListCell<>() {
@@ -72,6 +84,15 @@ public class MainApp extends Application {
 
         inputField.setOnAction(e -> addButton.fire());
 
+        saveButton.setOnAction(e -> {
+            try {
+                TodoStorage.save(items);
+                showAlert("저장 완료", "데이터가 저장되었습니다.", Alert.AlertType.INFORMATION);
+            } catch (IOException ex) {
+                showAlert("저장 오류", "데이터 저장에 실패했습니다.", Alert.AlertType.ERROR);
+            }
+        });
+
         deleteButton.setOnAction(e -> {
             ToDoItem selectedItem = listView.getSelectionModel().getSelectedItem();
             if (selectedItem != null) {
@@ -85,7 +106,7 @@ public class MainApp extends Application {
             }
         });
 
-        HBox inputBox = new HBox(10, inputField, addButton, deleteButton);
+        HBox inputBox = new HBox(10, inputField, addButton, saveButton, deleteButton);
         inputBox.setStyle("-fx-padding: 20; -fx-alignment: center;");
 
         VBox root = new VBox(10, inputBox, listView);
@@ -94,8 +115,16 @@ public class MainApp extends Application {
         Scene scene = new Scene(root, 450, 400);
         scene.getStylesheets().add(getClass().getResource("/style.css").toExternalForm());
 
-        primaryStage.setTitle("JAVAFX ToDoList - Step 3");
+        primaryStage.setTitle("JAVAFX ToDoList - Step 4");
         primaryStage.setScene(scene);
         primaryStage.show();
+    }
+
+    private void showAlert(String title, String message, Alert.AlertType type) {
+        Alert alert = new Alert(type);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
     }
 }

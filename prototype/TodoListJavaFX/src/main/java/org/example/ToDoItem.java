@@ -1,39 +1,29 @@
 package org.example;
 
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
-
 public class ToDoItem {
-    private final StringProperty text = new SimpleStringProperty();
-    private final BooleanProperty done = new SimpleBooleanProperty(false);
+    private String text;
+    private boolean done;
+
+    public ToDoItem() {}
 
     public ToDoItem(String text) {
-        this.text.set(text);
-    }
-
-    public StringProperty textProperty() {
-        return text;
-    }
-
-    public BooleanProperty doneProperty() {
-        return done;
+        this.text = text;
+        this.done = false;
     }
 
     public String getText() {
-        return text.get();
+        return text;
     }
 
-    public void setText(String value) {
-        text.set(value);
+    public void setText(String text) {
+        this.text = text;
     }
 
     public boolean isDone() {
-        return done.get();
+        return done;
     }
 
-    public void setDone(boolean value) {
-        done.set(value);
+    public void setDone(boolean done) {
+        this.done = done;
     }
 }
