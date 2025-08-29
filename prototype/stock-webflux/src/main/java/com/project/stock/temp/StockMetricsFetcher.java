@@ -11,7 +11,6 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.util.retry.Retry;
 
-import java.text.NumberFormat;
 import java.time.temporal.ChronoUnit;
 import java.time.Duration;
 import java.time.Instant;
@@ -398,7 +397,6 @@ public class StockMetricsFetcher {
     private static Item get(Map<Integer, Map<String, Item>> m, Integer fy, String q) { Map<String, Item> inner = m.get(fy); return inner==null?null:inner.get(q); }
     private static void putIfPresent(Map<QKey, Map.Entry<LocalDate, Double>> out, QKey key, Item item) { if (item != null) out.put(key, Map.entry(item.end, item.val)); }
     private static Item prefer(Item quarter, Item ytd) { return quarter!=null ? quarter : ytd; }
-    private static Item diff(Item ytdCurr, Item ytdPrev, Item quarter) { if (quarter!=null) return quarter; if (ytdCurr!=null && ytdPrev!=null) return new Item(ytdCurr.end, ytdCurr.val - ytdPrev.val, false, ytdCurr.form); return null; }
 
     /** instant(시점) 계정 → end 날짜별 NavigableMap */
     private NavigableMap<LocalDate, Double> toInstantNavSeries(List<JsonNode> facts) {
@@ -463,6 +461,7 @@ public class StockMetricsFetcher {
 
                     List<QuarterMetrics> out = new ArrayList<>();
                     int windowDays = 10; // end 날짜 허용 오차
+                    NavigableMap<LocalDate, Double> netD = byEndDate(netM);
 
                     for (LocalDate end : allEnds) {
                         double rev = getNear(revD, end, windowDays);
@@ -471,7 +470,7 @@ public class StockMetricsFetcher {
 
                         // EPS 보정(NetIncome / WADiluted)
                         if (Double.isNaN(eps)) {
-                            double net = getNear(byEndDate(netM), end, windowDays);
+                            double net = getNear(netD, end, windowDays);
                             double wa  = getNear(waD, end, windowDays);
                             if (!Double.isNaN(net) && !Double.isNaN(wa) && wa != 0.0) eps = net / wa;
                         }
@@ -608,13 +607,6 @@ public class StockMetricsFetcher {
 
     // ========================= 모델/포맷 & 실행 =========================
 
-    private static String fmt(double v) {
-        if (Double.isNaN(v) || Double.isInfinite(v)) return "N/A";
-        NumberFormat nf = NumberFormat.getNumberInstance(Locale.KOREA);
-        nf.setMaximumFractionDigits(2); nf.setMinimumFractionDigits(0);
-        return nf.format(v);
-    }
-
     public static class QuarterMetrics {
         public final LocalDate end; public final double revenue, operatingIncome, eps, equity, shares, price, per, pbr;
         public QuarterMetrics(LocalDate end, double revenue, double operatingIncome, double eps, double equity, double shares, double price, double per, double pbr) {
@@ -630,50 +622,6 @@ public class StockMetricsFetcher {
                  "6-K","6-K/A" -> true;
             default -> false;
         };
-    }
-
-    private void debugFacts(String label, String ticker, List<JsonNode> facts) {
-        if (facts == null || facts.isEmpty()) {
-            System.err.println(label + "[" + ticker + "] facts EMPTY");
-            return;
-        }
-        List<JsonNode> sorted = new ArrayList<>(facts);
-        sorted.sort((a, b) -> {
-            String ea = a.path("end").asText("");
-            String eb = b.path("end").asText("");
-            if (ea.isEmpty() || eb.isEmpty()) return 0;
-            return LocalDate.parse(eb).compareTo(LocalDate.parse(ea));
-        });
-
-        int q1=0,q2=0,q3=0,q4=0, fyCnt=0, ytdCnt=0, nonYtdCnt=0;
-        for (JsonNode n : facts) {
-            String fp = n.path("fp").asText("");
-            String frame = n.path("frame").asText("");
-            String start = n.path("start").asText("");
-            String end = n.path("end").asText("");
-            boolean ytd = isYTDLike(fp, frame, start, end); // ✅ 변경
-            if ("FY".equals(fp)) fyCnt++;
-            else if (fp.startsWith("Q")) {
-                switch (fp) { case "Q1" -> q1++; case "Q2" -> q2++; case "Q3" -> q3++; case "Q4" -> q4++; }
-            }
-            if (ytd) ytdCnt++; else nonYtdCnt++;
-        }
-
-        System.err.printf("%s[%s] total=%d, Q1=%d Q2=%d Q3=%d Q4=%d, FY=%d, YTD=%d nonYTD=%d%n",
-                label, ticker, facts.size(), q1, q2, q3, q4, fyCnt, ytdCnt, nonYtdCnt);
-
-        int show = Math.min(3, sorted.size());
-        for (int i = 0; i < show; i++) {
-            JsonNode n = sorted.get(i);
-            System.err.println("  #" + (i+1) +
-                    " form=" + n.path("form").asText("") +
-                    ", fy=" + n.path("fy").asInt() +
-                    ", fp=" + n.path("fp").asText("") +
-                    ", frame=" + n.path("frame").asText("") +
-                    ", start=" + n.path("start").asText("") +
-                    ", end=" + n.path("end").asText("") +
-                    ", val=" + n.path("val").asText(""));
-        }
     }
 
     private Mono<List<JsonNode>> fetchFromCompanyFactsUnion(String cik, String namespace, List<String> tags) {
@@ -710,18 +658,23 @@ public class StockMetricsFetcher {
     public static void main(String[] args) {
         StockMetricsFetcher fetcher = new StockMetricsFetcher();
         fetcher.fetchTickerList()
-                .flatMapMany(list -> Flux.fromIterable(list.stream().limit(5).toList()))
+                .flatMapMany(list -> Flux.fromIterable(list))
                 .flatMap(entry -> fetcher.computeMetricsSeries(entry.getKey(), entry.getValue())
-                        .map(series -> Map.entry(entry.getKey(), series)))
+                        .map(series -> Map.entry(entry.getKey(), series)), 6)
                 .collectList()
                 .doOnNext(all -> {
-                    for (Map.Entry<String, List<QuarterMetrics>> kv : all) {
-                        System.out.println("==== " + kv.getKey() + " (최근 3년 분기) ====");
-                        for (QuarterMetrics q : kv.getValue()) {
-                            System.out.printf("%s => 매출: %s, 영업이익: %s, PER: %s, PBR: %s%n",
-                                    q.end, fmt(q.revenue), fmt(q.operatingIncome), fmt(q.per), fmt(q.pbr));
-                        }
-                    }
+
+                    List<Map.Entry<String, List<QuarterMetrics>>> result = all.stream().filter(kv ->
+                                    kv.getValue() != null && kv.getValue().size() >= 3
+                                            && kv.getValue().get(0).revenue > kv.getValue().get(1).revenue
+                                            && kv.getValue().get(1).revenue > kv.getValue().get(2).revenue
+                                            && kv.getValue().get(0).operatingIncome > kv.getValue().get(1).operatingIncome
+                                            && kv.getValue().get(1).operatingIncome > kv.getValue().get(2).operatingIncome
+                                            && kv.getValue().get(0).pbr * kv.getValue().get(0).per <= 22.5)
+                            .toList();
+
+                    System.out.println("=== result ===");
+                    result.forEach(kv -> System.out.println(kv.getKey()));
                 })
                 .block();
     }
