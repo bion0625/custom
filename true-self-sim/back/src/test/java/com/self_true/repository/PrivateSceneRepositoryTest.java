@@ -22,8 +22,9 @@ class PrivateSceneRepositoryTest {
                 .isStart(true)
                 .isEnd(false)
                 .memberId(1L)
+                .storyId(1L)
                 .build();
         privateSceneRepository.save(scene);
-        assertThat(privateSceneRepository.findByMemberIdAndPrivateSceneIdAndDeletedAtIsNull(1L, "s1")).isPresent();
+        assertThat(privateSceneRepository.findByMemberIdAndStoryIdAndPrivateSceneIdAndDeletedAtIsNull(1L, 1L, "s1")).isPresent();
     }
 }
